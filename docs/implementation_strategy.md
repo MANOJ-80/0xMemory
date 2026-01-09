@@ -20,17 +20,236 @@
 
 ## Table of Contents
 
-1. [Design Philosophy](#design-philosophy)
-2. [System Architecture](#system-architecture)
-3. [MCP Server Design](#mcp-server-design)
-4. [Memory Architecture](#memory-architecture)
-5. [Cross-LLM Strategy](#cross-llm-strategy)
-6. [Infinite Context Strategy](#infinite-context-strategy)
-7. [Technical Stack](#technical-stack)
-8. [Implementation Phases](#implementation-phases)
-9. [File & Data Structures](#file--data-structures)
-10. [API Specification](#api-specification)
-11. [Testing Strategy](#testing-strategy)
+1. [Product Vision](#product-vision)
+2. [Unique Differentiators](#unique-differentiators)
+3. [CLI Commands](#cli-commands)
+4. [Memory Taxonomy](#memory-taxonomy)
+5. [User Experience Goals](#user-experience-goals)
+6. [Design Philosophy](#design-philosophy)
+7. [System Architecture](#system-architecture)
+8. [MCP Server Design](#mcp-server-design)
+9. [Memory Architecture](#memory-architecture)
+10. [Cross-LLM Strategy](#cross-llm-strategy)
+11. [Infinite Context Strategy](#infinite-context-strategy)
+12. [Technical Stack](#technical-stack)
+13. [Implementation Phases](#implementation-phases)
+14. [File & Data Structures](#file--data-structures)
+15. [API Specification](#api-specification)
+16. [Testing Strategy](#testing-strategy)
+17. [Potential Limitations & Mitigations](#potential-limitations--how-to-overcome-them)
+18. [Technology Justification](#technology-justification)
+19. [Open Questions & Future](#open-questions--future-considerations)
+
+---
+
+## Product Vision
+
+### The Problem
+
+Every AI coding assistant forgets you exist between sessions. You explain your project architecture, coding conventions, and preferences—then do it all over again next time. This is the **"Groundhog Effect"**.
+
+### The Solution
+
+**0xMemory** transforms your project folder into a **living brain**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    YOUR PROJECT                             │
+│                                                             │
+│   📁 .0xmemory/                                            │
+│   ├── 🧠 brain.md        ← Human-editable context          │
+│   ├── 📚 memory/         ← Learned facts & decisions       │
+│   ├── 📄 documents/      ← Your docs for RAG               │
+│   ├── 🗄️  .store/         ← Vector DB + SQLite              │
+│   └── 📜 sessions/       ← Session history                 │
+│                                                             │
+│   + Git versioned = Reproducible AI workflows              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### One-Line Description
+
+> A terminal-first AI memory layer that keeps persistent project state in human-editable Markdown, stores knowledge in a local vector DB, and enables cross-LLM workflows for solo developers via MCP.
+
+---
+
+## Unique Differentiators
+
+### How 0xMemory is Different
+
+| Aspect              | Competitors      | 0xMemory                         |
+| ------------------- | ---------------- | -------------------------------- |
+| **Interface**       | Cloud APIs, SDKs | MCP Server (works with any LLM)  |
+| **Memory Storage**  | Cloud databases  | Local vector DB + Markdown files |
+| **Context Files**   | Hidden/binary    | Human-editable Markdown          |
+| **Version Control** | None             | Git-native, every change tracked |
+| **Scope**           | User-global      | Project-scoped (per repo brain)  |
+| **Target User**     | Teams/Enterprise | Solo developers                  |
+| **Learning**        | Automatic only   | Auto + human-editable            |
+| **Offline**         | Usually no       | Fully offline capable            |
+| **Reproducibility** | Limited          | Full audit trail in Git          |
+| **LLM Lock-in**     | Single provider  | Cross-LLM via MCP                |
+
+### The 0xMemory Advantage
+
+1. **Human-in-the-Loop Memory**
+
+   - You can read, edit, and correct what the AI learns
+   - No black-box memory systems
+
+2. **Git-Native Workflows**
+
+   - Every session logged, every decision tracked
+   - Revert, branch, and collaborate on memory
+
+3. **Project Brain, Not User Brain**
+
+   - Each project has its own context
+   - Switch projects, switch brains
+
+4. **Terminal-First Design**
+
+   - Built for developers who live in the terminal
+   - No web UI required
+
+5. **Cross-LLM Compatibility**
+   - Works with Claude, Gemini, OpenAI, Cursor
+   - Switch LLMs, keep your memory
+
+---
+
+## CLI Commands
+
+### Core Commands
+
+| Command                   | Description                               |
+| ------------------------- | ----------------------------------------- |
+| `0xmemory init`           | Initialize a brain in the current project |
+| `0xmemory serve`          | Start MCP server (for LLM clients)        |
+| `0xmemory status`         | Show brain statistics                     |
+| `0xmemory add <content>`  | Manually add a memory                     |
+| `0xmemory search <query>` | Search through memories                   |
+| `0xmemory ingest <path>`  | Add documents to the brain                |
+| `0xmemory forget <id>`    | Remove a specific memory                  |
+| `0xmemory export`         | Export brain for backup/sharing           |
+| `0xmemory rebuild`        | Rebuild vector DB from Markdown           |
+
+### Usage Examples
+
+```bash
+# Initialize a new brain in your project
+cd my-project
+0xmemory init
+
+# Start MCP server for Claude/Gemini/Cursor
+0xmemory serve
+
+# Start MCP server on HTTP (for IDE integrations)
+0xmemory serve --http --port 8080
+
+# Check brain status
+0xmemory status
+
+# Add a fact manually
+0xmemory add "The API uses port 3000" --type fact --tags api,config
+
+# Search memories
+0xmemory search "authentication"
+
+# Ingest project documentation
+0xmemory ingest ./docs/
+
+# Export brain for backup
+0xmemory export brain-backup.zip
+```
+
+---
+
+## Memory Taxonomy
+
+### Cognitive Framework
+
+Based on research (ArXiv 2512.23343v1), 0xMemory organizes memory across two dimensions:
+
+| Dimension  | Category         | Description                                  | 0xMemory File          |
+| :--------- | :--------------- | :------------------------------------------- | :--------------------- |
+| **Nature** | **Episodic**     | "How" - Events, sessions, tool actions       | `sessions/`, logs      |
+|            | **Semantic**     | "What" - Facts, decisions, architecture      | `facts.md`, `brain.md` |
+| **Scope**  | **Inside-trail** | Current session context (working memory)     | `sessions/current.md`  |
+|            | **Cross-trail**  | Long-term state (persistent across sessions) | All memory files       |
+
+### Core Memory Modules
+
+1. **Project Brain** (`brain.md`)
+
+   - **Type**: Semantic / Cross-trail (Core)
+   - High-level project description, architecture, and "Source of Truth"
+   - Human-maintained & AI-referenced
+
+2. **Facts & Learnings** (`memory/facts.md`)
+
+   - **Type**: Semantic / Cross-trail (Derived)
+   - Discrete knowledge extracted from conversations
+   - Prevent repeating "Gotchas" and reinforce correct patterns
+
+3. **Decisions & Rationale** (`memory/decisions.md`)
+
+   - **Type**: Episodic-to-Semantic / Cross-trail
+   - Logs choices made with their context and reasoning
+   - Facilitates onboarding and "Architecture Decision Records" (ADR)
+
+4. **Session Archive** (`sessions/`)
+   - **Type**: Episodic / Inside-trail → Cross-trail
+   - Session summaries and activity logs
+   - Compressed after session ends
+
+### Context File Template (brain.md)
+
+```markdown
+# 🧠 Project Brain
+
+> This is the main context file for your project.
+> Edit this to help 0xMemory understand your project.
+
+## Project Overview
+
+[Your project description here]
+
+## Architecture
+
+[Key components and how they fit together]
+
+## Conventions
+
+[Coding conventions, patterns, rules]
+
+## Current Focus
+
+[What you're currently working on]
+```
+
+---
+
+## User Experience Goals
+
+### The Journey
+
+| Milestone     | Experience                                   |
+| ------------- | -------------------------------------------- |
+| **First Run** | `0xmemory init && 0xmemory serve` just works |
+| **Day 2**     | AI remembers yesterday's conversation        |
+| **Week 2**    | AI knows your project deeply                 |
+| **Month 2**   | Irreplaceable development companion          |
+
+### Success Metrics
+
+| Metric                 | Target                                      |
+| ---------------------- | ------------------------------------------- |
+| **Context Recall**     | AI references past conversations accurately |
+| **Session Continuity** | Pick up where you left off after days       |
+| **Retrieval Latency**  | < 500ms for memory search                   |
+| **Setup Time**         | < 2 minutes to first memory                 |
+| **Zero Config**        | Works with sensible defaults                |
 
 ---
 
@@ -134,6 +353,178 @@
 | **Vector Store**        | Semantic search via embeddings (ChromaDB)             |
 | **Knowledge Extractor** | LLM-based fact/decision extraction from conversations |
 | **Embedding Layer**     | Generates vector representations of text              |
+
+### Data Flow
+
+```
+Session Start (LLM connects via MCP)
+     │
+     ▼
+┌─────────────────────┐
+│ Load Context Files  │ ← brain.md, facts.md, preferences.md
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Build System Prompt │ ← Combine context + retrieved memories
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   User Query        │ ← Via MCP tool call (recall, remember, etc.)
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Retrieve Relevant   │ ← Semantic search in ChromaDB
+│ Memories            │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Return to LLM       │ ← Formatted context for the AI
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Store New Memory    │ ← If remember tool is called
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Update Markdown +   │ ← Write to facts.md + ChromaDB
+│ Vector DB           │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Optional: Git Commit│ ← Auto-commit if configured
+└─────────────────────┘
+```
+
+### Memory Algorithms
+
+#### Knowledge Extraction Flow
+
+```
+User Message + AI Response
+         │
+         ▼
+┌─────────────────────┐
+│ LLM Extraction      │
+│ Prompt:             │
+│ "Extract facts,     │
+│  decisions, and     │
+│  learnings from     │
+│  this conversation" │
+└──────────┬──────────┘
+           │
+           ▼
+    ┌──────┴──────┐
+    │             │
+    ▼             ▼
+  Facts       Decisions
+    │             │
+    ▼             ▼
+facts.md    decisions.md
+    │             │
+    └──────┬──────┘
+           ▼
+      ChromaDB
+    (embeddings)
+```
+
+#### Retrieval Strategy
+
+```
+User Query (via recall tool)
+    │
+    ▼
+┌─────────────────────┐
+│ 1. Embed query      │ ← sentence-transformers
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ 2. Vector search    │ ← Top 10 by cosine similarity
+│    (ChromaDB)       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ 3. Keyword boost    │ ← Re-rank by keyword overlap
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ 4. Recency boost    │ ← Prefer recent memories
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ 5. Salience boost   │ ← Prefer high-importance memories
+└──────────┬──────────┘
+           │
+           ▼
+     Top 5 Results
+```
+
+#### Memory Consolidation (Maintenance)
+
+Inspired by Shodh-Memory's approach:
+
+```
+Weekly/Monthly Maintenance
+       │
+       ▼
+┌─────────────────────┐
+│ Summarize old facts │ ← Compress similar facts
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Remove duplicates   │ ← Dedup by semantic similarity > 0.95
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Decay unused        │ ← A(t) = A₀ · e^(-λt)
+│ (reduce salience)   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Archive old sessions│ ← Move to archive/ after 90 days
+└──────────┬──────────┘
+           │
+           ▼
+   Optimized Memory
+```
+
+### Git Integration
+
+Auto-commit session changes:
+
+```python
+# Auto-commit on session end
+def end_session():
+    # Generate session summary
+    summary = summarize_session(current_session)
+
+    # Write to session archive
+    archive_session(current_session, summary)
+
+    # Stage memory changes
+    repo.index.add([".0xmemory/memory/", ".0xmemory/sessions/"])
+
+    # Commit with descriptive message
+    facts_added = count_new_facts()
+    decisions_added = count_new_decisions()
+
+    repo.index.commit(
+        f"[0xMemory] Session: +{facts_added} facts, +{decisions_added} decisions"
+    )
+```
 
 ---
 
