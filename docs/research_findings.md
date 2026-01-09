@@ -969,6 +969,38 @@ Raw Conversation Data
 
 ---
 
+### Deep-Dive: AI Meets Brain (Unified Survey 2025)
+
+> **Source:** "AI Meets Brain: A Unified Survey on Memory Systems" - ArXiv 2512.23343v1
+
+**Memory substrates in LLMs:**
+
+1. **Parametric Memory**: Knowledge internalized in model weights (static, knowledge cutoff, prone to hallucinations).
+2. **Working Memory**: Real-time interaction via context window (KV-caches, positional bias, capacity-cost tradeoff).
+3. **Explicit External Memory**: Independent storage (RAG, vector databases, KGs) - decouples computation from storage.
+
+**Memory Taxonomy for Agents:**
+
+| Approach         | Category         | Description                                                          |
+| :--------------- | :--------------- | :------------------------------------------------------------------- |
+| **Nature-based** | **Episodic**     | "How to" - tool trajectories, experiential logs, sequential history. |
+|                  | **Semantic**     | "What are" - factual concepts, rules, general knowledge.             |
+| **Scope-based**  | **Inside-trail** | Confined to single task/session; temporary reasoning steps.          |
+|                  | **Cross-trail**  | Persistent across episodes; long-term personalization/knowledge.     |
+
+**Memory Management Pipeline (The "Cognitive OS"):**
+
+- **Memory Extraction**: Distilling meaningful content from noisy streams.
+  - _Flat_: Raw recording or basic summarization.
+  - _Hierarchical_: Recursive compression (macro-gist vs. micro-detail).
+  - _Generative_: Dynamic reconstruction during reasoning (branch/return operators).
+- **Memory Updating**:
+  - _Memory Folding_: Moving working memory into condensed inside-trail records (summarization triggers).
+  - _Dynamic Filtering_: Retain critical details; discard irrelevant noise.
+- **Utilization**: Transforming stored experiences into decision support.
+
+---
+
 ## Conclusion
 
 The market has two distinct categories:
