@@ -7,14 +7,57 @@
 
 ## Table of Contents
 
-1. [The Core Problem](#the-core-problem)
-2. [Competitor Analysis](#competitor-analysis)
-3. [Terminal-First AI Agents](#terminal-first-ai-agents)
-4. [Technical Approaches](#technical-approaches)
-5. [Feature Comparison Matrix](#feature-comparison-matrix)
-6. [Key Limitations Identified](#key-limitations-identified)
-7. [Community Insights (MARM)](#community-insights-marm)
-8. [Research Resources Summary](#research-resources-summary)
+1. [Executive Summary: 0xMemory vs Competitors](#executive-summary-0xmemory-vs-all-competitors)
+2. [The Core Problem](#the-core-problem)
+3. [Competitor Analysis](#competitor-analysis)
+4. [Terminal-First AI Agents](#terminal-first-ai-agents)
+5. [Technical Approaches](#technical-approaches)
+6. [Feature Comparison Matrix](#feature-comparison-matrix)
+7. [Key Limitations Identified](#key-limitations-identified)
+8. [Community Insights (MARM)](#community-insights-marm)
+9. [Research Resources Summary](#research-resources-summary)
+10. [All Research Resources](#all-research-resources)
+
+---
+
+## Executive Summary: 0xMemory vs All Competitors
+
+### Quick Comparison Matrix
+
+| Feature                   | **0xMemory** | Mem0           | Zep       | OpenMemory | Shodh | Claude Code | Gemini CLI   |
+| ------------------------- | ------------ | -------------- | --------- | ---------- | ----- | ----------- | ------------ |
+| **100% Local**            | ✅           | ❌ Cloud       | ❌ Server | Partial    | ✅    | ❌          | ❌           |
+| **Cross-LLM**             | ✅ MCP       | ❌             | ❌        | ❌         | ❌    | ❌          | ❌           |
+| **Human-Editable Memory** | ✅ Markdown  | ❌ API only    | ❌        | ❌         | ❌    | ❌          | ✅ GEMINI.md |
+| **Git-Versioned**         | ✅           | ❌             | ❌        | ❌         | ❌    | ❌          | ❌           |
+| **Project-Scoped**        | ✅           | ❌ User-global | ❌        | ❌         | ✅    | ✅          | ✅           |
+| **Semantic Search**       | ✅           | ✅             | ✅        | ✅         | ✅    | ❌          | ❌           |
+| **Terminal-First**        | ✅           | ❌             | ❌        | ❌         | ✅    | ✅          | ✅           |
+| **Free/Open Source**      | ✅           | Freemium       | Freemium  | ✅         | ✅    | Closed      | Closed       |
+
+### 0xMemory's Unique Position
+
+```
+0xMemory =
+  (Mem0's extraction pipeline)
++ (OpenMemory's memory architecture)
++ (Gemini CLI's human-editable files)
++ (Git's version control)
++ (MCP's cross-LLM compatibility)
+- (All the cloud dependencies)
+- (All the setup complexity)
+= Something nobody else offers
+```
+
+### The 5 Things ONLY 0xMemory Does
+
+| #   | Feature                   | Why It Matters                                      |
+| --- | ------------------------- | --------------------------------------------------- |
+| 1   | **Cross-LLM via MCP**     | Switch from Claude to Gemini, same memory           |
+| 2   | **Markdown + Vector DB**  | Human-readable AND machine-searchable               |
+| 3   | **Git-Versioned Memory**  | Revert to yesterday's brain, branch for experiments |
+| 4   | **100% Local + Offline**  | No cloud, works on airplane                         |
+| 5   | **Project-Scoped Brains** | Different project = different context               |
 
 ---
 
@@ -1001,6 +1044,57 @@ Raw Conversation Data
 
 ---
 
+## All Research Resources
+
+### GitHub Repositories
+
+| Repository                 | Description                           | Link                                                     |
+| -------------------------- | ------------------------------------- | -------------------------------------------------------- |
+| **momo-research**          | Personal assistant memory research    | https://github.com/momo-personal-assistant/momo-research |
+| **OpenMemory**             | Open-source memory layer by CaviraOSS | https://github.com/CaviraOSS/OpenMemory                  |
+| **SuperMemory**            | AI memory management system           | https://github.com/supermemoryai/supermemory             |
+| **Memory Ledger Protocol** | Protocol for AI memory                | https://github.com/memory-ledger/memory-ledger-protocol  |
+| **BrainAPI**               | Memory abstraction layer              | https://github.com/lumenlabs-dev/brainapi                |
+| **Shodh-Memory**           | Offline MCP memory server             | https://github.com/shodh-ai/shodh-memory                 |
+| **Claude Code**            | Anthropic's CLI agent                 | https://github.com/anthropics/claude-code                |
+| **OpenCode**               | Open-source Claude Code alternative   | https://github.com/sanjeed5/opencode                     |
+| **Gemini CLI**             | Google's terminal-based agent         | https://github.com/google-gemini/gemini-cli              |
+
+### ArXiv Papers
+
+| Paper                       | Description                                   | Link                                |
+| --------------------------- | --------------------------------------------- | ----------------------------------- |
+| **"AI Meets Brain" Survey** | Comprehensive AI memory survey (2512.23343v1) | https://arxiv.org/html/2512.23343v1 |
+| **Mem0 Paper**              | Technical paper on Mem0 architecture          | https://arxiv.org/abs/2504.19413    |
+
+### Research Articles & Whitepapers
+
+| Resource                       | Description                            | Link                                                                                |
+| ------------------------------ | -------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Google Context Engineering** | Whitepaper on sessions and memory      | https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory           |
+| **Manus Context Engineering**  | Lessons from building Manus AI         | https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus |
+| **Chroma Context Rot**         | Research on context window degradation | https://research.trychroma.com/context-rot                                          |
+
+### Commercial Memory Solutions
+
+| Solution    | Type                    | Link                   |
+| ----------- | ----------------------- | ---------------------- |
+| **Mem0**    | Memory-as-a-Service     | https://mem0.ai        |
+| **Zep AI**  | Enterprise memory layer | https://www.getzep.com |
+| **Papr.ai** | AI memory solution      | https://www.papr.ai    |
+| **Cognee**  | Knowledge memory system | https://www.cognee.ai  |
+
+### Documentation & Frameworks
+
+| Resource                  | Description                          | Link                                                      |
+| ------------------------- | ------------------------------------ | --------------------------------------------------------- |
+| **LangGraph Memory**      | Official memory documentation        | https://langchain-ai.github.io/langgraph/concepts/memory/ |
+| **MCP Protocol**          | Model Context Protocol specification | https://modelcontextprotocol.io                           |
+| **ChromaDB**              | Vector database documentation        | https://docs.trychroma.com                                |
+| **Sentence Transformers** | Embedding models                     | https://www.sbert.net                                     |
+
+---
+
 ## Conclusion
 
 The market has two distinct categories:
@@ -1022,9 +1116,12 @@ Bridge these worlds - create a terminal-first agent with persistent, semantic me
 - Human-editable (Markdown)
 - Git-versioned (reproducible)
 - Project-scoped (per-repo brain)
+- Cross-LLM compatible (MCP)
 - Solo-developer focused
 - Works offline
 
 ---
 
 _This document synthesizes findings from all provided resources to inform 0xMemory's unique positioning._
+
+_Last Updated: 2026-01-09_
