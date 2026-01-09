@@ -1149,24 +1149,565 @@ mem.forget(id="fact-a1b2c3d4")
 
 ---
 
-## Risks & Mitigations
+## Potential Limitations & How to Overcome Them
 
-| Risk                        | Mitigation                                       |
-| --------------------------- | ------------------------------------------------ |
-| **Embedding quality**       | Allow swappable models, default to battle-tested |
-| **Context overflow**        | Aggressive compression, token budgeting          |
-| **MCP compatibility**       | Follow spec strictly, test with all clients      |
-| **Git conflicts**           | Structured Markdown, atomic commits              |
-| **Performance degradation** | Lazy loading, index optimization                 |
+### 1. Embedding Quality Issues
+
+**The Problem:**
+
+- Local embedding models (80-550MB) are less accurate than cloud APIs (OpenAI, Gemini)
+- Semantic search may miss relevant memories or return irrelevant ones
+- Domain-specific terminology may not be well-represented
+
+**Mitigation Strategies:**
+
+| Strategy           | Implementation                                    |
+| ------------------ | ------------------------------------------------- |
+| **Hybrid Search**  | Combine semantic (vector) + keyword (BM25) search |
+| **Model Swapping** | Allow users to configure better models if needed  |
+| **Reranking**      | Use LLM to rerank top-20 results to top-5         |
+| **Fine-tuning**    | Future: Fine-tune embeddings on user's data       |
+
+```python
+# Hybrid search example
+def hybrid_search(query: str, top_k: int = 5):
+    # Semantic search (by meaning)
+    semantic_results = vector_store.search(embed(query), limit=20)
+
+    # Keyword search (exact matches)
+    keyword_results = bm25_search(query, limit=20)
+
+    # Merge with weighted scoring
+    merged = merge_results(
+        semantic_results,
+        keyword_results,
+        semantic_weight=0.7,
+        keyword_weight=0.3
+    )
+
+    return merged[:top_k]
+```
 
 ---
 
-## Open Questions
+### 2. Memory Drift & Inconsistency
 
-1. **Multi-project:** How to handle cross-project memory sharing?
-2. **Privacy:** How to handle sensitive information in memories?
-3. **Collaboration:** How to merge team-member brains?
-4. **Versioning:** How to handle memory schema migrations?
+**The Problem:**
+
+- Facts can become outdated ("We use MongoDB" → later "We migrated to PostgreSQL")
+- Contradictory memories may coexist
+- No automatic conflict detection
+
+**Mitigation Strategies:**
+
+| Strategy               | Implementation                                        |
+| ---------------------- | ----------------------------------------------------- |
+| **Temporal Validity**  | Add `valid_from` and `valid_to` timestamps            |
+| **Conflict Detection** | Check for contradictions before adding new facts      |
+| **Human Review**       | Flag potential conflicts for manual resolution        |
+| **Memory Decay**       | Automatically reduce salience of old, unused memories |
+
+```python
+# Conflict detection example
+def add_fact(new_fact: str, type: str = "fact"):
+    # Search for potentially conflicting facts
+    similar = vector_store.search(embed(new_fact), limit=5)
+
+    for existing in similar:
+        if similarity(new_fact, existing) > 0.85:
+            if is_contradictory(new_fact, existing.content):
+                # Mark old fact as superseded
+                existing.valid_to = datetime.now()
+                existing.superseded_by = new_fact.id
+                log_conflict(existing, new_fact)
+
+    # Add new fact
+    store(new_fact)
+```
+
+---
+
+### 3. Context Window Overflow
+
+**The Problem:**
+
+- Accumulating too much context per request
+- Session summaries get too long
+- Brain.md grows unbounded
+
+**Mitigation Strategies:**
+
+| Strategy                     | Implementation                                         |
+| ---------------------------- | ------------------------------------------------------ |
+| **Token Budgeting**          | Hard limit of 2,500 tokens for retrieved context       |
+| **Aggressive Summarization** | Compress sessions when > 2,000 tokens                  |
+| **Chunked brain.md**         | Split large brain.md into sections, load only relevant |
+| **Priority Scoring**         | Only include highest-salience memories                 |
+
+```python
+# Token budgeting
+MAX_CONTEXT_TOKENS = 2500
+TOKEN_BUDGET = {
+    "brain_summary": 500,
+    "retrieved_facts": 800,
+    "decisions": 400,
+    "session": 300,
+    "user_prefs": 100,
+    "buffer": 400  # Safety margin
+}
+
+def assemble_context(query: str) -> str:
+    context_parts = []
+    tokens_used = 0
+
+    for part_name, budget in TOKEN_BUDGET.items():
+        content = get_content(part_name, query)
+        truncated = truncate_to_tokens(content, budget)
+        context_parts.append(truncated)
+        tokens_used += count_tokens(truncated)
+
+        if tokens_used >= MAX_CONTEXT_TOKENS:
+            break
+
+    return "\n".join(context_parts)
+```
+
+---
+
+### 4. MCP Protocol Compatibility
+
+**The Problem:**
+
+- Different clients (Claude, Gemini, Cursor) may have subtle differences
+- MCP spec is still evolving
+- Transport variations (stdio vs HTTP) have different behaviors
+
+**Mitigation Strategies:**
+
+| Strategy                   | Implementation                              |
+| -------------------------- | ------------------------------------------- |
+| **Strict Spec Compliance** | Follow MCP spec exactly, no extensions      |
+| **Multi-client Testing**   | Test with every major client before release |
+| **Graceful Degradation**   | Handle unknown operations without crashing  |
+| **Version Negotiation**    | Support multiple MCP versions if needed     |
+
+```python
+# Graceful error handling
+@mcp_tool("remember")
+async def remember(content: str, type: str = "fact"):
+    try:
+        result = await store_memory(content, type)
+        return {"success": True, "id": result.id}
+    except ValidationError as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return {"success": False, "error": "Internal error"}
+```
+
+---
+
+### 5. Performance Degradation at Scale
+
+**The Problem:**
+
+- Vector search slows with thousands of memories
+- Markdown files become unwieldy
+- ChromaDB SQLite backend has limits
+
+**Mitigation Strategies:**
+
+| Strategy               | Implementation                             |
+| ---------------------- | ------------------------------------------ |
+| **Lazy Loading**       | Don't load all memories into RAM           |
+| **Index Optimization** | Use HNSW index for fast approximate search |
+| **Sharding**           | Split memories by year/month if > 10K      |
+| **Archival**           | Move old memories to archive collection    |
+
+```python
+# Performance thresholds
+PERFORMANCE_CONFIG = {
+    "max_active_memories": 5000,
+    "archive_after_days": 180,
+    "shard_threshold": 10000,
+    "search_timeout_ms": 500
+}
+
+def periodic_maintenance():
+    # Archive old memories
+    old_memories = query_memories(
+        where={"accessed_at": {"$lt": days_ago(180)}}
+    )
+    for mem in old_memories:
+        move_to_archive(mem)
+
+    # Optimize indexes
+    vector_store.optimize()
+```
+
+---
+
+### 6. Data Loss & Corruption
+
+**The Problem:**
+
+- ChromaDB corruption if process killed mid-write
+- Markdown/Vector DB sync can get out of sync
+- User accidentally deletes .0xmemory folder
+
+**Mitigation Strategies:**
+
+| Strategy                        | Implementation                                 |
+| ------------------------------- | ---------------------------------------------- |
+| **Markdown as Source of Truth** | Vector DB can always be rebuilt from Markdown  |
+| **Atomic Writes**               | Write to temp file, then rename                |
+| **Startup Validation**          | Check sync on every startup, rebuild if needed |
+| **Git as Backup**               | All Markdown is version-controlled             |
+
+```python
+# Sync validation on startup
+def validate_sync():
+    markdown_ids = get_all_markdown_memory_ids()
+    vector_ids = get_all_vector_memory_ids()
+
+    if markdown_ids != vector_ids:
+        logger.warning("Sync mismatch detected, rebuilding vector DB")
+        rebuild_vector_db_from_markdown()
+
+    return True
+```
+
+---
+
+### 7. Knowledge Extraction Quality
+
+**The Problem:**
+
+- LLM may extract irrelevant or wrong facts
+- Duplicate facts with slightly different wording
+- Over-extraction (too many facts from simple conversations)
+
+**Mitigation Strategies:**
+
+| Strategy                  | Implementation                            |
+| ------------------------- | ----------------------------------------- |
+| **Confidence Thresholds** | Only store high-confidence extractions    |
+| **Deduplication**         | Check similarity before adding            |
+| **Rate Limiting**         | Max 5 new facts per conversation turn     |
+| **Human Review Mode**     | Optional: show extractions before storing |
+
+```python
+# Extraction with quality control
+def extract_and_store(conversation: str):
+    extractions = llm.extract_facts(conversation)
+
+    stored_count = 0
+    for fact in extractions:
+        # Skip low confidence
+        if fact.confidence < 0.7:
+            continue
+
+        # Skip duplicates
+        if is_duplicate(fact.content):
+            continue
+
+        # Rate limit
+        if stored_count >= 5:
+            break
+
+        store_memory(fact.content, fact.type)
+        stored_count += 1
+
+    return stored_count
+```
+
+---
+
+### 8. Privacy & Security Concerns
+
+**The Problem:**
+
+- Sensitive info (API keys, passwords) may be stored in memories
+- Memories stored in plain text Markdown
+- Git history preserves deleted sensitive data
+
+**Mitigation Strategies:**
+
+| Strategy                 | Implementation                                 |
+| ------------------------ | ---------------------------------------------- |
+| **Content Filtering**    | Detect and redact sensitive patterns           |
+| **Encryption Option**    | Future: encrypt .store/ directory              |
+| **.gitignore Sensitive** | Exclude certain files from Git                 |
+| **Memory Expiry**        | Auto-delete memories after configurable period |
+
+```python
+# Sensitive data detection
+SENSITIVE_PATTERNS = [
+    r'(?i)(api[_-]?key|secret|password|token)\s*[:=]\s*\S+',
+    r'sk-[a-zA-Z0-9]{48}',  # OpenAI keys
+    r'AIza[a-zA-Z0-9_-]{35}',  # Google API keys
+]
+
+def sanitize_content(content: str) -> str:
+    for pattern in SENSITIVE_PATTERNS:
+        content = re.sub(pattern, "[REDACTED]", content)
+    return content
+```
+
+---
+
+## Technology Justification
+
+### Why These Technologies Were Chosen
+
+#### 1. Python (Language)
+
+| Factor                    | Justification                                                |
+| ------------------------- | ------------------------------------------------------------ |
+| **Ecosystem**             | Best AI/ML library support (transformers, chromadb, litellm) |
+| **MCP SDK**               | Official MCP SDK is Python-first                             |
+| **Async Support**         | Native asyncio for MCP server performance                    |
+| **Developer Familiarity** | Most AI developers know Python                               |
+| **Rapid Prototyping**     | Faster iteration than compiled languages                     |
+
+**Alternatives Considered:**
+
+- **Go:** Better performance, but weaker AI ecosystem
+- **TypeScript:** Good for web, but Python has better ML libraries
+- **Rust:** Too low-level for rapid development
+
+---
+
+#### 2. ChromaDB (Vector Database)
+
+| Factor            | Justification                            |
+| ----------------- | ---------------------------------------- |
+| **Local-First**   | Runs embedded, no separate server needed |
+| **Lightweight**   | Single SQLite file, easy to backup       |
+| **Python Native** | First-class Python support               |
+| **Persistent**    | Data survives restarts                   |
+| **Free & Open**   | Apache 2.0 license                       |
+
+**Alternatives Considered:**
+
+| Alternative  | Why Not                                 |
+| ------------ | --------------------------------------- |
+| **Pinecone** | Cloud-only, costs money, vendor lock-in |
+| **Weaviate** | Requires running a separate server      |
+| **Qdrant**   | Heavier, more complex setup             |
+| **FAISS**    | No persistence, just an index library   |
+| **LanceDB**  | Newer, less battle-tested               |
+| **pgvector** | Requires PostgreSQL server              |
+
+**ChromaDB Benchmarks:**
+
+- **Insert:** ~1000 docs/sec
+- **Search:** ~10ms for 10K docs
+- **Storage:** ~1KB per embedding (384 dims)
+
+---
+
+#### 3. Sentence Transformers (Embeddings)
+
+| Factor      | Justification                        |
+| ----------- | ------------------------------------ |
+| **Offline** | No API calls, works without internet |
+| **Free**    | No per-token pricing                 |
+| **Quality** | Good accuracy for general text       |
+| **Speed**   | Fast inference on CPU                |
+| **Variety** | Many model sizes to choose from      |
+
+**Model Comparison:**
+
+| Model               | Size  | Quality | Speed  | Use Case               |
+| ------------------- | ----- | ------- | ------ | ---------------------- |
+| `all-MiniLM-L6-v2`  | 80MB  | Good    | Fast   | **Default choice**     |
+| `all-mpnet-base-v2` | 420MB | Better  | Medium | Higher accuracy needed |
+| `nomic-embed-text`  | 550MB | Best    | Slower | Quality-critical apps  |
+
+**Why not cloud embeddings (OpenAI, Gemini)?**
+
+- Cost per token adds up
+- Requires internet connection
+- Privacy (sending all your data to cloud)
+- Latency from API calls
+
+---
+
+#### 4. MCP Protocol (Integration)
+
+| Factor                | Justification                                       |
+| --------------------- | --------------------------------------------------- |
+| **Universal**         | Works with Claude, Gemini, Cursor, and future tools |
+| **Official Standard** | Backed by Anthropic, adopted by Google              |
+| **Simple**            | JSON-RPC over stdio/HTTP, easy to implement         |
+| **Extensible**        | Tools, Resources, Prompts—covers all use cases      |
+| **No Lock-in**        | Open spec, not tied to any vendor                   |
+
+**Why MCP instead of custom API?**
+
+- No need to build integrations for each LLM client
+- Future-proof as more tools adopt MCP
+- Users can switch LLMs without changing memory
+
+---
+
+#### 5. Typer + Rich (CLI)
+
+| Factor            | Justification                                     |
+| ----------------- | ------------------------------------------------- |
+| **Type Hints**    | Auto-generates help, validation from Python types |
+| **Rich Output**   | Beautiful tables, colors, progress bars           |
+| **Minimal Code**  | Less boilerplate than argparse/click              |
+| **Auto-Complete** | Shell completions generated automatically         |
+
+```python
+# Compare: Typer vs argparse
+
+# argparse (verbose)
+parser = argparse.ArgumentParser()
+parser.add_argument('--name', type=str, required=True)
+args = parser.parse_args()
+
+# Typer (clean)
+@app.command()
+def greet(name: str):
+    print(f"Hello {name}")
+```
+
+---
+
+#### 6. Pydantic (Validation)
+
+| Factor             | Justification                           |
+| ------------------ | --------------------------------------- |
+| **Type Safety**    | Validates all data at runtime           |
+| **Serialization**  | Easy JSON/YAML conversion               |
+| **IDE Support**    | Autocomplete works with Pydantic models |
+| **Error Messages** | Clear validation error messages         |
+
+```python
+# Config validation with Pydantic
+class MemoryConfig(BaseModel):
+    content: str
+    type: Literal["fact", "decision", "learning"]
+    tags: list[str] = []
+    salience: float = Field(ge=0.0, le=1.0, default=0.5)
+
+# Automatically validates
+memory = MemoryConfig(content="...", type="fact", salience=1.5)
+# Raises: ValidationError: salience must be <= 1.0
+```
+
+---
+
+#### 7. LiteLLM (LLM Abstraction)
+
+| Factor               | Justification                                       |
+| -------------------- | --------------------------------------------------- |
+| **Unified API**      | Same code works with OpenAI, Gemini, Claude, Ollama |
+| **Fallback Support** | Auto-retry with different providers                 |
+| **Local Support**    | Works with Ollama for offline operation             |
+| **Cost Tracking**    | Built-in token counting and cost estimation         |
+
+```python
+# Works with ANY provider
+from litellm import completion
+
+# These all use the same API:
+completion(model="gpt-4")
+completion(model="gemini/gemini-2.0-flash")
+completion(model="claude-3-sonnet-20240229")
+completion(model="ollama/llama3")
+```
+
+**Why not use provider SDKs directly?**
+
+- Would need separate code for each provider
+- Harder to implement fallback logic
+- More maintenance as APIs evolve
+
+---
+
+#### 8. SQLite (Metadata)
+
+| Factor          | Justification                     |
+| --------------- | --------------------------------- |
+| **Zero Config** | No server, just a file            |
+| **Reliable**    | Billions of deployments worldwide |
+| **Fast**        | Great for read-heavy workloads    |
+| **Portable**    | Single file, easy to backup       |
+| **Built-in**    | Comes with Python                 |
+
+**Why not PostgreSQL?**
+
+- Requires running a server
+- Overkill for single-user local app
+- More complex deployment
+
+---
+
+### Technology Stack Summary
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    0xMemory Technology Stack                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  INTERFACE LAYER                                                 │
+│  ├── MCP Protocol   → Cross-LLM compatibility                   │
+│  └── Typer + Rich   → Beautiful CLI                             │
+│                                                                  │
+│  LOGIC LAYER                                                     │
+│  ├── Python 3.11+   → Async, type hints, ecosystem              │
+│  ├── Pydantic       → Data validation                           │
+│  └── LiteLLM        → Multi-provider LLM access                 │
+│                                                                  │
+│  STORAGE LAYER                                                   │
+│  ├── ChromaDB       → Vector search (embeddings)                │
+│  ├── SQLite         → Metadata, indexes                         │
+│  └── Markdown       → Human-readable, Git-friendly              │
+│                                                                  │
+│  EMBEDDING LAYER                                                 │
+│  └── Sentence-Transformers → Local, fast, free                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Open Questions & Future Considerations
+
+### Resolved in This Design
+
+| Question                         | Resolution                            |
+| -------------------------------- | ------------------------------------- |
+| How to share memory across LLMs? | MCP protocol + shared storage         |
+| How to handle token limits?      | Smart retrieval, ~2.5K tokens/request |
+| How to work offline?             | Local embeddings, local vector DB     |
+| How to keep data portable?       | Markdown source of truth, Git-native  |
+
+### Still Open
+
+| Question                      | Possible Approaches                       |
+| ----------------------------- | ----------------------------------------- |
+| **Multi-project memory?**     | Global brain + project-specific brains    |
+| **Sensitive data handling?**  | Pattern detection + optional encryption   |
+| **Team collaboration?**       | Git-based merging, conflict resolution UI |
+| **Memory schema migrations?** | Version field + migration scripts         |
+| **Very large projects?**      | Sharding by module/component              |
+| **Real-time sync?**           | Filesystem watcher + incremental indexing |
+
+### Future Enhancements (Post v1.0)
+
+| Feature                   | Value                         | Complexity |
+| ------------------------- | ----------------------------- | ---------- |
+| **GraphRAG**              | Better relationship reasoning | High       |
+| **Web Dashboard**         | Visual memory exploration     | Medium     |
+| **VS Code Extension**     | Inline memory suggestions     | Medium     |
+| **Fine-tuned Embeddings** | Better domain-specific search | High       |
+| **Memory Visualizer**     | Graph view of connections     | Medium     |
+| **Team Sync**             | Shared team brains            | High       |
 
 ---
 
