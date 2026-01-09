@@ -42,6 +42,34 @@ From BrainAPI research:
 - **Latency vs Comprehensiveness**: Fast retrieval without sacrificing relevance
 - **Scalability**: Memory systems must grow without performance degradation
 
+### Research Challenges (from BrainAPI Medium Articles)
+
+> Sources: "Beyond Context Windows" and "Giving LLMs Real Memory" by Lumen Labs
+
+**The Fundamental Problem:**
+LLMs are stateless—they don't inherently "remember" past interactions. Each prompt is processed independently, creating an "illusion of memory."
+
+| Challenge              | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| **Context Truncation** | When context window fills, older info discarded |
+| **Context Rot**        | Performance degrades as more tokens added       |
+| **Lost in the Middle** | Important info in middle of context overlooked  |
+| **Cost & Latency**     | Large contexts = expensive + slow               |
+| **Broken Coreference** | "it" or "she" lose meaning across truncations   |
+
+**Traditional Workarounds (and their failures):**
+
+- **Prompt Stuffing**: Leads to bloat and context rot
+- **RAG Retrieval**: Loses follow-up context
+- **Manual State Tracking**: Poor scalability
+- **Coreference Issues**: Pronouns break across chunks
+
+**BrainAPI's Solution Approach:**
+
+- Treat context window as temporary "scratchpad", not long-term memory
+- Build durable, addressable, updateable memory OUTSIDE the LLM
+- Use hybrid system: coreference resolution + knowledge graphs + vector search + summaries
+
 ---
 
 ## Competitor Analysis
@@ -209,6 +237,118 @@ From BrainAPI research:
 - Requires database infrastructure
 - Focus on enterprise/team use cases
 - Not optimized for solo developers
+
+---
+
+### 7. SuperMemory
+
+**What it is:** AI second brain for saving and organizing everything that matters
+
+**How it works:**
+
+- Browser/Raycast extension + Web app architecture
+- MCP integration for connecting to AI tools (Claude, Cursor, etc.)
+- Multi-source ingestion: URLs, PDFs, plain text, Notion, Google Drive, OneDrive
+
+**Features:**
+
+- **MCP Integration**: Seamlessly connects with Claude, Cursor, and other AI tools
+- **Browser Extension**: Save from any webpage, integrates with ChatGPT/Claude/Twitter
+- **Raycast Extension**: Keyboard-shortcut access for power users
+- **Chat Interface**: Converse with stored memories using natural language
+- **Service Connections**: Notion, Google Drive, OneDrive integration
+- Self-hostable for enterprise deployment
+
+**Limitations:**
+
+- Focused on personal knowledge management, not code/project context
+- Browser/app-centric, not terminal-first
+- Not optimized for developer workflows
+- No Git integration or version control
+
+---
+
+### 8. Memory Ledger Protocol (MLP)
+
+**What it is:** A portable, verifiable, consent-aware memory format for AI agents across platforms
+
+**How it works:**
+
+```
+Architecture:
+  Identity Kernel ↔ Memory Envelope ↔ Access Policy
+       (Self)          (Ledger)         (Consent)
+                          ↓
+                    Memory Blob (Encrypted)
+                          ↓
+            Decentralized Storage (IPFS/Arweave/S3)
+```
+
+**Core Principles:**
+
+- **Portability**: Memories belong to the agent/user, not the platform
+- **Verifiability**: Cryptographic proofs ensure memory integrity
+- **Consent-First**: Access policies are first-class citizens
+- **Privacy-Preserving**: Encrypted blobs with metadata minimization
+- **Append-Only**: Identity evolves through attestation, not mutation
+
+**Use Cases:**
+
+- AI Agent Continuity across different LLM providers
+- Verified Memory (tamper-proof)
+- Consent Management with fine-grained control
+- Identity Portability across platforms
+- Audit Trails with immutable records
+
+**Limitations:**
+
+- Specification-focused, not implementation-ready
+- Decentralized storage adds complexity
+- Not focused on developer workflows or code context
+- Early stage, limited adoption
+
+---
+
+### 9. OpenMemory (CaviraOSS)
+
+**What it is:** Local persistent cognitive memory engine for LLM applications
+
+**How it works:**
+
+- **Multi-Sector Memory Architecture:**
+
+  - Episodic (events)
+  - Semantic (facts)
+  - Procedural (skills)
+  - Emotional (feelings)
+  - Reflective (insights)
+
+- **Temporal Knowledge Graph**: `valid_from`/`valid_to` for point-in-time truth
+- **Composite Scoring**: Salience + recency + coactivation (not just cosine distance)
+- **Hierarchical Memory Decomposition** with sector classifier
+
+**Features:**
+
+- Python + Node SDKs (local-first, 3 lines to use)
+- Self-hosted (SQLite/Postgres)
+- MCP server + VS Code integration
+- CLI (`opm`) for direct engine access
+- **Connectors**: GitHub, Notion, Google Drive, OneDrive, Web Crawler
+- **Migration tool**: Import from Mem0, Zep, SuperMemory
+- Decay engine with adaptive forgetting
+- Explainable recall ("Waypoint" traces)
+
+**Integrations:**
+
+- LangChain, CrewAI, AutoGen, Streamlit
+- Claude Desktop, GitHub Copilot, Codex, Antigravity
+
+**Limitations:**
+
+- Not terminal-first (SDK/server focused)
+- No human-editable context files
+- No Git-native versioning
+- Focused on app developers, not solo coding workflows
 
 ---
 
@@ -419,20 +559,20 @@ Working Memory → Session Memory → Long-Term Memory
 
 ## Feature Comparison Matrix
 
-| Feature                  | Mem0 | Zep | Shodh | BrainAPI | Cognee | OpenCode | Gemini CLI |
-| ------------------------ | ---- | --- | ----- | -------- | ------ | -------- | ---------- |
-| **Persistent Memory**    | ✅   | ✅  | ✅    | ✅       | ✅     | ⚠️       | ⚠️         |
-| **Vector Search**        | ✅   | ✅  | ✅    | ✅       | ✅     | ❌       | ❌         |
-| **Knowledge Graph**      | ⚠️   | ✅  | ❌    | ✅       | ✅     | ❌       | ❌         |
-| **Terminal-First**       | ❌   | ❌  | ⚠️    | ❌       | ❌     | ✅       | ✅         |
-| **Offline Capable**      | ❌   | ❌  | ✅    | ❌       | ⚠️     | ✅       | ❌         |
-| **Human-Editable Files** | ❌   | ❌  | ❌    | ❌       | ❌     | ✅       | ✅         |
-| **Git Integration**      | ❌   | ❌  | ❌    | ❌       | ❌     | ⚠️       | ✅         |
-| **MCP Support**          | ❌   | ❌  | ✅    | ❌       | ❌     | ❌       | ✅         |
-| **Self-Improving**       | ✅   | ✅  | ✅    | ⚠️       | ✅     | ❌       | ❌         |
-| **Project-Scoped**       | ❌   | ❌  | ❌    | ❌       | ❌     | ✅       | ✅         |
-| **Solo Dev Focus**       | ❌   | ❌  | ⚠️    | ❌       | ❌     | ✅       | ✅         |
-| **Open Source**          | ✅   | ⚠️  | ✅    | ✅       | ✅     | ✅       | ✅         |
+| Feature                  | Mem0 | Zep | Shodh | BrainAPI | Cognee | SuperMemory | OpenCode | Gemini CLI |
+| ------------------------ | ---- | --- | ----- | -------- | ------ | ----------- | -------- | ---------- |
+| **Persistent Memory**    | ✅   | ✅  | ✅    | ✅       | ✅     | ✅          | ⚠️       | ⚠️         |
+| **Vector Search**        | ✅   | ✅  | ✅    | ✅       | ✅     | ✅          | ❌       | ❌         |
+| **Knowledge Graph**      | ⚠️   | ✅  | ❌    | ✅       | ✅     | ❌          | ❌       | ❌         |
+| **Terminal-First**       | ❌   | ❌  | ⚠️    | ❌       | ❌     | ❌          | ✅       | ✅         |
+| **Offline Capable**      | ❌   | ❌  | ✅    | ❌       | ⚠️     | ❌          | ✅       | ❌         |
+| **Human-Editable Files** | ❌   | ❌  | ❌    | ❌       | ❌     | ❌          | ✅       | ✅         |
+| **Git Integration**      | ❌   | ❌  | ❌    | ❌       | ❌     | ❌          | ⚠️       | ✅         |
+| **MCP Support**          | ❌   | ❌  | ✅    | ❌       | ❌     | ✅          | ❌       | ✅         |
+| **Self-Improving**       | ✅   | ✅  | ✅    | ⚠️       | ✅     | ⚠️          | ❌       | ❌         |
+| **Project-Scoped**       | ❌   | ❌  | ❌    | ❌       | ❌     | ❌          | ✅       | ✅         |
+| **Solo Dev Focus**       | ❌   | ❌  | ⚠️    | ❌       | ❌     | ✅          | ✅       | ✅         |
+| **Open Source**          | ✅   | ⚠️  | ✅    | ✅       | ✅     | ✅          | ✅       | ✅         |
 
 Legend: ✅ Full support | ⚠️ Partial | ❌ No support
 
@@ -502,28 +642,330 @@ From conversation with **Alone-Biscotti6145** (MARM creator on Reddit):
 
 ---
 
+## Mem0 Academic Paper Insights
+
+> **Source:** [arxiv.org/html/2504.19413v1](https://arxiv.org/html/2504.19413v1) - "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory"
+
+### Key Findings
+
+The paper introduces two memory architectures:
+
+1. **Mem0**: Vector-based memory with extraction + update pipeline
+2. **Mem0^g**: Graph-enhanced memory with entity relationships
+
+### Architecture Details
+
+**Two-Phase Pipeline:**
+
+```
+Extraction Phase:
+  Input: Message pair (m_t-1, m_t) + conversation summary + recent messages
+  Output: Set of salient memories Ω = {ω1, ω2, ..., ωn}
+
+Update Phase:
+  For each memory: Compare → Decide (ADD/UPDATE/DELETE/NO-OP) → Execute
+```
+
+**Graph Memory (Mem0^g):**
+
+- Directed labeled graph G = (V, E, L)
+- Nodes V = entities (Alice, San_Francisco)
+- Edges E = relationships (lives_in)
+- Labels L = semantic types (Person, City)
+- Two-stage extraction: Entity Extractor → Relationship Extractor
+
+### Benchmark Results (LOCOMO Dataset)
+
+| Question Type | Best Previous | Mem0     | Improvement           |
+| ------------- | ------------- | -------- | --------------------- |
+| Single-Hop    | LangMem ~62%  | 67.13% J | +5%                   |
+| Multi-Hop     | LangMem ~46%  | 51.15% J | +11%                  |
+| Temporal      | Zep ~59%      | 66.05% J | +7%                   |
+| Open-Domain   | Zep 76.60%    | 75.71% J | (Zep slightly better) |
+
+### Latency Performance
+
+| Method       | Search p50 | Total p50  | Total p95 |
+| ------------ | ---------- | ---------- | --------- |
+| **Mem0**     | **0.148s** | **0.708s** | 1.440s    |
+| Mem0^g       | 0.476s     | 1.091s     | 2.590s    |
+| LangMem      | 17.99s     | -          | 59.82s    |
+| Full-Context | N/A        | 9.870s     | 17.117s   |
+
+**Key Insight:** Mem0 achieves **91% lower latency** than full-context while maintaining accuracy.
+
+### Implications for 0xMemory
+
+1. **Extraction + Update** is the proven paradigm for memory management
+2. **Graph memory** helps with temporal/relational queries but adds latency
+3. **Selective retrieval** beats brute-force full-context
+4. For simple queries, dense vector memory outperforms graph memory
+
+---
+
 ## Research Resources Summary
 
 ### Primary Sources Analyzed
 
-| Resource             | Type       | Key Insight                                                 |
-| -------------------- | ---------- | ----------------------------------------------------------- |
-| Reddit r/RAG         | Discussion | "Breaking the Context Window" - Memory-as-a-Service concept |
-| BrainAPI GitHub      | Code       | Modular adapter architecture, 14-step injection             |
-| Shodh-Memory GitHub  | Code       | Neuroscience-based 3-tier memory, Hebbian learning          |
-| Claude Code GitHub   | Code       | Plugin system, no persistent memory                         |
-| OpenCode GitHub      | Code       | AGENTS.md, auto-compact, provider-agnostic                  |
-| Gemini CLI GitHub    | Code       | GEMINI.md, checkpointing, MCP support                       |
-| Mem0 (web search)    | Docs       | Two-phase memory pipeline                                   |
-| Zep (web search)     | Docs       | Temporal knowledge graph, Graphiti                          |
-| Papr.ai (web search) | Docs       | Predictive Memory Graph, OMO standard                       |
-| Cognee (web search)  | Docs       | ECL pipeline, knowledge graph + embeddings                  |
+| Resource               | Type       | Key Insight                                                 |
+| ---------------------- | ---------- | ----------------------------------------------------------- |
+| Reddit r/RAG           | Discussion | "Breaking the Context Window" - Memory-as-a-Service concept |
+| BrainAPI GitHub        | Code       | Modular adapter architecture, 14-step injection             |
+| Shodh-Memory GitHub    | Code       | Neuroscience-based 3-tier memory, Hebbian learning          |
+| Claude Code GitHub     | Code       | Plugin system, no persistent memory                         |
+| OpenCode GitHub        | Code       | AGENTS.md, auto-compact, provider-agnostic                  |
+| Gemini CLI GitHub      | Code       | GEMINI.md, checkpointing, MCP support                       |
+| SuperMemory GitHub     | Code       | MCP integration, browser/Raycast extensions                 |
+| Memory Ledger Protocol | Spec       | Portable, verifiable, consent-aware memory format           |
+| Mem0 (web search)      | Docs       | Two-phase memory pipeline                                   |
+| Zep (web search)       | Docs       | Temporal knowledge graph, Graphiti                          |
+| Papr.ai (web search)   | Docs       | Predictive Memory Graph, OMO standard                       |
+| Cognee (web search)    | Docs       | ECL pipeline, knowledge graph + embeddings                  |
 
 ### Papers & Research
 
+- **Mem0 Paper (2025)**: Arxiv 2504.19413 - LOCOMO benchmark, extraction+update pipeline
 - **Cowan (2010)**: Working memory model (3-tier architecture basis)
 - **Microsoft GraphRAG (2024)**: Knowledge graph enhanced RAG
 - **MCP Specification**: Model Context Protocol standard
+
+### Medium Articles (BrainAPI/Lumen Labs)
+
+- **"Beyond Context Windows"**: Research hurdles in giving LLMs memory
+- **"Giving LLMs Real Memory"**: Why it's hard and hybrid memory approach
+
+### Research Paper Collections
+
+**momo-research** ([github.com/momo-personal-assistant/momo-research](https://github.com/momo-personal-assistant/momo-research))
+
+Curated summaries of key context engineering papers:
+
+- Google's Context Engineering whitepaper
+- Manus's Context Engineering for AI Agents
+- Chroma's Context Rot research
+- Evo-Memory: LLM Agent Self-Evolving Memory
+- CodeAct: Executable Code Actions
+- Multi-Agent Evolving Orchestration
+- Recursive Language Models
+
+---
+
+## Deep-Dive: Key Research Insights
+
+### Google Context Engineering Whitepaper
+
+> **Source:** "Context Engineering: Sessions & Memory" - Kaggle 5-Day AI Agents Intensive (Day 3)
+> **Authors:** Kimberly Milam, Antonio Gulli (Google)
+
+**Key Concepts:**
+
+The whitepaper introduces "context engineering" as a discipline to build stateful, intelligent agents from inherently stateless LLMs.
+
+**Two Core Architectural Components:**
+
+1. **Sessions** - Temporary "workbench" for single conversations
+
+   - Stores chronological dialogue history
+   - Manages agent's immediate working memory
+   - Uses **session compaction** (LLM-driven summarization) to stay within token limits
+
+2. **Memory** - Long-term persistence across conversations
+   - Described as an **LLM-driven ETL pipeline**
+   - Process: Raw conversation → Extract facts → Transform to knowledge → Load to storage
+   - Resolves conflicts and updates existing facts
+
+**Memory ETL Pipeline:**
+
+```
+Raw Conversation Data
+        ↓
+    [Extraction]  ← LLM identifies salient facts
+        ↓
+   [Transformation]  ← Deduplication, conflict resolution
+        ↓
+     [Loading]  ← Store in persistent memory
+```
+
+---
+
+### Chroma Context Rot Research
+
+> **Source:** "Context Rot: How Increasing Input Tokens Impacts LLM Performance" - Chroma Research
+
+**Key Finding:** Performance degrades as context length increases—even for simple tasks.
+
+**Study Details:**
+
+- Evaluated **18 state-of-the-art LLMs** (GPT-4.1, Claude 4, Gemini 2.5, Qwen3)
+- Found consistent performance decline across ALL models
+
+**Factors Affecting Context Rot:**
+
+| Factor                         | Impact                                        |
+| ------------------------------ | --------------------------------------------- |
+| **Input Length**               | Performance drops with more tokens            |
+| **Needle-Question Similarity** | Lower similarity = faster degradation         |
+| **Distractors**                | Similar-but-wrong info confuses models        |
+| **Haystack Structure**         | Text arrangement affects processing           |
+| **Position Bias**              | Info at start/end recalled better than middle |
+
+**Failure Modes:**
+
+- Increased hallucinations
+- Position bias (beginning/end preference)
+- Diminished multi-step reasoning accuracy
+
+**Critical Insight:**
+
+> "Larger context windows ≠ better performance. Often leads to slower, costlier, and less accurate results."
+
+---
+
+### Manus AI: 7 Context Engineering Lessons
+
+> **Source:** "Context Engineering for AI Agents: Lessons from Building Manus" - manus.im
+
+**Lesson 1: Context Engineering > Fine-tuning**
+
+- Leveraging in-context learning is faster than training custom models
+- Foundation models evolve rapidly; context engineering adapts faster
+
+**Lesson 2: Optimize KV-Cache Hit Rate**
+
+- Production agents have ~100:1 input:output token ratio
+- Strategies:
+  - Stable prompt prefixes (avoid timestamps)
+  - Append-only context (deterministic serialization)
+  - Explicit cache breakpoints
+- Cached tokens are much cheaper
+
+**Lesson 3: File System as External Memory**
+
+- Large context windows still insufficient for complex tasks
+- Teach agents to use file system as unlimited persistent memory
+- Write intermediate states to files instead of truncating context
+
+**Lesson 4: Mask Tools, Don't Remove Them**
+
+- Removing unused tools invalidates cache
+- Instead: mask token logits during decoding
+- Preserve cache coherence while controlling actions
+
+**Lesson 5: Recite the Plan (Task Recitation)**
+
+- LLMs drift off-topic in long multi-step tasks
+- Solution: Constantly rewrite todo list at END of context
+- Pushes global plan into recent attention span
+
+**Lesson 6: Preserve Errors for Learning**
+
+- Keep failed actions and stack traces in context
+- Models learn to avoid repeating mistakes
+- Key indicator of true agentic behavior
+
+**Lesson 7: Inject Diversity**
+
+- LLMs' pattern-matching can become a liability
+- Introduce variation: different templates, phrasing, formatting
+- "Structured noise" prevents repetitive loops
+
+---
+
+### LangGraph Memory Architecture
+
+> **Source:** LangChain/LangGraph Documentation
+
+**Memory Types:**
+
+| Type           | Scope          | Persistence | Purpose                 |
+| -------------- | -------------- | ----------- | ----------------------- |
+| **Short-Term** | Thread/Session | Temporary   | Conversation history    |
+| **Long-Term**  | Cross-Session  | Persistent  | User facts, preferences |
+
+**Short-Term Memory (Conversational):**
+
+- Thread-scoped checkpointers
+- `thread_id` links conversation turns
+- `add_messages` for accumulation
+- Options: InMemorySaver, SqliteSaver, PostgreSQL, Redis
+
+**Long-Term Memory (Cognitive Analog):**
+
+| Memory Type    | Description       | Example                       |
+| -------------- | ----------------- | ----------------------------- |
+| **Semantic**   | Factual knowledge | "User's name is Alex"         |
+| **Episodic**   | Specific events   | "Completed project last week" |
+| **Procedural** | Operational rules | "Always use formal tone"      |
+
+**State Management:**
+
+- Graph-based workflow with shared `State` object
+- Nodes update state; reducer functions merge updates
+- Checkpointers enable time-travel and fault tolerance
+
+---
+
+### Needle-in-Haystack Benchmark
+
+> **Source:** Greg Kamradt (2023), OpenCompass NeedleBench
+
+**Purpose:** Evaluate LLM's ability to find specific info in large contexts
+
+**Test Methodology:**
+
+1. Insert unique "needle" (target fact) into lengthy "haystack" (irrelevant text)
+2. Vary needle position and haystack length
+3. Query model to retrieve the needle
+
+**Benchmark Variants:**
+
+| Variant                             | Complexity                    |
+| ----------------------------------- | ----------------------------- |
+| **S-RT** (Single-Needle Retrieval)  | Find one fact                 |
+| **M-RT** (Multi-Needle Retrieval)   | Find multiple facts           |
+| **M-RS** (Multi-Needle Reasoning)   | Integrate facts for reasoning |
+| **ATC** (Ancestral Trace Challenge) | Multi-layer logical reasoning |
+
+**Model Performance:**
+
+| Model              | Accuracy       | Notes                                |
+| ------------------ | -------------- | ------------------------------------ |
+| **Claude 3 Opus**  | >99%           | Detected artificial needle insertion |
+| **GPT-4**          | Strong initial | Drops at 64K+ tokens, position bias  |
+| **Gemini 1.5 Pro** | High recall    | Maintains performance to 1M+ tokens  |
+
+---
+
+### OpenAI ChatGPT Memory System
+
+> **Source:** OpenAI Help Center, User Research
+
+**Memory Types:**
+
+1. **Saved Memories** (Explicit)
+
+   - User-instructed details ("Remember that I'm vegetarian")
+   - Persists independently of chat history
+   - Full user control (view, delete, disable)
+
+2. **Reference Chat History** (Implicit)
+   - Inferred from ongoing interactions
+   - Evolves over time
+   - Identifies helpful patterns
+
+**Custom Instructions:**
+
+- Persistent preferences applied to ALL conversations
+- Controls: role, tone, response length, formatting
+- Applied until modified
+
+**Implementation (Likely):**
+
+- Saved memories → injected into system prompt
+- Chat history → RAG-based retrieval
+- High-level preferences only (not large text blocks)
+
+**Limitation:** Identified as potential vector for prompt injection attacks
 
 ---
 
@@ -531,7 +973,7 @@ From conversation with **Alone-Biscotti6145** (MARM creator on Reddit):
 
 The market has two distinct categories:
 
-1. **Memory Layers** (Mem0, Zep, Cognee, BrainAPI):
+1. **Memory Layers** (Mem0, Zep, Cognee, BrainAPI, OpenMemory):
 
    - Sophisticated memory systems
    - Cloud-centric, API-first
