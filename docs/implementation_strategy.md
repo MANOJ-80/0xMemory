@@ -549,6 +549,218 @@ def fold_session(session_transcript: str) -> str:
     return summary
 ```
 
+### Why This Works: Detailed Explanation
+
+> **Key Insight:** "Infinite context" does NOT mean stuffing everything into the LLM's context window.  
+> It means **storing everything** but only **retrieving what's relevant**.
+
+#### ❌ The Naive Approach (What We're NOT Doing)
+
+```
+"Infinite context" = Stuff EVERYTHING into context window
+                   = 100K+ tokens every request
+                   = Slow, expensive, CONTEXT ROT!
+
+┌─────────────────────────────────────────────────────┐
+│  CONTEXT WINDOW (e.g., 128K tokens)                 │
+│  ┌───────────────────────────────────────────────┐  │
+│  │ brain.md          (5K tokens)                 │  │
+│  │ ALL facts         (20K tokens)                │  │
+│  │ ALL decisions     (10K tokens)                │  │
+│  │ ALL sessions      (50K tokens)                │  │
+│  │ ALL documents     (40K tokens)                │  │
+│  │ Current message   (500 tokens)                │  │
+│  └───────────────────────────────────────────────┘  │
+│  TOTAL: 125K tokens 💸💸💸 (expensive + slow)       │
+└─────────────────────────────────────────────────────┘
+```
+
+**Problems with this approach:**
+
+1. **Cost:** More tokens = more money (API pricing is per token)
+2. **Latency:** More tokens = slower responses (linear increase)
+3. **Context Rot:** Performance DEGRADES with more tokens (proven by Chroma research)
+4. **"Lost in the Middle":** LLMs ignore information in the middle of long contexts
+
+#### ✅ Our Approach: Smart Retrieval
+
+```
+"Infinite context" = STORE everything, RETRIEVE only what's relevant
+                   = ~2-3K tokens per request (always!)
+                   = Fast, cheap, accurate
+
+┌─────────────────────────────────────────────────────┐
+│  CONTEXT WINDOW                                      │
+│  ┌───────────────────────────────────────────────┐  │
+│  │ brain.md summary      (500 tokens)  ← Always  │  │
+│  │ TOP 5 relevant facts  (800 tokens)  ← Smart   │  │
+│  │ Related decisions     (400 tokens)  ← Smart   │  │
+│  │ Session summary       (300 tokens)  ← Compressed│ │
+│  │ Current message       (500 tokens)            │  │
+│  └───────────────────────────────────────────────┘  │
+│  TOTAL: ~2,500 tokens ✨ (cheap + fast)             │
+└─────────────────────────────────────────────────────┘
+
+                        ↑ Only the RELEVANT stuff!
+
+┌─────────────────────────────────────────────────────┐
+│  STORAGE (ChromaDB + Markdown)                      │
+│  ┌───────────────────────────────────────────────┐  │
+│  │ 1000+ facts        (searchable by meaning)    │  │
+│  │ 100+ decisions     (searchable by meaning)    │  │
+│  │ Years of sessions  (archived, searchable)     │  │
+│  │ All documents      (indexed, searchable)      │  │
+│  └───────────────────────────────────────────────┘  │
+│  UNLIMITED STORAGE ♾️ (not in context window!)      │
+└─────────────────────────────────────────────────────┘
+```
+
+#### Step-by-Step: How It Works
+
+**Step 1: User Asks a Question**
+
+```
+User: "How does our authentication work?"
+```
+
+**Step 2: We Search Our Memory (NOT in LLM context yet)**
+
+```python
+# Embed the question
+query_embedding = embed("How does our authentication work?")
+
+# Search ChromaDB (milliseconds, not tokens!)
+relevant_memories = chroma.query(
+    query_embedding,
+    n_results=5,  # Only top 5!
+    where={"type": {"$in": ["fact", "decision"]}}
+)
+
+# Results:
+# 1. "The API uses JWT tokens for auth" (0.92 similarity)
+# 2. "Tokens expire after 24 hours" (0.87 similarity)
+# 3. "Refresh tokens last 30 days" (0.85 similarity)
+# 4. "Auth middleware is in auth.py" (0.82 similarity)
+# 5. "We chose JWT over session cookies" (0.78 similarity)
+```
+
+**Step 3: Build Minimal Context**
+
+```python
+context = f"""
+## Project Context
+{brain_summary}  # ~500 tokens
+
+## Relevant Knowledge
+- The API uses JWT tokens for authentication
+- Tokens expire after 24 hours, refresh after 30 days
+- Auth middleware is in auth.py
+- We chose JWT over session cookies because...
+
+## Current Session
+{session_summary}  # ~300 tokens
+
+## User Question
+How does our authentication work?
+"""
+
+# Total: ~2,500 tokens (fits ANY model!)
+```
+
+**Step 4: Send to LLM**
+
+The LLM only sees the **relevant** 2,500 tokens, not all 100K+ of stored knowledge!
+
+#### Semantic Search: Finding by Meaning
+
+This is the magic that makes it work:
+
+```python
+# Question: "How does login work?"
+# This finds: "JWT authentication is used for user sessions"
+# Even though "login" ≠ "JWT" literally!
+
+# The magic: Embeddings know they're semantically similar
+embed("How does login work?") ≈ embed("JWT authentication")
+```
+
+Vector embeddings capture the **meaning** of text, not just keywords. So:
+
+- "login" → finds "authentication"
+- "password storage" → finds "hashing", "bcrypt"
+- "API security" → finds "JWT", "auth middleware"
+
+#### Recency + Relevance Scoring
+
+We don't just use similarity—we combine multiple factors:
+
+```python
+def score_memory(memory, query):
+    # Semantic similarity (0-1)
+    similarity = cosine_similarity(embed(query), memory.embedding)
+
+    # Recency boost (recent = higher)
+    days_old = (now - memory.created_at).days
+    recency = 1.0 / (1 + days_old * 0.1)
+
+    # Salience (how important is this memory)
+    salience = memory.salience
+
+    # Combined score
+    return (similarity * 0.5) + (recency * 0.2) + (salience * 0.3)
+```
+
+#### Token Budget Breakdown
+
+```
+┌─────────────────────────────────────────────────────┐
+│  TOKEN BUDGET PER REQUEST                           │
+├─────────────────────────────────────────────────────┤
+│                                                      │
+│  System Prompt:                                      │
+│  ├── Brain summary:         500 tokens              │
+│  ├── User preferences:      100 tokens              │
+│  └── Instructions:          200 tokens              │
+│                             ─────────               │
+│                              800 tokens             │
+│                                                      │
+│  Retrieved Context:                                  │
+│  ├── Top 5 facts:           800 tokens              │
+│  ├── Related decisions:     400 tokens              │
+│  └── Session summary:       300 tokens              │
+│                             ─────────               │
+│                             1,500 tokens            │
+│                                                      │
+│  User Message:               500 tokens             │
+│                                                      │
+│  ─────────────────────────────────────              │
+│  TOTAL:                    2,800 tokens             │
+│  ─────────────────────────────────────              │
+│                                                      │
+│  Works on: GPT-3.5 (4K), Claude (8K), Gemini (1M) ✅│
+│                                                      │
+└─────────────────────────────────────────────────────┘
+```
+
+#### Comparison: Approaches
+
+| Approach             | Tokens/Request | Speed   | Cost    | Accuracy          |
+| -------------------- | -------------- | ------- | ------- | ----------------- |
+| **Stuff everything** | 100K+          | Slow 🐌 | High 💸 | Low (context rot) |
+| **Our approach**     | 2-3K           | Fast ⚡ | Low 💰  | High (focused)    |
+
+#### Summary: What "Infinite Context" Really Means
+
+| Term                    | What It Means                                |
+| ----------------------- | -------------------------------------------- |
+| **Infinite STORAGE**    | Everything saved in ChromaDB + Markdown      |
+| **Finite CONTEXT**      | Only relevant items loaded (2-3K tokens)     |
+| **Smart RETRIEVAL**     | Search by meaning, not brute force           |
+| **Session Compression** | Long conversations → short summaries         |
+| **Works Everywhere**    | Same approach fits 4K, 8K, 128K, 1M contexts |
+
+This is exactly what Mem0, OpenMemory, and all successful memory systems do. We're just doing it **locally** with **MCP**!
+
 ---
 
 ## Technical Stack
