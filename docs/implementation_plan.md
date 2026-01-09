@@ -204,41 +204,48 @@ Session Start
 | `0xmemory forget <id>`    | Remove a specific memory                  |
 | `0xmemory export`         | Export brain for backup/sharing           |
 
-### Memory Types
+### Memory Taxonomy (Cognitive Framework)
 
-1. **Project Context** (`brain.md`)
+Based on recent research (ArXiv 2512.23343v1), 0xMemory organizes persistent information across two main dimensions:
 
-   - High-level project description
-   - Architecture overview
-   - Key components
-   - Human-maintained
+| Dimension  | Category         | 0xMemory Implementation                                  |
+| :--------- | :--------------- | :------------------------------------------------------- |
+| **Nature** | **Episodic**     | "How" - Session logs, tool trajectories, commit history. |
+|            | **Semantic**     | "What" - Facts, decisions, architecture, preferences.    |
+| **Scope**  | **Inside-trail** | Current session context (working memory).                |
+|            | **Cross-trail**  | Long-term brain state (persistent archives).             |
 
-2. **Facts** (`memory/facts.md`)
+### Core Memory Modules
 
-   - Discrete pieces of knowledge
-   - Extracted from conversations
-   - Auto-appended with timestamps
+1. **Project Brain** (`brain.md`)
 
-3. **Decisions** (`memory/decisions.md`)
+   - **Type**: Semantic / Cross-trail (Core)
+   - High-level project description, architecture, and "Source of Truth".
+   - Human-maintained & AI-referenced.
 
-   - Choices made with rationale
-   - Links to relevant context
-   - Useful for onboarding/handoff
+2. **Facts & Learnings** (`memory/facts.md`, `memory/learnings.md`)
 
-4. **Learnings** (`memory/learnings.md`)
+   - **Type**: Semantic / Cross-trail (Derived)
+   - Discrete knowledge extracted from conversations.
+   - Prevent repeating "Gotchas" and reinforce correct patterns.
 
-   - Gotchas, tips, lessons learned
-   - Prevent repeating mistakes
+3. **Decisions & Rationale** (`memory/decisions.md`)
 
-5. **Preferences** (`memory/preferences.md`)
+   - **Type**: Episodic-to-Semantic / Cross-trail
+   - Logs choices made with their context and reasoning.
+   - Facilitates onboarding and "Architecture Decision Records" (ADR).
 
-   - Coding style, communication style
-   - Tool preferences
-   - Human-editable
+4. **Session Trail** (`changelog.md`)
+   - **Type**: Episodic / Inside-trail (until commit)
+   - Activity log for Git commits and session summaries.
 
-6. **Session Log** (`changelog.md`)
-   - Append-only activity log
-   - Git-friendly format
+### Memory Folding Mechanism
+
+To prevent context rot and manage token usage, 0xMemory implements **Memory Folding**:
+
+- **Triggers**: When context approaches model limits or a subtask completes.
+- **Process**: LLM-driven summarization compresses the "Inside-trail" trajectories into concise "Semantic" summaries.
+- **Loading**: Compressed state is injected back, replacing raw history.
 
 ### RAG Capabilities
 
