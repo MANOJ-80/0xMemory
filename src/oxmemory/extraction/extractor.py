@@ -162,7 +162,11 @@ class KnowledgeExtractor:
 
         if provider is None:
             logger.warning("No LLM provider available")
-            return None
+            raise ValueError(
+                "No active LLM provider found. Please set an API key in your .env file "
+                "(e.g., GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY) "
+                "or configure a local Ollama instance."
+            )
 
         messages = []
         if system_prompt:
@@ -264,14 +268,22 @@ class KnowledgeExtractor:
         prompt = EXTRACTION_PROMPTS["extract"].format(conversation=conversation)
         system_prompt = EXTRACTION_PROMPTS["system"]
 
-        response = await self._call_llm(prompt, system_prompt)
+        try:
+            response = await self._call_llm(prompt, system_prompt)
+        except ValueError as e:
+            return ExtractionResult(
+                facts=[],
+                decisions=[],
+                learnings=[],
+                error=str(e),
+            )
 
         if response is None:
             return ExtractionResult(
                 facts=[],
                 decisions=[],
                 learnings=[],
-                error="No LLM response",
+                error="LLM failed to generate a response (Rate limit or API error).",
             )
 
         return self._parse_extraction_response(response)

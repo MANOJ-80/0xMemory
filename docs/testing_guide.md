@@ -58,7 +58,9 @@ _Simulate onboarding a new developer (or agent)._
     > "Why aren't we using Poetry?"
 4.  **Success**: Agent recalls the rationale: "High speed and Rust implementation."
 
-### Scenario 3: The "Knowledge Extraction" Test
+### Scenario 3: The "Knowledge Extraction" Test (Lazy Mode)
+
+_(Requires `extract` tool and API key)_
 
 _Simulate saving meeting notes._
 
@@ -167,12 +169,14 @@ Force Cursor to use the `recall` tool (Vector Search) instead of reading the fil
 - **✅ Pros**: Zero token cost until needed. Scales to infinite memories.
 - **❌ Cons**: Slightly slower (agent must decide to call a tool).
 - **Setup**:
+
   1.  Create a `.cursorignore` file in your project root.
   2.  Add this line:
       ```text
       .0xmemory/memory/*.md
       ```
   3.  **Use Rules (Critical)**: Since the files are hidden, you MUST tell Cursor to use the tool. Create a `.cursorrules` file:
+
       ```markdown
       # 0xMemory Rules
 
@@ -180,4 +184,5 @@ Force Cursor to use the `recall` tool (Vector Search) instead of reading the fil
       If you cannot find information in the active files, you MUST use the `recall_0xMemory` tool to search for it.
       ALWAYS check `recall_0xMemory` before saying "I don't know".
       ```
+
       Now Cursor realizes: _"I can't see the file, but my rules say check the tool!"_

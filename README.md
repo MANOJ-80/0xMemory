@@ -15,6 +15,9 @@ Instead of explaining your project structure or coding preferences to every new 
 ## ✨ Features
 
 - **🧠 Persistent Memory**: Facts, decisions, and learnings are stored in human-readable Markdown files (`.0xmemory/memory/`).
+- **⚡ Two Modes**:
+  1.  **Lazy Mode**: Dump raw text, let 0xMemory extract facts (requires API keys).
+  2.  **Disciplined Mode**: Let the Agent (Claude/Cursor) extract facts itself and just tell 0xMemory to `remember` them. No 0xMemory API keys needed!
 - **🔌 Cross-Agent Compatible**: Works with **Cursor**, **Claude Desktop**, **Gemini**, and any [MCP](https://github.com/iterative/mcp)-compliant client.
 - **🔍 vector Search**: Semantic retrieval helps agents find relevant past decisions and facts.
 - **📄 Human Editable**: All memory is just Markdown. You can edit, delete, or version control it with Git.
@@ -106,6 +109,27 @@ And these **Resources** (Context):
 - **`brain://context`**: Reads your `brain.md` (Project Overview).
 - **`brain://facts`**: List of all stored facts.
 - **`brain://decisions`**: Log of architectural decisions.
+
+## 🧠 How to Extract Knowledge
+
+You have two powerful ways to build your memory:
+
+### 1. Lazy Mode (The "Dump" Method)
+
+_Best for: Meeting notes, long documentation, or messy brain dumps._
+
+1.  **Requirement**: Add an API key (`GEMINI_API_KEY`, etc.) to your `.env` file.
+2.  **Action**: Run `0xmemory extract "paste your long text here"`.
+3.  **Result**: 0xMemory uses the cloud LLM to analyze the text and automatically creates facts, decisions, and outcomes in `.0xmemory/memory/`.
+
+### 2. Disciplined Mode (The "Agent" Method)
+
+_Best for: coding sessions in Cursor/Claude. No API keys required for 0xMemory!_
+
+1.  **Action**: Just talk to your Agent normally.
+2.  **Prompt**: When you decide something important, tell the Agent:
+    > "Using the `remember` tool, save the fact that we decided to use PostgreSQL because of its JSONB support."
+3.  **Result**: The Agent (which already has context) calls the tool directly. 0xMemory simply stores it.
 
 ## 🧠 The Separation of Powers
 
