@@ -137,6 +137,29 @@ When you ask:
 
 ---
 
+## 6. The "Lazy" vs. "Disciplined" Approach (Why Extract?)
+
+You might ask: _"Do I really need the `extract` tool?"_
+
+It depends on your style:
+
+### Option A: The Disciplined Way (`remember`)
+
+- **You**: "Remember that the API port is 8080."
+- **Effort**: High. You must spoon-feed facts one by one.
+- **Precision**: 100%.
+
+### Option B: The Lazy Way (`extract`)
+
+- **You**: Paste a messy meeting transcript. "Extract everything important from this."
+- **0xMemory**: Scans the text -> Finds "Port 8080" -> Saves it as a Fact.
+- **Effort**: Zero.
+- **Precision**: Good, but depends on the AI understanding your notes.
+
+**Verdict**: Use `remember` for specific rules. Use `extract` for dumping raw knowledge.
+
+---
+
 ## 🧠 Summary
 
 - **You** trigger the action.
