@@ -120,6 +120,21 @@ def init(
     markdown = MarkdownManager(cwd)
     created_files = markdown.initialize_brain(name, description)
     
+    # Auto-update .gitignore if it exists
+    gitignore_path = cwd / ".gitignore"
+    gitignore_entry = ".0xmemory/.store/"
+    gitignore_updated = False
+    
+    if gitignore_path.exists():
+        gitignore_content = gitignore_path.read_text()
+        if gitignore_entry not in gitignore_content:
+            # Append the entry
+            with open(gitignore_path, "a") as f:
+                if not gitignore_content.endswith("\n"):
+                    f.write("\n")
+                f.write(f"\n# 0xMemory vector store (auto-added)\n{gitignore_entry}\n")
+            gitignore_updated = True
+    
     # Success message
     console.print(Panel.fit(
         f"[green]✅ Brain initialized![/green]\n\n"
@@ -132,6 +147,9 @@ def init(
     
     for label, path in created_files.items():
         console.print(f"  📄 {path.relative_to(cwd)}")
+    
+    if gitignore_updated:
+        console.print(f"  📝 Updated [cyan].gitignore[/cyan] (added {gitignore_entry})")
     
     console.print(f"\n[bold]Next steps:[/bold]")
     console.print("  1. Edit [cyan].0xmemory/brain.md[/cyan] with your project context")
@@ -163,6 +181,11 @@ def serve(
         "-p",
         help="Port to listen on (http only)",
     ),
+    debug: bool = typer.Option(
+        False,
+        "--debug",
+        help="Enable debug logging (verbose output)",
+    ),
 ) -> None:
     """Start the MCP server for AI clients.
     
@@ -184,6 +207,11 @@ def serve(
         raise typer.Exit(1)
     
     if transport == TransportMode.STDIO:
+        # Configure debug logging for stdio
+        if debug:
+            import logging
+            logging.basicConfig(level=logging.DEBUG)
+            console.print("[yellow]🐛 Debug mode enabled[/yellow]")
         # Run standard MCP server with stdio
         try:
             asyncio.run(run_server(cwd))
@@ -193,7 +221,7 @@ def serve(
         # Run HTTP server
         try:
             from oxmemory.mcp.http_server import run_http_server
-            run_http_server(cwd, host=host, port=port)
+            run_http_server(cwd, host=host, port=port, debug=debug)
         except ImportError:
             console.print(
                 "[red]❌ HTTP server dependencies missing.[/red]\n"
@@ -322,6 +350,130 @@ def add(
         f"[dim]Tags:[/dim] {tags_str}\n"
         f"[dim]Content:[/dim] {content[:80]}{'...' if len(content) > 80 else ''}"
     )
+
+
+@app.command()
+def forget(
+    memory_id: str = typer.Argument(
+        ...,
+        help="Memory ID to delete (e.g., mem-20260112153045)",
+    ),
+    project_dir: Optional[Path] = typer.Option(
+        None,
+        "--dir",
+        "-d",
+        help="Project directory (defaults to current)",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help="Skip confirmation prompt",
+    ),
+) -> None:
+    """Delete a memory by its ID.
+    
+    To find memory IDs, use '0xmemory search' or '0xmemory status'.
+    
+    Examples:
+        0xmemory forget mem-20260112153045
+        0xmemory forget mem-20260112153045 --force
+    """
+    cwd = project_dir or Path.cwd()
+    
+    if not brain_exists(cwd):
+        console.print(
+            f"[red]❌ No brain found at {cwd}[/red]\n"
+            "Run [cyan]0xmemory init[/cyan] first."
+        )
+        raise typer.Exit(1)
+    
+    store = MemoryStore(cwd)
+    
+    # Check if memory exists first
+    memory = store.get(memory_id)
+    if not memory:
+        console.print(f"[red]❌ Memory not found: {memory_id}[/red]")
+        raise typer.Exit(1)
+    
+    # Show what will be deleted
+    console.print(f"\n[yellow]Memory to delete:[/yellow]")
+    console.print(f"  [dim]ID:[/dim] {memory.id}")
+    console.print(f"  [dim]Type:[/dim] {memory.type.value}")
+    console.print(f"  [dim]Content:[/dim] {memory.content[:100]}{'...' if len(memory.content) > 100 else ''}")
+    
+    # Confirm unless --force
+    if not force:
+        confirm = typer.confirm("\nAre you sure you want to delete this memory?")
+        if not confirm:
+            console.print("[yellow]Cancelled.[/yellow]")
+            raise typer.Exit(0)
+    
+    # Delete
+    success = store.delete(memory_id)
+    
+    if success:
+        console.print(f"\n[green]✅ Deleted memory: {memory_id}[/green]")
+    else:
+        console.print(f"[red]❌ Failed to delete memory: {memory_id}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def update(
+    memory_id: str = typer.Argument(
+        ...,
+        help="Memory ID to update",
+    ),
+    content: str = typer.Argument(
+        ...,
+        help="New content for the memory",
+    ),
+    project_dir: Optional[Path] = typer.Option(
+        None,
+        "--dir",
+        "-d",
+        help="Project directory (defaults to current)",
+    ),
+) -> None:
+    """Update an existing memory's content.
+    
+    The memory type and tags are preserved; only the content is changed.
+    
+    Examples:
+        0xmemory update mem-20260112153045 "Updated content here"
+    """
+    cwd = project_dir or Path.cwd()
+    
+    if not brain_exists(cwd):
+        console.print(
+            f"[red]❌ No brain found at {cwd}[/red]\n"
+            "Run [cyan]0xmemory init[/cyan] first."
+        )
+        raise typer.Exit(1)
+    
+    store = MemoryStore(cwd)
+    
+    # Check if memory exists
+    old_memory = store.get(memory_id)
+    if not old_memory:
+        console.print(f"[red]❌ Memory not found: {memory_id}[/red]")
+        raise typer.Exit(1)
+    
+    # Show old content
+    console.print(f"\n[yellow]Updating memory:[/yellow]")
+    console.print(f"  [dim]ID:[/dim] {memory_id}")
+    console.print(f"  [dim]Old:[/dim] {old_memory.content[:80]}{'...' if len(old_memory.content) > 80 else ''}")
+    console.print(f"  [dim]New:[/dim] {content[:80]}{'...' if len(content) > 80 else ''}")
+    
+    # Update
+    updated = store.update(memory_id, content)
+    
+    if updated:
+        console.print(f"\n[green]✅ Updated memory: {memory_id}[/green]")
+    else:
+        console.print(f"[red]❌ Failed to update memory: {memory_id}[/red]")
+        raise typer.Exit(1)
 
 
 @app.command()
@@ -600,6 +752,197 @@ def extract(
                 salience=memory.salience,
             )
         console.print(f"\n[green]✅ Saved {len(memories)} memories[/green]")
+
+
+@app.command()
+def doctor(
+    project_dir: Optional[Path] = typer.Option(
+        None,
+        "--dir",
+        "-d",
+        help="Project directory (defaults to current)",
+    ),
+) -> None:
+    """Run health checks on the brain configuration.
+    
+    Validates:
+    - Config file syntax (YAML)
+    - Vector DB connectivity
+    - LLM provider availability
+    - Memory file integrity
+    - Required directories
+    
+    Examples:
+        0xmemory doctor
+        0xmemory doctor --dir /path/to/project
+    """
+    import os
+    import yaml
+    
+    cwd = project_dir or Path.cwd()
+    brain_path = get_brain_path(cwd)
+    
+    console.print(Panel.fit(
+        "[bold]Running health checks...[/bold]",
+        title="🩺 0xMemory Doctor",
+        border_style="cyan",
+    ))
+    
+    checks = []
+    all_passed = True
+    
+    # Check 1: Brain directory exists
+    brain_exists_check = brain_path.exists()
+    checks.append(("Brain directory (.0xmemory/)", brain_exists_check, None))
+    if not brain_exists_check:
+        all_passed = False
+        console.print("\n[red]❌ Brain not initialized. Run '0xmemory init' first.[/red]")
+        _print_doctor_summary(checks, all_passed)
+        raise typer.Exit(1)
+    
+    # Check 2: Config file syntax
+    config_ok = True
+    config_error = None
+    config_path = brain_path / "config.yaml"
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            config_ok = False
+            config_error = str(e)
+            all_passed = False
+    else:
+        config_ok = False
+        config_error = "File not found"
+        all_passed = False
+    checks.append(("Config file syntax", config_ok, config_error))
+    
+    # Check 3: brain.md exists
+    brain_md_path = brain_path / "brain.md"
+    brain_md_ok = brain_md_path.exists()
+    checks.append(("brain.md exists", brain_md_ok, None if brain_md_ok else "File not found"))
+    if not brain_md_ok:
+        all_passed = False
+    
+    # Check 4: Memory directory
+    memory_dir = brain_path / "memory"
+    memory_dir_ok = memory_dir.exists() and memory_dir.is_dir()
+    checks.append(("Memory directory", memory_dir_ok, None if memory_dir_ok else "Directory not found"))
+    if not memory_dir_ok:
+        all_passed = False
+    
+    # Check 5: Memory file integrity
+    memory_files = ["facts.md", "decisions.md", "learnings.md", "preferences.md"]
+    memory_integrity_ok = True
+    memory_error = None
+    for mf in memory_files:
+        mf_path = memory_dir / mf
+        if mf_path.exists():
+            try:
+                content = mf_path.read_text()
+                # Basic check: should have a header
+                if not content.strip().startswith("#"):
+                    memory_integrity_ok = False
+                    memory_error = f"{mf} missing header"
+                    break
+            except Exception as e:
+                memory_integrity_ok = False
+                memory_error = f"{mf}: {e}"
+                break
+    checks.append(("Memory file integrity", memory_integrity_ok, memory_error))
+    if not memory_integrity_ok:
+        all_passed = False
+    
+    # Check 6: Vector DB (ChromaDB)
+    vector_ok = True
+    vector_error = None
+    try:
+        import chromadb
+        # Try to connect to the store
+        store_path = brain_path / ".store" / "chroma"
+        if store_path.exists():
+            client = chromadb.PersistentClient(path=str(store_path))
+            # Just test we can list collections
+            client.list_collections()
+        else:
+            vector_error = "Store not yet created (will be created on first use)"
+    except ImportError:
+        vector_ok = False
+        vector_error = "chromadb not installed (pip install chromadb)"
+        all_passed = False
+    except Exception as e:
+        vector_ok = False
+        vector_error = str(e)
+        all_passed = False
+    checks.append(("Vector DB (ChromaDB)", vector_ok, vector_error))
+    
+    # Check 7: LLM Providers
+    llm_available = []
+    llm_missing = []
+    
+    # Check Ollama
+    ollama_host = os.environ.get("OLLAMA_API_BASE", "http://localhost:11434")
+    try:
+        import urllib.request
+        req = urllib.request.Request(f"{ollama_host}/api/tags", method="GET")
+        with urllib.request.urlopen(req, timeout=2) as resp:
+            if resp.status == 200:
+                llm_available.append("Ollama")
+    except Exception:
+        llm_missing.append("Ollama (not running)")
+    
+    # Check Groq
+    if os.environ.get("GROQ_API_KEY"):
+        llm_available.append("Groq")
+    else:
+        llm_missing.append("Groq (GROQ_API_KEY not set)")
+    
+    # Check Gemini
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
+        llm_available.append("Gemini")
+    else:
+        llm_missing.append("Gemini (GEMINI_API_KEY not set)")
+    
+    # Check OpenRouter
+    if os.environ.get("OPENROUTER_API_KEY"):
+        llm_available.append("OpenRouter")
+    else:
+        llm_missing.append("OpenRouter (OPENROUTER_API_KEY not set)")
+    
+    llm_ok = len(llm_available) > 0
+    llm_status = ", ".join(llm_available) if llm_available else "None available"
+    checks.append(("LLM Provider", llm_ok, None if llm_ok else "No providers configured"))
+    
+    # Print results
+    _print_doctor_summary(checks, all_passed)
+    
+    # Additional info
+    if llm_available:
+        console.print(f"\n[green]Available LLM providers:[/green] {', '.join(llm_available)}")
+    if llm_missing:
+        console.print(f"[dim]Inactive providers: {', '.join(llm_missing)}[/dim]")
+    
+    if all_passed:
+        console.print("\n[green]✅ All checks passed! Your brain is healthy.[/green]")
+    else:
+        console.print("\n[yellow]⚠️  Some checks failed. See above for details.[/yellow]")
+        raise typer.Exit(1)
+
+
+def _print_doctor_summary(checks: list, all_passed: bool) -> None:
+    """Print doctor check summary as a table."""
+    table = Table(title="Health Check Results", border_style="cyan")
+    table.add_column("Check", style="cyan")
+    table.add_column("Status")
+    table.add_column("Details", style="dim")
+    
+    for name, passed, error in checks:
+        status = "[green]✓ Pass[/green]" if passed else "[red]✗ Fail[/red]"
+        details = error or ""
+        table.add_row(name, status, details)
+    
+    console.print(table)
 
 
 if __name__ == "__main__":

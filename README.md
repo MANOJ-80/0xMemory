@@ -144,9 +144,13 @@ And these **Resources** (Context):
 | `0xmemory serve`   | Start the MCP server (stdio or http)        |
 | `0xmemory status`  | View brain statistics                       |
 | `0xmemory add`     | Manually add a memory                       |
+| `0xmemory forget`  | Delete a memory by ID                       |
+| `0xmemory update`  | Update a memory's content                   |
 | `0xmemory search`  | Search for memories                         |
 | `0xmemory extract` | Extract knowledge from text                 |
 | `0xmemory export`  | Export memories to JSON/CSV                 |
+| `0xmemory rebuild` | Rebuild vector index from Markdown          |
+| `0xmemory doctor`  | Run health checks on configuration          |
 
 ## 🧪 Real-World Testing
 

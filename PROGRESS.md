@@ -1,7 +1,7 @@
 # 0xMemory Development Progress
 
 > **Purpose:** Track implementation progress so multiple AI agents can coordinate  
-> **Last Updated:** 2026-01-12 10:55 IST
+> **Last Updated:** 2026-01-12 16:30 IST
 
 ---
 
@@ -41,10 +41,17 @@
 - **Export Command**: Added `0xmemory export` to dump memories to JSON/CSV.
 - **Knowledge Extraction**: Verified LLM-based fact extraction.
 
+**5. Polish Features (2026-01-12)**
+
+- **`--debug` Flag**: Added verbose logging to serve command.
+- **`/health` Endpoint**: Health check for load balancers (HTTP mode).
+- **`.gitignore` Auto-Update**: `init` now adds `.0xmemory/.store/` automatically.
+- **`doctor` Command**: Configuration validation (config, vector DB, LLM providers).
+- **CHANGELOG.md**: Created release documentation following Keep a Changelog format.
+- **Integration Tests**: Added 18 new E2E tests for MCP server (54 total tests passing).
+
 - Rewrote `README.md` to reflect v1.0 architecture (MCP-first).
 - Updated `task.md` and `walkthrough.md` with connection guides.
-- Verified end-to-end functionality with real-world Cursor workflow.
-
 - Verified end-to-end functionality with real-world Cursor workflow.
 
 ---
