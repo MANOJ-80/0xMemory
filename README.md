@@ -2,9 +2,11 @@
 
 > 🧠 Cross-LLM Memory Layer for AI Agents
 
+[![PyPI version](https://img.shields.io/pypi/v/oxmemory.svg)](https://pypi.org/project/oxmemory/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![MCP](https://img.shields.io/badge/MCP-Enabled-green.svg)](https://github.com/iterative/mcp)
+[![Tests](https://github.com/MANOJ-80/0xMemory/actions/workflows/ci.yml/badge.svg)](https://github.com/MANOJ-80/0xMemory/actions/workflows/ci.yml)
+[![MCP](https://img.shields.io/badge/MCP-Enabled-green.svg)](https://modelcontextprotocol.io)
 
 **0xMemory** gives your AI coding agents specific, persistent, and portable memory.
 
