@@ -5,11 +5,16 @@ from enum import Enum
 from pathlib import Path
 
 import typer
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
 from oxmemory import __version__
+
+# Load environment variables from .env file
+load_dotenv()
+
 from oxmemory.cli.export import app as export_app
 from oxmemory.core.config import (
     brain_exists,
@@ -121,18 +126,40 @@ def init(
 
     # Auto-update .gitignore if it exists
     gitignore_path = cwd / ".gitignore"
-    gitignore_entry = ".0xmemory/.store/"
+    # We want to ignore the vector store AND the .env file
+    gitignore_entries = [".0xmemory/.store/", ".env"]
     gitignore_updated = False
 
     if gitignore_path.exists():
         gitignore_content = gitignore_path.read_text()
-        if gitignore_entry not in gitignore_content:
-            # Append the entry
-            with open(gitignore_path, "a") as f:
-                if not gitignore_content.endswith("\n"):
-                    f.write("\n")
-                f.write(f"\n# 0xMemory vector store (auto-added)\n{gitignore_entry}\n")
-            gitignore_updated = True
+        with open(gitignore_path, "a") as f:
+            if not gitignore_content.endswith("\n"):
+                f.write("\n")
+            
+            for entry in gitignore_entries:
+                if entry not in gitignore_content:
+                    f.write(f"\n# 0xMemory (auto-added)\n{entry}\n")
+                    gitignore_updated = True
+
+    # -------------------------------------------------------------
+    # Create .env file if it doesn't exist
+    # -------------------------------------------------------------
+    env_path = cwd / ".env"
+    env_created = False
+    if not env_path.exists():
+        env_content = (
+            "# 0xMemory Configuration\n"
+            "# ----------------------\n"
+            "# PASTE YOUR API KEYS HERE. This file is ignored by git.\n\n"
+            "# 1. LLM Provider (Optional - for knowledge extraction)\n"
+            "# GEMINI_API_KEY=\n"
+            "# GROQ_API_KEY=\n"
+            "# OPENROUTER_API_KEY=\n\n"
+            "# 2. Vector Database (Optional - for cloud embeddings)\n"
+            "# OPENAI_API_KEY=\n"
+        )
+        env_path.write_text(env_content)
+        env_created = True
 
     # Success message
     console.print(
@@ -149,13 +176,17 @@ def init(
     for label, path in created_files.items():
         console.print(f"  📄 {path.relative_to(cwd)}")
 
+    if env_created:
+        console.print(f"  🔑 Created [cyan].env[/cyan] (add your API keys here)")
+
     if gitignore_updated:
-        console.print(f"  📝 Updated [cyan].gitignore[/cyan] (added {gitignore_entry})")
+        console.print(f"  📝 Updated [cyan].gitignore[/cyan]")
 
     console.print("\n[bold]Next steps:[/bold]")
-    console.print("  1. Edit [cyan].0xmemory/brain.md[/cyan] with your project context")
-    console.print("  2. Run [cyan]0xmemory serve[/cyan] to start the MCP server")
-    console.print("  3. Configure your AI client (Claude, Gemini, Cursor) to use it")
+    console.print("  1. Add API keys to [cyan].env[/cyan]")
+    console.print("  2. Edit [cyan].0xmemory/brain.md[/cyan] with your project context")
+    console.print("  3. Run [cyan]0xmemory serve[/cyan] to start the MCP server")
+    console.print("  4. Configure your AI client (Claude, Gemini, Cursor) to use it")
 
 
 @app.command()

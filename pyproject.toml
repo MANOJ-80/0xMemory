@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oxmemory"
-version = "1.0.1"
+version = "1.0.2"
 description = "Cross-LLM memory layer for AI agents - local, human-editable, Git-native"
 readme = "README.md"
 license = "MIT"
@@ -29,17 +29,28 @@ dependencies = [
     "rich>=13.0.0",
     "pydantic>=2.0.0",
     "pyyaml>=6.0",
-    # Vector Search
-    "chromadb>=0.5.0",
-    "sentence-transformers>=3.0.0",
-    # Knowledge Extraction
-    "litellm>=1.0.0",
-    # HTTP Server
-    "fastapi>=0.100.0",
-    "uvicorn>=0.23.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
+# Feature: Vector Search (Local)
+vector = [
+    "chromadb>=0.5.0",
+    "sentence-transformers>=3.0.0",
+]
+# Feature: Knowledge Extraction (Local/API)
+extraction = [
+    "litellm>=1.0.0",
+]
+# Feature: HTTP Server
+server = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+]
+# All features (Heavy!)
+all = [
+    "oxmemory[vector,extraction,server]",
+]
 # Development
 dev = [
     "pytest>=7.0.0",
