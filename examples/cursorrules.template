@@ -1,0 +1,8 @@
+# 0xMemory Rules
+
+You have a long-term memory system called 0xMemory available via MCP.
+
+## Memory Protocol
+1.  **Check Memory First**: If the user asks a question about the project, history, or decisions, and you do not see the answer in your active files, you MUST use the `recall_0xMemory` tool.
+2.  **Save Important Details**: When the user provides new architectural decisions, preferences, or critical facts, use `remember` to save them.
+3.  **Blind Mode**: If `.0xmemory/memory/*.md` files are in `.cursorignore`, do not assume memory is empty. Use the tools to find what you need.
