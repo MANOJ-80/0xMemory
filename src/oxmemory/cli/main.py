@@ -13,7 +13,7 @@ from rich.table import Table
 from oxmemory import __version__
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv()  # noqa: E402
 
 from oxmemory.cli.export import app as export_app
 from oxmemory.core.config import (
@@ -135,7 +135,7 @@ def init(
         with open(gitignore_path, "a") as f:
             if not gitignore_content.endswith("\n"):
                 f.write("\n")
-            
+
             for entry in gitignore_entries:
                 if entry not in gitignore_content:
                     f.write(f"\n# 0xMemory (auto-added)\n{entry}\n")
@@ -177,10 +177,10 @@ def init(
         console.print(f"  📄 {path.relative_to(cwd)}")
 
     if env_created:
-        console.print(f"  🔑 Created [cyan].env[/cyan] (add your API keys here)")
+        console.print("  🔑 Created [cyan].env[/cyan] (add your API keys here)")
 
     if gitignore_updated:
-        console.print(f"  📝 Updated [cyan].gitignore[/cyan]")
+        console.print("  📝 Updated [cyan].gitignore[/cyan]")
 
     console.print("\n[bold]Next steps:[/bold]")
     console.print("  1. Add API keys to [cyan].env[/cyan]")
