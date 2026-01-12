@@ -63,6 +63,19 @@ _(Note: The first run resolves a local AI model (~80MB). If it times out, just r
 4.  **Type**: `SSE`
 5.  **URL**: `http://localhost:8000/sse`
 
+**Or add to your `config.json` (if using port 9000):**
+
+```json
+{
+  "mcpServers": {
+    "0xMemory": {
+      "url": "http://localhost:9000/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
 #### 🤖 For Claude Desktop
 
 Add this to your `claude_desktop_config.json`:
