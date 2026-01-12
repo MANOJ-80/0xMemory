@@ -380,32 +380,97 @@ print(response.choices[0].message.content)
 
 ## API Keys & Accounts
 
-### Required (Pick at least one)
+### Reality Check: Free Tier Limits (Jan 2026)
 
-| Service           | Purpose                      | Free Tier                | Link                                   |
-| ----------------- | ---------------------------- | ------------------------ | -------------------------------------- |
-| **Google Gemini** | LLM for knowledge extraction | 60 req/min, 1000 req/day | https://aistudio.google.com/app/apikey |
-| **OpenAI**        | Alternative LLM              | $5 free credit           | https://platform.openai.com/api-keys   |
-| **Ollama**        | Local LLM (no API key!)      | Unlimited, free          | https://ollama.ai                      |
+> ⚠️ **Important:** Free tiers have strict limits. Plan your development accordingly!
+
+| Provider             | Model            | RPM | RPD    | Best Use       |
+| -------------------- | ---------------- | --- | ------ | -------------- |
+| **Google AI Studio** | gemini-2.5-flash | 5   | 20     | Demo only      |
+| **Google AI Studio** | gemini-3-flash   | 5   | 20     | Demo only      |
+| **Groq**             | llama-3.1-8b     | 30  | 14,400 | Development ⭐ |
+| **Ollama (Colab)**   | llama3.2:3b      | ∞   | ∞      | Primary dev ⭐ |
+
+### Development Strategy (Free Resources Only)
+
+```
+┌─────────────────────────────────────────────────────┐
+│              DEVELOPMENT FLOW                        │
+├─────────────────────────────────────────────────────┤
+│                                                      │
+│   PRIMARY (Daily Coding)                             │
+│   └── Ollama on Google Colab                        │
+│       ├── llama3.2:3b (chat/extraction)             │
+│       └── nomic-embed-text (embeddings)             │
+│       └── Free GPU, unlimited requests              │
+│                                                      │
+│   FALLBACK (If Colab down)                          │
+│   └── Groq Free Tier                                │
+│       └── 14,400 req/day (very generous!)           │
+│                                                      │
+│   PRODUCTION/DEMO (Save these!)                      │
+│   └── Gemini API                                    │
+│       └── 40 req/day total (combine models)         │
+│                                                      │
+└─────────────────────────────────────────────────────┘
+```
+
+### Required API Keys
+
+| Service           | Purpose           | Free Limit       | Get Key                                |
+| ----------------- | ----------------- | ---------------- | -------------------------------------- |
+| **Groq** ⭐       | LLM fallback      | 14,400/day       | https://console.groq.com/keys          |
+| **Google Gemini** | Production/demo   | 20/day per model | https://aistudio.google.com/app/apikey |
+| **Ollama**        | Primary (no key!) | Unlimited        | Just install                           |
 
 ### Optional
 
-| Service               | Purpose                                  | Free Tier   | Link                           |
-| --------------------- | ---------------------------------------- | ----------- | ------------------------------ |
-| **Anthropic**         | Claude API (if not using Claude Desktop) | Limited     | https://console.anthropic.com/ |
-| **OpenAI Embeddings** | Cloud embeddings (alternative)           | Pay per use | Same as above                  |
+| Service       | Purpose         | Notes             |
+| ------------- | --------------- | ----------------- |
+| **OpenAI**    | Alternative LLM | $5 credit expires |
+| **Anthropic** | Claude API      | Limited free tier |
+| **ngrok**     | Colab tunneling | Free tier works   |
 
 ### Setting Up API Keys
 
 ```bash
 # Add to your shell profile (~/.bashrc, ~/.zshrc)
-export GEMINI_API_KEY="your-gemini-key-here"
-export OPENAI_API_KEY="your-openai-key-here"  # Optional
 
-# For Ollama, no API key needed!
-# Just install and run:
-ollama pull llama3
-ollama pull nomic-embed-text  # For embeddings
+# Required
+export GROQ_API_KEY="gsk_xxx..."        # Get from console.groq.com
+export GEMINI_API_KEY="AIza..."         # Get from aistudio.google.com
+
+# Optional (for Colab Ollama tunneling)
+export NGROK_AUTH_TOKEN="xxx..."        # Get from ngrok.com
+
+# For Ollama on Colab - set when running
+export OLLAMA_HOST="https://xxx.ngrok.io"  # From Colab notebook
+```
+
+### LLM Priority Configuration
+
+```yaml
+# config.yaml - Use this order for free development
+llm:
+  providers:
+    # Priority 1: Ollama on Colab (unlimited, free)
+    - name: ollama
+      host: "${OLLAMA_HOST}"
+      model: llama3.2:3b
+
+    # Priority 2: Groq (14,400/day free!)
+    - name: groq
+      model: llama-3.1-8b-instant
+
+    # Priority 3: Gemini (save for demos, 20/day)
+    - name: gemini
+      model: gemini-3-flash
+
+embeddings:
+  # Always local - no API needed
+  model: all-MiniLM-L6-v2
+  # OR via Ollama:
+  # model: nomic-embed-text
 ```
 
 ---
