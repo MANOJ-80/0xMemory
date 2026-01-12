@@ -15,18 +15,18 @@ from oxmemory import __version__
 # Load environment variables from .env file
 load_dotenv()  # noqa: E402
 
-from oxmemory.cli.export import app as export_app
-from oxmemory.core.config import (
+from oxmemory.cli.export import app as export_app  # noqa: E402
+from oxmemory.core.config import (  # noqa: E402
     brain_exists,
     get_brain_path,
     get_default_config,
     load_config,
     save_config,
 )
-from oxmemory.core.models import MemoryType
-from oxmemory.mcp.server import run_server
-from oxmemory.storage.markdown import MarkdownManager
-from oxmemory.storage.memory_store import MemoryStore
+from oxmemory.core.models import MemoryType  # noqa: E402
+from oxmemory.mcp.server import run_server  # noqa: E402
+from oxmemory.storage.markdown import MarkdownManager  # noqa: E402
+from oxmemory.storage.memory_store import MemoryStore  # noqa: E402
 
 app = typer.Typer(
     name="0xmemory",
