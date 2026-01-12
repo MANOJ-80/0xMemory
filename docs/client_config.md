@@ -91,5 +91,20 @@ from mcp.client.stdio import stdio_client
 
 For any client that supports MCP:
 
-- **Stdio:** Point the command to your `0xmemory` executable.
 - **SSE:** Run `0xmemory serve --transport http` and point the client to the `/sse` endpoint.
+
+---
+
+## 5. Remote Ollama (Colab + Ngrok)
+
+If you are running Ollama on a remote machine (like Google Colab) and tunneling via Ngrok:
+
+1.  **Get your Ngrok URL**: e.g., `https://abcd-1234.ngrok-free.app`
+2.  **Export the variable** before running the server:
+
+```bash
+export OLLAMA_API_BASE="https://abcd-1234.ngrok-free.app"
+0xmemory serve --transport http
+```
+
+0xMemory will automatically detect that you provided a custom base URL and use it instead of `localhost:11434`.
