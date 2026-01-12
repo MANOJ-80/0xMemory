@@ -1048,17 +1048,19 @@ Raw Conversation Data
 
 ### GitHub Repositories
 
-| Repository                 | Description                           | Link                                                     |
-| -------------------------- | ------------------------------------- | -------------------------------------------------------- |
-| **momo-research**          | Personal assistant memory research    | https://github.com/momo-personal-assistant/momo-research |
-| **OpenMemory**             | Open-source memory layer by CaviraOSS | https://github.com/CaviraOSS/OpenMemory                  |
-| **SuperMemory**            | AI memory management system           | https://github.com/supermemoryai/supermemory             |
-| **Memory Ledger Protocol** | Protocol for AI memory                | https://github.com/memory-ledger/memory-ledger-protocol  |
-| **BrainAPI**               | Memory abstraction layer              | https://github.com/lumenlabs-dev/brainapi                |
-| **Shodh-Memory**           | Offline MCP memory server             | https://github.com/shodh-ai/shodh-memory                 |
-| **Claude Code**            | Anthropic's CLI agent                 | https://github.com/anthropics/claude-code                |
-| **OpenCode**               | Open-source Claude Code alternative   | https://github.com/sanjeed5/opencode                     |
-| **Gemini CLI**             | Google's terminal-based agent         | https://github.com/google-gemini/gemini-cli              |
+| Repository                 | Description                                                                | Link                                                     |
+| -------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **momo-research**          | Personal assistant memory research                                         | https://github.com/momo-personal-assistant/momo-research |
+| **OpenMemory**             | Open-source memory layer by CaviraOSS                                      | https://github.com/CaviraOSS/OpenMemory                  |
+| **SuperMemory**            | AI memory management system                                                | https://github.com/supermemoryai/supermemory             |
+| **Memory Ledger Protocol** | Protocol for AI memory                                                     | https://github.com/memory-ledger/memory-ledger-protocol  |
+| **BrainAPI**               | Memory abstraction layer                                                   | https://github.com/lumenlabs-dev/brainapi                |
+| **Shodh-Memory**           | Offline MCP memory server                                                  | https://github.com/shodh-ai/shodh-memory                 |
+| **Claude Code**            | Anthropic's CLI agent                                                      | https://github.com/anthropics/claude-code                |
+| **OpenCode**               | Open-source Claude Code alternative                                        | https://github.com/sanjeed5/opencode                     |
+| **Gemini CLI**             | Google's terminal-based agent                                              | https://github.com/google-gemini/gemini-cli              |
+| **claude-mem**             | Claude Code plugin with persistent memory, session capture, AI compression | https://github.com/thedotmack/claude-mem                 |
+| **UnClaude**               | Model-independent CLI with infinite memory, multi-LLM support via LiteLLM  | https://github.com/anzal1/unclaude                       |
 
 ### ArXiv Papers
 
