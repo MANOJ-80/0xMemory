@@ -6,7 +6,9 @@ This tests the same transport that Claude Desktop uses.
 import asyncio
 import json
 import subprocess
+import os
 import sys
+from pathlib import Path
 
 
 async def test_stdio_transport():
@@ -15,13 +17,16 @@ async def test_stdio_transport():
     print("🔌 Testing STDIO transport (Claude Desktop mode)...")
     print("=" * 50)
     
+    # Get the project root directory
+    project_root = Path(__file__).parent.parent.absolute()
+    
     # Start the MCP server as a subprocess
     proc = await asyncio.create_subprocess_exec(
         sys.executable, "-m", "oxmemory.cli.main", "serve",
         stdin=asyncio.subprocess.PIPE,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
-        cwd="/home/itachi/Projects/0xMemory"
+        cwd=str(project_root)
     )
     
     # MCP uses JSON-RPC over stdio
