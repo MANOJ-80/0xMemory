@@ -1,8 +1,71 @@
-# 0xMemory Rules
+# 0xMemory Integration Rules
 
-You have a long-term memory system called 0xMemory available via MCP.
+> Copy this file to your project root as `.cursorrules` to enable 0xMemory integration.
 
-## Memory Protocol
-1.  **Check Memory First**: If the user asks a question about the project, history, or decisions, and you do not see the answer in your active files, you MUST use the `recall_0xMemory` tool.
-2.  **Save Important Details**: When the user provides new architectural decisions, preferences, or critical facts, use `remember` to save them.
-3.  **Blind Mode**: If `.0xmemory/memory/*.md` files are in `.cursorignore`, do not assume memory is empty. Use the tools to find what you need.
+## You Have Persistent Memory
+
+This project uses **0xMemory** - a persistent memory system available via MCP tools.
+Your memories survive across chat sessions. You can remember facts, decisions, and preferences.
+
+## Available Tools
+
+| Tool | When to Use |
+|------|-------------|
+| `remember` | Save important facts, decisions, preferences, or learnings |
+| `recall` | Search for past context before answering questions |
+| `list` | View all stored memories |
+| `forget` | Remove outdated or incorrect memories |
+| `update` | Correct existing memories |
+| `extract` | Parse and save knowledge from large text blocks |
+
+## Available Resources
+
+| Resource | Content |
+|----------|---------|
+| `brain://context` | High-level project description and goals |
+| `brain://facts` | Technical facts about the codebase |
+| `brain://decisions` | Past architectural decisions with reasoning |
+| `brain://full` | Combined full context |
+
+## Rules
+
+### 1. Check Memory First
+Before saying "I don't know" or asking the user to repeat context:
+- Use `recall` to search for relevant information
+- Check `brain://context` for project overview
+- Check `brain://decisions` for past architectural choices
+
+### 2. Save Important Information
+When the user shares:
+- **Technical facts** → `remember` as `fact` (e.g., "API runs on port 8080")
+- **Decisions with reasoning** → `remember` as `decision` (e.g., "Chose Postgres over Mongo for joins")
+- **Coding preferences** → `remember` as `preference` (e.g., "Use Pydantic v2 for models")
+- **Lessons learned** → `remember` as `learning` (e.g., "Don't use sync calls in async handlers")
+
+### 3. Token Saver Mode
+If `.0xmemory/memory/*.md` files are in `.cursorignore`:
+- Do NOT assume memory is empty
+- Always use tools to access memories
+- The files exist but are hidden from your context window
+
+### 4. Be Proactive
+- Offer to remember important decisions after discussions
+- Recall past context when it's relevant to the current task
+- Update outdated facts when you notice changes
+
+## Example Usage
+
+**User asks about past decisions:**
+```
+User: "Why did we choose PostgreSQL?"
+You: [Use recall tool with query "PostgreSQL decision"]
+     → Found: "Chose Postgres over MongoDB for better join performance"
+You: "We chose PostgreSQL over MongoDB because it handles complex joins better."
+```
+
+**User shares new information:**
+```
+User: "We're moving the API to port 9000"
+You: [Use remember tool: type=fact, content="API runs on port 9000"]
+You: "Got it! I've saved that the API now runs on port 9000."
+```

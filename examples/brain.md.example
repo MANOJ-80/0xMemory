@@ -1,0 +1,103 @@
+# 🧠 Project Brain
+
+> This is the main context file for your project.
+> Edit this to help 0xMemory understand your project.
+> Your AI agents will read this first when they need project context.
+
+---
+
+## Project Overview
+
+**Name:** [Your Project Name]
+
+**Description:** [One-paragraph description of what this project does]
+
+**Status:** [Active Development / Maintenance / MVP / Production]
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | [e.g., Python 3.11, TypeScript] |
+| Framework | [e.g., FastAPI, Next.js, Django] |
+| Database | [e.g., PostgreSQL, MongoDB, SQLite] |
+| Deployment | [e.g., Docker, Vercel, AWS] |
+
+---
+
+## Architecture
+
+```
+[Describe your project structure here]
+
+Example:
+├── src/
+│   ├── api/          # REST API endpoints
+│   ├── core/         # Business logic
+│   ├── models/       # Data models
+│   └── utils/        # Helper functions
+├── tests/            # Test files
+└── docs/             # Documentation
+```
+
+### Key Components
+
+- **[Component 1]:** [What it does]
+- **[Component 2]:** [What it does]
+- **[Component 3]:** [What it does]
+
+---
+
+## Coding Conventions
+
+### Style
+- [e.g., We use Black for Python formatting]
+- [e.g., Max line length: 100 characters]
+- [e.g., Use type hints everywhere]
+
+### Patterns
+- [e.g., Repository pattern for database access]
+- [e.g., Pydantic for all data validation]
+- [e.g., Async-first for I/O operations]
+
+### Naming
+- [e.g., snake_case for functions and variables]
+- [e.g., PascalCase for classes]
+- [e.g., SCREAMING_SNAKE_CASE for constants]
+
+---
+
+## Current Focus
+
+### Active Sprint/Goals
+- [ ] [Current task 1]
+- [ ] [Current task 2]
+- [ ] [Current task 3]
+
+### Known Issues
+- [Issue 1 to be aware of]
+- [Issue 2 to be aware of]
+
+---
+
+## Important Context
+
+### Things to Always Remember
+- [Critical rule or constraint]
+- [Important business logic]
+- [Security consideration]
+
+### Things to Never Do
+- [Anti-pattern to avoid]
+- [Deprecated approach]
+- [Known pitfall]
+
+---
+
+## References
+
+- [Link to main documentation]
+- [Link to API docs]
+- [Link to design docs]

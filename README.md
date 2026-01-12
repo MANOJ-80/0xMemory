@@ -264,7 +264,13 @@ Force Cursor to use the `recall` tool (vector search) instead of reading files d
 .0xmemory/memory/*.md
 ```
 
-**Step 2:** Create `.cursorrules` to tell Cursor about the memory tool:
+**Step 2:** Copy the rules template to your project:
+
+```bash
+cp examples/cursorrules.template .cursorrules
+```
+
+Or create a minimal `.cursorrules`:
 
 ```markdown
 # 0xMemory Rules
@@ -274,7 +280,24 @@ When you need project context or past decisions, use the `recall` tool to search
 ALWAYS check `recall` before saying "I don't know".
 ```
 
-Now Cursor won't read the files directly, but will use semantic search when it needs information.
+---
+
+## AI Context Templates
+
+We provide ready-to-use context files for different AI agents. Copy these to your project root:
+
+| File                            | For                 | Usage                  |
+| ------------------------------- | ------------------- | ---------------------- |
+| `examples/cursorrules.template` | Cursor IDE          | Copy as `.cursorrules` |
+| `examples/CLAUDE.md`            | Claude Code/Desktop | Copy as `CLAUDE.md`    |
+| `examples/GEMINI.md`            | Gemini CLI          | Copy as `GEMINI.md`    |
+| `examples/AGENT.md`             | Any AI agent        | Universal template     |
+
+Each template includes:
+
+- Full tools and resources reference
+- Behavior guidelines
+- Customization section for your project context
 
 ---
 
