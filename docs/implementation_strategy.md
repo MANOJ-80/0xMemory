@@ -1824,12 +1824,13 @@ def extract_and_store(conversation: str):
 
 **Mitigation Strategies:**
 
-| Strategy                 | Implementation                                 |
-| ------------------------ | ---------------------------------------------- |
-| **Content Filtering**    | Detect and redact sensitive patterns           |
-| **Encryption Option**    | Future: encrypt .store/ directory              |
-| **.gitignore Sensitive** | Exclude certain files from Git                 |
-| **Memory Expiry**        | Auto-delete memories after configurable period |
+| Strategy                 | Implementation                                     |
+| ------------------------ | -------------------------------------------------- |
+| **Content Filtering**    | Detect and redact sensitive patterns               |
+| **Privacy Tags**         | User-defined exclusion via `<!-- private -->` tags |
+| **Encryption Option**    | Future: encrypt .store/ directory                  |
+| **.gitignore Sensitive** | Exclude certain files from Git                     |
+| **Memory Expiry**        | Auto-delete memories after configurable period     |
 
 ```python
 # Sensitive data detection
@@ -1844,6 +1845,134 @@ def sanitize_content(content: str) -> str:
         content = re.sub(pattern, "[REDACTED]", content)
     return content
 ```
+
+#### Privacy Tags Feature (Inspired by claude-mem)
+
+Allow users to explicitly exclude content from memory storage using HTML comments:
+
+```markdown
+## Session Notes
+
+This is a normal note that will be stored in memory.
+
+<!-- private -->
+
+API_KEY=sk-abc123xyz789...
+Production database password: supersecret123
+
+<!-- /private -->
+
+This content after the private block is stored normally.
+```
+
+**Implementation:**
+
+```python
+import re
+
+def strip_private_content(content: str) -> str:
+    """
+    Remove content between <!-- private --> and <!-- /private --> tags.
+    This content will NOT be stored in memory or vector DB.
+    """
+    pattern = r'<!--\s*private\s*-->.*?<!--\s*/private\s*-->'
+    return re.sub(pattern, '[PRIVATE CONTENT EXCLUDED]', content, flags=re.DOTALL)
+
+def process_for_storage(content: str) -> str:
+    # First strip private blocks
+    content = strip_private_content(content)
+    # Then sanitize any remaining sensitive patterns
+    content = sanitize_content(content)
+    return content
+```
+
+**Use Cases:**
+
+- Exclude API keys and credentials shared during debugging
+- Hide personal information from memory
+- Prevent specific code snippets from being stored
+- Keep proprietary algorithms private
+
+---
+
+### 9. Token Cost Visibility (Inspired by claude-mem)
+
+**The Feature:**
+
+Show users how many tokens are being used when retrieving context, enabling informed decisions about memory usage.
+
+**Implementation:**
+
+```python
+from transformers import AutoTokenizer
+
+# Load tokenizer once
+tokenizer = AutoTokenizer.from_pretrained("gpt2")  # Universal approximation
+
+def count_tokens(text: str) -> int:
+    """Count tokens in text."""
+    return len(tokenizer.encode(text))
+
+def retrieve_with_cost(query: str, max_tokens: int = 2500) -> dict:
+    """
+    Retrieve context with token cost breakdown.
+    """
+    # Retrieve memories
+    brain = load_brain_summary()
+    facts = search_facts(query, limit=5)
+    decisions = search_decisions(query, limit=3)
+    session = get_session_summary()
+
+    # Calculate token costs
+    costs = {
+        "brain_summary": count_tokens(brain),
+        "retrieved_facts": count_tokens("\n".join(facts)),
+        "decisions": count_tokens("\n".join(decisions)),
+        "session_summary": count_tokens(session),
+    }
+
+    total = sum(costs.values())
+
+    return {
+        "context": assemble_context(brain, facts, decisions, session),
+        "token_breakdown": costs,
+        "total_tokens": total,
+        "budget_remaining": max_tokens - total,
+        "budget_used_percent": round((total / max_tokens) * 100, 1)
+    }
+```
+
+**CLI Display:**
+
+```bash
+$ 0xmemory status
+
+🧠 0xMemory Status
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Facts stored:     42
+Decisions logged: 7
+Sessions archived: 12
+
+📊 Token Usage (last retrieval):
+┌──────────────────┬────────┬───────┐
+│ Component        │ Tokens │   %   │
+├──────────────────┼────────┼───────┤
+│ Brain summary    │    487 │  19%  │
+│ Retrieved facts  │    823 │  33%  │
+│ Decisions        │    412 │  16%  │
+│ Session summary  │    298 │  12%  │
+│ Buffer           │    480 │  19%  │
+├──────────────────┼────────┼───────┤
+│ TOTAL            │  2,500 │ 100%  │
+└──────────────────┴────────┴───────┘
+```
+
+**Benefits:**
+
+- Users understand token efficiency
+- Helps debug context overflow issues
+- Enables optimization of memory storage
+- Transparency in retrieval process
 
 ---
 
