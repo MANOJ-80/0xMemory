@@ -1,5 +1,6 @@
 """Core module - configuration and data models."""
 
+from oxmemory.core.config import get_default_config, load_config, save_config
 from oxmemory.core.models import (
     BrainInfo,
     Config,
@@ -10,7 +11,6 @@ from oxmemory.core.models import (
     MemoryType,
     ProjectConfig,
 )
-from oxmemory.core.config import load_config, get_default_config, save_config
 
 __all__ = [
     "Memory",

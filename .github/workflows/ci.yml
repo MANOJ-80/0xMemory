@@ -16,16 +16,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # this might remove tools that you actually need,
+          # if set to "true" but default is "false"
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to "false" if you need them
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pip"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[vector,extraction,http]"
-          pip install pytest pytest-asyncio pytest-cov
+          # Install CPU-only torch to save space
+          pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --no-cache-dir -e ".[vector,extraction,http]"
+          pip install --no-cache-dir pytest pytest-asyncio pytest-cov
 
       - name: Run tests
         run: |

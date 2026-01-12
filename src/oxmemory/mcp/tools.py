@@ -3,8 +3,6 @@
 Defines the tools that AI clients can use to interact with the memory store.
 """
 
-from typing import Optional
-
 from oxmemory.core.models import Memory, MemoryType
 from oxmemory.storage.memory_store import MemoryStore
 
@@ -26,20 +24,20 @@ async def handle_remember(
     store: MemoryStore,
     content: str,
     type: str = "fact",
-    tags: Optional[list[str]] = None,
+    tags: list[str] | None = None,
     source: str = "conversation",
 ) -> dict:
     """Handle the 'remember' tool call.
-    
+
     Store a new memory (fact, decision, learning, or preference).
-    
+
     Args:
         store: Memory store instance.
         content: The memory content to store.
         type: Type of memory (fact, decision, learning, preference).
         tags: Optional categorization tags.
         source: Where this memory came from.
-        
+
     Returns:
         Dictionary with success status and memory ID.
     """
@@ -49,9 +47,10 @@ async def handle_remember(
     except ValueError:
         return {
             "success": False,
-            "error": f"Invalid memory type: {type}. Must be one of: fact, decision, learning, preference",
+            "error": "Invalid memory type: {type}. Must be one of: "
+            "fact, decision, learning, preference",
         }
-    
+
     try:
         memory = store.add(
             content=content,
@@ -59,11 +58,12 @@ async def handle_remember(
             tags=tags or [],
             source=source,
         )
-        
+
         return {
             "success": True,
             "id": memory.id,
-            "message": f"Stored {memory_type.value}: {content[:50]}{'...' if len(content) > 50 else ''}",
+            "message": f"Stored {memory_type.value}: "
+            f"{content[:50]}{'...' if len(content) > 50 else ''}",
         }
     except Exception as e:
         return {
@@ -76,18 +76,18 @@ async def handle_recall(
     store: MemoryStore,
     query: str,
     limit: int = 5,
-    types: Optional[list[str]] = None,
+    types: list[str] | None = None,
 ) -> dict:
     """Handle the 'recall' tool call.
-    
+
     Search memories by meaning/content.
-    
+
     Args:
         store: Memory store instance.
         query: Natural language search query.
         limit: Maximum number of results.
         types: Filter by memory types.
-        
+
     Returns:
         Dictionary with matching memories.
     """
@@ -101,20 +101,20 @@ async def handle_recall(
                     memory_types.append(MemoryType(t.lower()))
                 except ValueError:
                     pass  # Ignore invalid types
-        
+
         memories = store.search(
             query=query,
             limit=limit,
             memory_types=memory_types,
         )
-        
+
         if not memories:
             return {
                 "found": 0,
                 "memories": [],
                 "message": f"No memories found matching: {query}",
             }
-        
+
         return {
             "found": len(memories),
             "memories": [_memory_to_dict(m) for m in memories],
@@ -130,18 +130,18 @@ async def handle_recall(
 
 async def handle_list(
     store: MemoryStore,
-    type: Optional[str] = None,
+    type: str | None = None,
     limit: int = 20,
 ) -> dict:
     """Handle the 'list' tool call.
-    
+
     List all memories, optionally filtered by type.
-    
+
     Args:
         store: Memory store instance.
         type: Filter by memory type.
         limit: Maximum number of results.
-        
+
     Returns:
         Dictionary with memory list.
     """
@@ -156,12 +156,12 @@ async def handle_list(
                     "memories": [],
                     "error": f"Invalid memory type: {type}",
                 }
-        
+
         memories = store.list_memories(
             memory_type=memory_type,
             limit=limit,
         )
-        
+
         return {
             "count": len(memories),
             "memories": [_memory_to_dict(m) for m in memories],
@@ -179,19 +179,19 @@ async def handle_forget(
     id: str,
 ) -> dict:
     """Handle the 'forget' tool call.
-    
+
     Remove a memory by ID.
-    
+
     Args:
         store: Memory store instance.
         id: Memory ID to remove.
-        
+
     Returns:
         Dictionary with success status.
     """
     try:
         removed = store.delete(id)
-        
+
         if removed:
             return {
                 "success": True,
@@ -215,20 +215,20 @@ async def handle_update(
     content: str,
 ) -> dict:
     """Handle the 'update' tool call.
-    
+
     Update an existing memory's content.
-    
+
     Args:
         store: Memory store instance.
         id: Memory ID to update.
         content: New content.
-        
+
     Returns:
         Dictionary with success status.
     """
     try:
         memory = store.update(id, content)
-        
+
         if memory:
             return {
                 "success": True,
@@ -249,18 +249,18 @@ async def handle_update(
 
 async def handle_status(store: MemoryStore) -> dict:
     """Handle the 'status' tool call.
-    
+
     Get brain statistics.
-    
+
     Args:
         store: Memory store instance.
-        
+
     Returns:
         Dictionary with brain info.
     """
     try:
         info = store.get_brain_info()
-        
+
         return {
             "project_name": info.project_name,
             "total_memories": info.total_memories,
@@ -283,36 +283,36 @@ async def handle_extract(
     auto_save: bool = True,
 ) -> dict:
     """Handle the 'extract' tool call.
-    
+
     Extract facts, decisions, and learnings from a conversation using LLM.
-    
+
     Args:
         store: Memory store instance.
         conversation: The conversation to analyze.
         auto_save: Whether to automatically save extracted memories.
-        
+
     Returns:
         Dictionary with extracted knowledge.
     """
     try:
         from oxmemory.extraction import KnowledgeExtractor
-        
+
         extractor = KnowledgeExtractor()
-        
+
         if not extractor.is_available():
             return {
                 "success": False,
                 "error": "No LLM provider available. Configure Ollama, Groq, or Gemini.",
             }
-        
+
         result = await extractor.extract(conversation)
-        
+
         if result.error:
             return {
                 "success": False,
                 "error": result.error,
             }
-        
+
         saved_count = 0
         if auto_save:
             memories = extractor.extraction_to_memories(result)
@@ -325,16 +325,17 @@ async def handle_extract(
                     salience=memory.salience,
                 )
                 saved_count += 1
-        
+
         return {
             "success": True,
             "facts": result.facts,
             "decisions": result.decisions,
             "learnings": result.learnings,
             "saved": saved_count,
-            "message": f"Extracted {len(result.facts)} facts, {len(result.decisions)} decisions, {len(result.learnings)} learnings",
+            "message": f"Extracted {len(result.facts)} facts, "
+            f"{len(result.decisions)} decisions, {len(result.learnings)} learnings",
         }
-        
+
     except ImportError:
         return {
             "success": False,
@@ -345,4 +346,3 @@ async def handle_extract(
             "success": False,
             "error": str(e),
         }
-

@@ -1,9 +1,11 @@
 """Prompt templates for knowledge extraction."""
 
 # System prompt for extraction
-EXTRACTION_SYSTEM_PROMPT = """You are a knowledge extraction assistant. Your job is to analyze conversations and extract:
+EXTRACTION_SYSTEM_PROMPT = """You are a knowledge extraction assistant.
+Your job is to analyze conversations and extract:
 
-1. **Facts** - Concrete, verifiable information about the project (technical details, configurations, constraints)
+1. **Facts** - Concrete, verifiable information about the project
+   (technical details, configurations, constraints)
 2. **Decisions** - Choices made with their rationale (why something was chosen over alternatives)
 3. **Learnings** - Lessons learned, gotchas, insights from experience
 
@@ -63,7 +65,8 @@ CONVERSATION:
 {conversation}"""
 
 # Prompt for checking if content is similar/duplicate
-DEDUP_PROMPT = """Compare these two pieces of information and determine if they are semantically the same or very similar.
+DEDUP_PROMPT = """Compare these two pieces of information and determine
+if they are semantically the same or very similar.
 
 EXISTING: {existing}
 NEW: {new}

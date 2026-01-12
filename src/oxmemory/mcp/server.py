@@ -3,68 +3,67 @@
 Implements the Model Context Protocol server using stdio transport.
 """
 
-import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
-    Tool,
-    TextContent,
-    Resource,
     GetPromptResult,
     Prompt,
-    PromptMessage,
     PromptArgument,
+    PromptMessage,
+    Resource,
+    TextContent,
+    Tool,
 )
 
-from oxmemory.storage.memory_store import MemoryStore
-from oxmemory.mcp.tools import (
-    handle_remember,
-    handle_recall,
-    handle_list,
-    handle_forget,
-    handle_update,
-    handle_status,
-    handle_extract,
-)
 from oxmemory.mcp.resources import (
     get_brain_context,
-    get_facts_context,
     get_decisions_context,
+    get_facts_context,
     get_full_context,
 )
-
+from oxmemory.mcp.tools import (
+    handle_extract,
+    handle_forget,
+    handle_list,
+    handle_recall,
+    handle_remember,
+    handle_status,
+    handle_update,
+)
+from oxmemory.storage.memory_store import MemoryStore
 
 logger = logging.getLogger(__name__)
 
 
-def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemoryStore]:
+def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]:
     """Create an MCP server instance.
-    
+
     Args:
         project_dir: Project directory. Defaults to current directory.
-        
+
     Returns:
         Tuple of (Server, MemoryStore).
     """
     server = Server("0xmemory")
     store = MemoryStore(project_dir)
-    
+
     # -------------------------------------------------------------------------
     # Tool definitions
     # -------------------------------------------------------------------------
-    
+
     @server.list_tools()
     async def list_tools() -> list[Tool]:
         """List available tools."""
         return [
             Tool(
                 name="remember",
-                description="Store a new memory (fact, decision, learning, or preference). Use this to save important information from the conversation.",
+                description="Store a new memory (fact, decision, learning, or preference). "
+                "Use this to save important information from the conversation.",
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -94,7 +93,8 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
             ),
             Tool(
                 name="recall",
-                description="Search memories by meaning/content. Use this to find relevant past information.",
+                description="Search memories by meaning/content. "
+                "Use this to find relevant past information.",
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -177,7 +177,8 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
             ),
             Tool(
                 name="extract",
-                description="Extract facts, decisions, and learnings from a conversation using LLM. Requires Ollama, Groq, or Gemini.",
+                description="Extract facts, decisions, and learnings from a conversation "
+                "using LLM. Requires Ollama, Groq, or Gemini.",
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -195,7 +196,7 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
                 },
             ),
         ]
-    
+
     @server.call_tool()
     async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         """Handle tool calls."""
@@ -242,20 +243,17 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
                 )
             else:
                 result = {"error": f"Unknown tool: {name}"}
-            
+
             return [TextContent(type="text", text=json.dumps(result, indent=2))]
-            
+
         except Exception as e:
             logger.exception(f"Error in tool {name}")
-            return [TextContent(
-                type="text", 
-                text=json.dumps({"error": str(e)})
-            )]
-    
+            return [TextContent(type="text", text=json.dumps({"error": str(e)}))]
+
     # -------------------------------------------------------------------------
     # Resource definitions
     # -------------------------------------------------------------------------
-    
+
     @server.list_resources()
     async def list_resources() -> list[Resource]:
         """List available resources."""
@@ -285,17 +283,17 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
                 mimeType="text/markdown",
             ),
         ]
-    
+
     @server.read_resource()
     async def read_resource(uri: str) -> str:
         """Read a resource by URI."""
         logger.info(f"Reading resource: {str(uri)!r}")
-        
+
         # Normalize URI: strip trailing slash and handle triple slash
         normalized_uri = str(uri).strip().rstrip("/")
         if normalized_uri.startswith("brain:///"):
             normalized_uri = "brain://" + normalized_uri[9:]
-            
+
         if normalized_uri == "brain://context":
             return await get_brain_context(store)
         elif normalized_uri == "brain://facts":
@@ -307,11 +305,11 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
         else:
             logger.error(f"Unknown resource URI: {uri!r} (normalized: {normalized_uri!r})")
             raise ValueError(f"Unknown resource: {uri}")
-    
+
     # -------------------------------------------------------------------------
     # Prompt definitions
     # -------------------------------------------------------------------------
-    
+
     @server.list_prompts()
     async def list_prompts() -> list[Prompt]:
         """List available prompts."""
@@ -333,9 +331,9 @@ def create_server(project_dir: Optional[Path] = None) -> tuple[Server, MemorySto
                 ],
             ),
         ]
-    
+
     @server.get_prompt()
-    async def get_prompt(name: str, arguments: Optional[dict] = None) -> GetPromptResult:
+    async def get_prompt(name: str, arguments: dict | None = None) -> GetPromptResult:
         """Get a prompt by name."""
         if name == "project_context":
             context = await get_full_context(store)
@@ -373,25 +371,24 @@ Conversation:
             )
         else:
             raise ValueError(f"Unknown prompt: {name}")
-    
+
     return server, store
 
 
-async def run_server(project_dir: Optional[Path] = None) -> None:
+async def run_server(project_dir: Path | None = None) -> None:
     """Run the MCP server with stdio transport.
-    
+
     Args:
         project_dir: Project directory. Defaults to current directory.
     """
     server, store = create_server(project_dir)
-    
+
     # Check if brain exists
     if not store.is_initialized():
         logger.warning(
-            f"Brain not initialized in {project_dir or Path.cwd()}. "
-            "Run '0xmemory init' first."
+            f"Brain not initialized in {project_dir or Path.cwd()}. Run '0xmemory init' first."
         )
-    
+
     # Run with stdio transport
     async with stdio_server() as (read_stream, write_stream):
         await server.run(
