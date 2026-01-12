@@ -1,84 +1,96 @@
-# 0xMemory
-
-> 🧠 **Cross-LLM Memory Layer for AI Agents** > _Give your AI Agent a persistent brain that lives in your repo._
-
-[![PyPI version](https://img.shields.io/pypi/v/oxmemory.svg)](https://pypi.org/project/oxmemory/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![MCP](https://img.shields.io/badge/MCP-Enabled-green.svg)](https://modelcontextprotocol.io)
-
-**0xMemory** gives your AI coding agents (Cursor, Claude, Gemini) specific, persistent, and portable memory.
-
-Instead of explaining your project structure or coding preferences to every new chat session, **0xMemory** stores this context in your repo where any agent can find it.
-
----
-
-## ✨ Why 0xMemory?
-
-- **🧠 Persistent**: Facts and decisions are stored in human-readable Markdown (`.0xmemory/memory/`).
-- **🚀 Hybrid Architecture**:
-  - **Local**: Vector search runs 100% locally on your machine (Privacy + Speed).
-  - **Cloud**: Knowledge extraction uses your preferred LLM API (Groq, Gemini, OpenAI).
-- **🔌 Universal**: Works with **Cursor**, **Claude Desktop**, and any MCP client.
-- **� Git-Native**: Your memory is just files. Commit them, diff them, push them.
+<p align="center">
+  <h1 align="center">🧠 0xMemory</h1>
+  <p align="center">
+    <strong>Give your AI a brain that lives in your repo.</strong>
+  </p>
+  <p align="center">
+    <a href="https://pypi.org/project/oxmemory/"><img src="https://img.shields.io/pypi/v/oxmemory.svg" alt="PyPI"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
+    <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Enabled-green.svg" alt="MCP"></a>
+  </p>
+</p>
 
 ---
 
-## 🚀 Quick Start
+**0xMemory** is a cross-LLM memory layer that gives AI coding agents (Cursor, Claude, Gemini) persistent, portable memory.
 
-### 1. Installation
+Stop explaining your project to every new chat session. 0xMemory stores context in human-readable Markdown files that any agent can find.
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│   You: "Remember that we use PostgreSQL for auth."          │
+│                          ↓                                  │
+│   ┌─────────────────────────────────────────────────────┐  │
+│   │              0xMemory MCP Server                    │  │
+│   │   Saves to Markdown → Indexes in Vector DB          │  │
+│   └─────────────────────────────────────────────────────┘  │
+│                          ↓                                  │
+│   Later: "What database do we use?"                         │
+│   Agent: "You use PostgreSQL for auth." ✅                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+| Feature        | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
+| **Persistent** | Facts and decisions stored in `.0xmemory/memory/` as Markdown |
+| **Private**    | Vector search runs 100% locally on your machine               |
+| **Portable**   | Works with Cursor, Claude Desktop, and any MCP client         |
+| **Git-Native** | Your memory is just files. Commit, diff, and push them.       |
+
+---
+
+## Quick Start
+
+### Step 1: Set Up Environment
 
 ```bash
+# Create and activate a virtual environment (recommended)
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install 0xMemory
 pip install oxmemory
 ```
 
-### 2. Initialize a Brain
-
-Go to your project directory and run:
+### Step 2: Initialize
 
 ```bash
-cd /path/to/my/project
+cd /path/to/your/project
 0xmemory init
 ```
 
-This creates a `.0xmemory/` folder.
+This creates a `.0xmemory/` folder. Edit `.0xmemory/brain.md` to describe your project.
 
-- **Action**: Edit `.0xmemory/brain.md` to add your high-level project goals.
-- **Action**: (Optional) Add your API keys to `.env` if you want to use the `extract` tool.
-
-### 3. Connect your AI Agent
-
-First, start the Memory Server:
+### Step 3: Start the Server
 
 ```bash
 0xmemory serve --transport http
 ```
 
-_(Note: The first run resolves a local AI model (~80MB). If it times out, just run it again.)_
+> **Note**: First run downloads a small embedding model (~80MB). If it times out, just run it again.
 
-#### 🖱️ For Cursor (IDE)
+### Step 4: Connect Your AI
 
-1.  Go to **Settings > Cursor Settings > Features > MCP**.
-2.  Click **Add new MCP server**.
-3.  **Name**: `0xmemory`
-4.  **Type**: `SSE`
-5.  **URL**: `http://localhost:8000/sse`
+#### Cursor IDE
 
-**Or add to your `config.json` (if using port 9000):**
+Add to your MCP config (`.cursor/mcp.json` or via Settings → Features → MCP):
 
 ```json
 {
   "mcpServers": {
     "0xMemory": {
-      "url": "http://localhost:9000/sse",
+      "url": "http://localhost:8000/sse",
       "transport": "sse"
     }
   }
 }
 ```
 
-#### 🤖 For Claude Desktop
+#### Claude Desktop
 
-Add this to your `claude_desktop_config.json`:
+Add to your `claude_desktop_config.json`:
 
 ```json
 {
@@ -94,98 +106,198 @@ Add this to your `claude_desktop_config.json`:
 
 ---
 
-## 🧠 Two Ways to Use It
+## Usage
 
-0xMemory supports two distinct workflows depending on your style.
+### Disciplined Mode (Local, Free)
 
-### Mode A: The "Disciplined" Agent (Local & Free)
+Tell your agent what to remember. No API keys required.
 
-_Best for: Coding sessions in Cursor/Claude._
-
-You don't need any API keys for this. You just tell your Agent to remember things.
-
-> **You**: "We strictly use `pydantic` v2 for all models."
->
-> **You**: "Using the `remember` tool, save that preference."
->
-> **Agent**: _Calls `remember` tool._ "Saved."
-
-### Mode B: The "Lazy" Dump (Cloud Powered)
-
-_Best for: Processing messy thoughts or meeting notes._
-
-1.  Add an API key (e.g., `GROQ_API_KEY`, `GEMINI_API_KEY`) to your `.env` file.
-2.  Dump text into the extractor:
-
-```bash
-0xmemory extract "We decided to switch to Postgres because Mongo was too retrieving complex relations."
+```
+You: "We use Pydantic v2 for all models. Remember that."
+Agent: ✅ Memory saved.
 ```
 
-3.  0xMemory will analyze it using the LLM and automatically save the **Decision** ("Switch to Postgres") and the **Reasoning** ("Mongo complex relations").
+### Lazy Mode (Cloud-Powered)
+
+Dump messy notes, 0xMemory extracts the knowledge for you.
+
+1. Add an API key to `.env` (e.g., `GROQ_API_KEY`)
+2. Run:
+   ```bash
+   0xmemory extract "We decided to switch to Postgres because Mongo was too slow for complex joins."
+   ```
+3. 0xMemory saves:
+   - **Decision**: Switch to Postgres
+   - **Reasoning**: Mongo slow for complex joins
 
 ---
 
-## 🛠️ Available Tools
+## LLM Providers
 
-Once connected, your Agent has these tools:
+The `extract` tool uses an LLM to parse knowledge from text. Configure via `.env`:
 
-| Tool           | Description                                                          |
-| :------------- | :------------------------------------------------------------------- |
-| **`remember`** | Save a Fact, Decision, Learning, or Preference.                      |
-| **`recall`**   | Search past memories using semantic search.                          |
-| **`extract`**  | (Advanced) Read a block of text and extract knowledge automatically. |
+| Provider       | Env Variable         | Free Tier      | Notes               |
+| -------------- | -------------------- | -------------- | ------------------- |
+| **Groq**       | `GROQ_API_KEY`       | 14,400 req/day | Recommended for dev |
+| **Gemini**     | `GEMINI_API_KEY`     | 20 req/day     | Save for demos      |
+| **OpenRouter** | `OPENROUTER_API_KEY` | Pay-as-you-go  | Many models         |
+| **Ollama**     | `OLLAMA_API_BASE`    | Unlimited      | Fully local         |
 
-And these **Resources** (Read-Only Context):
+**Example `.env`:**
 
-| Resource                | Description                      |
-| :---------------------- | :------------------------------- |
-| **`brain://context`**   | Your high-level `brain.md` file. |
-| **`brain://facts`**     | List of all technical facts.     |
-| **`brain://decisions`** | Log of architectural decisions.  |
+```bash
+# Pick one (or more for fallback)
+GROQ_API_KEY=gsk_xxx...
+GEMINI_API_KEY=AIza...
+
+# For remote Ollama (e.g., Google Colab + ngrok)
+OLLAMA_API_BASE=https://your-tunnel.ngrok.io
+```
+
+0xMemory tries providers in order: Ollama → Groq → OpenRouter → Gemini.
 
 ---
 
-## 📁 Directory Structure
+## Available Tools
+
+Once connected, your AI agent has access to these MCP tools:
+
+| Tool       | What It Does                                    |
+| ---------- | ----------------------------------------------- |
+| `remember` | Save a Fact, Decision, Learning, or Preference  |
+| `recall`   | Search memories using semantic search           |
+| `list`     | List all memories with optional filters         |
+| `forget`   | Remove a memory by ID                           |
+| `update`   | Update an existing memory                       |
+| `status`   | Get brain statistics                            |
+| `extract`  | Auto-extract knowledge from text (requires LLM) |
+
+And these read-only resources:
+
+| Resource            | Content                        |
+| ------------------- | ------------------------------ |
+| `brain://context`   | Your project's `brain.md` file |
+| `brain://facts`     | All stored technical facts     |
+| `brain://decisions` | Log of architectural decisions |
+| `brain://full`      | Combined full context          |
+
+---
+
+## Project Structure
+
+After running `0xmemory init`, your project gets a `.0xmemory/` folder:
+
+```
+.0xmemory/
+├── brain.md           # 👈 Your project context (edit this!)
+├── config.yaml        # Server and LLM settings
+├── memory/            # AI-managed memory files
+│   ├── facts.md       # Technical facts ("API uses port 3000")
+│   ├── decisions.md   # Architectural decisions with reasoning
+│   ├── learnings.md   # Lessons learned, gotchas, tips
+│   └── preferences.md # Coding style preferences
+├── documents/         # (Optional) Docs for RAG ingestion
+├── sessions/          # Chat session history archives
+└── .store/            # Vector database (auto-generated, gitignored)
+    └── chroma/        # ChromaDB embeddings for semantic search
+```
+
+### What Each File Does
+
+| File/Folder   | Purpose                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `brain.md`    | **You write this.** High-level project description, architecture, goals. The AI reads this first.                   |
+| `config.yaml` | Configuration for LLM providers, embedding models, and server settings.                                             |
+| `memory/*.md` | **AI writes these.** Extracted knowledge from your conversations. Human-readable and editable.                      |
+| `documents/`  | Drop markdown/text files here for document-based retrieval (RAG).                                                   |
+| `sessions/`   | Archived chat sessions for context continuity.                                                                      |
+| `.store/`     | Local vector database (ChromaDB). Enables semantic search. Auto-generated, safe to delete (rebuilds from markdown). |
+
+---
+
+## CLI Reference
+
+| Command                      | Description                                          |
+| ---------------------------- | ---------------------------------------------------- |
+| `0xmemory init`              | Create a new brain in current directory              |
+| `0xmemory serve`             | Start MCP server (add `--transport http` for Cursor) |
+| `0xmemory status`            | Show brain statistics                                |
+| `0xmemory add "..."`         | Manually add a memory                                |
+| `0xmemory search "..."`      | Search memories                                      |
+| `0xmemory forget <id>`       | Delete a memory by ID                                |
+| `0xmemory update <id> "..."` | Update a memory's content                            |
+| `0xmemory extract "..."`     | Extract knowledge via LLM                            |
+| `0xmemory export`            | Export memories to JSON/CSV                          |
+| `0xmemory rebuild`           | Rebuild vector index from Markdown                   |
+| `0xmemory doctor`            | Check configuration health                           |
+| `0xmemory config --show`     | View current configuration                           |
+
+**Useful flags:**
+
+```bash
+0xmemory serve --transport http --port 9000  # Custom port
+0xmemory serve --debug                        # Verbose logging
+0xmemory export -o backup.json                # Export to JSON
+0xmemory export -o data.csv --type fact       # Export facts to CSV
+```
+
+---
+
+## Advanced: Token Optimization
+
+As your memory grows, you can optimize how Cursor uses it.
+
+### Default Mode (Direct Access)
+
+Cursor reads `.0xmemory/*.md` files directly into its context window.
+
+- ✅ Fast - no tool calls needed
+- ❌ Uses tokens - can fill context with large memories
+
+### Token Saver Mode
+
+Force Cursor to use the `recall` tool (vector search) instead of reading files directly. This scales to unlimited memories with zero token cost until needed.
+
+**Step 1:** Create `.cursorignore` in your project root:
 
 ```text
-.0xmemory/
-├── brain.md              # Main project context (Human curated)
-├── memory/               # AI memory (Auto-managed)
-│   ├── facts.md
-│   ├── decisions.md
-│   ├── learnings.md
-│   └── preferences.md
-├── sessions/             # Chat session archives
-└── .store/               # Local Vector Index (Git ignored)
+.0xmemory/memory/*.md
 ```
+
+**Step 2:** Create `.cursorrules` to tell Cursor about the memory tool:
+
+```markdown
+# 0xMemory Rules
+
+You have a long-term memory system called 0xMemory.
+When you need project context or past decisions, use the `recall` tool to search for it.
+ALWAYS check `recall` before saying "I don't know".
+```
+
+Now Cursor won't read the files directly, but will use semantic search when it needs information.
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
-### First Run Timeout / Download Errors
+| Problem                    | Solution                                                |
+| -------------------------- | ------------------------------------------------------- |
+| **First run timeout**      | Normal on slow connections. Download resumes on retry.  |
+| **Port 8000 in use**       | Use `0xmemory serve --port 9000` and update your config |
+| **Model download stuck**   | Check internet connection, then run again               |
+| **Connection refused**     | Make sure `0xmemory serve` is running in a terminal     |
+| **Cursor shows red light** | Restart the server, then refresh MCP in Cursor settings |
 
-On the very first run, 0xMemory downloads a local embedding model (~80MB) from Hugging Face.
-
-- **Symptom**: `ReadTimeoutError` or `HTTPSConnectionPool` in logs.
-- **Fix**: This is normal on slow connections. Just run the command again. It resumes where it left off.
-
-### "Address already in use"
-
-If port 8000 is taken:
-
-```bash
-0xmemory serve --port 9000
-```
-
-(Remember to update your Cursor config url to `http://localhost:9000/sse`)
+**Health check:** When running in HTTP mode, visit `http://localhost:8000/health` to verify the server is up.
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+[MIT](LICENSE)
 
-## 📄 License
+---
 
-This project is licensed under the [MIT License](LICENSE).
+<p align="center">
+  <sub>Built for developers who want their AI to actually remember things.</sub>
+</p>
