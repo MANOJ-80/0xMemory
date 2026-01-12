@@ -16,6 +16,14 @@
 
 **Active Work:** Project Complete! 🚀
 
+### v1.0.0 Final Release (2026-01-12)
+
+- **Published to PyPI**: Official `oxmemory` package is now live.
+- **Automated CI/CD**: Established GitHub Actions for tests and auto-publishing.
+- **Trusted Publishing**: Configured OIDC between GitHub and PyPI.
+- **Full CLI**: Added `forget`, `update`, and `doctor` commands.
+- **Docs**: Comprehensive guide including [CI/CD setup](docs/ci_cd.md).
+
 ### Phase 4 Achievements (Session Changelog)
 
 **1. HTTP Transport (Cursor Support)**
