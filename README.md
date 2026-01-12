@@ -1,195 +1,165 @@
 # 0xMemory
 
-> 🧠 Terminal-first AI agent with persistent memory - turns your project into a living brain
+> 🧠 Cross-LLM Memory Layer for AI Agents
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MCP](https://img.shields.io/badge/MCP-Enabled-green.svg)](https://github.com/iterative/mcp)
 
-## What is 0xMemory?
+**0xMemory** gives your AI coding agents specific, persistent, and portable memory.
 
-0xMemory is a terminal-first AI agent that transforms your project folder (Git repo) into a **living brain** with persistent memory. Unlike traditional AI assistants that forget everything between sessions, 0xMemory:
+Instead of explaining your project structure or coding preferences to every new chat session in Cursor, Claude, or Gemini, **0xMemory** stores this context in your repo where any agent can find it.
 
-- 📝 **Remembers everything** - Facts, decisions, and learnings persist in human-editable Markdown files
-- 🔍 **Retrieves contextually** - Semantic search finds relevant memories from your documents
-- 🤖 **Reasons with context** - LLM responses are grounded in your project's accumulated knowledge
-- 📜 **Tracks changes** - Session logs and changelogs make your AI interactions reproducible
+## ✨ Features
 
-## Quick Start
+- **🧠 Persistent Memory**: Facts, decisions, and learnings are stored in human-readable Markdown files (`.0xmemory/memory/`).
+- **🔌 Cross-Agent Compatible**: Works with **Cursor**, **Claude Desktop**, **Gemini**, and any [MCP](https://github.com/iterative/mcp)-compliant client.
+- **🔍 vector Search**: Semantic retrieval helps agents find relevant past decisions and facts.
+- **📄 Human Editable**: All memory is just Markdown. You can edit, delete, or version control it with Git.
+- **🚀 Local First**: Your data stays in your repo. No external vector DBs required.
 
-### Installation
+## 🚀 Quick Start
+
+### 1. Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/0xMemory.git
+# Clone and install
+git clone https://github.com/manoj-80/0xMemory.git
 cd 0xMemory
-
-# Install with Poetry
-poetry install
-
-# Or with pip
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 
-### Initialize Your Brain
+### 2. Initialize a Brain
+
+Go to your project directory and run:
 
 ```bash
-# Navigate to your project
-cd your-project
-
-# Initialize 0xMemory
+cd /path/to/my/project
 0xmemory init
-
-# Or use the alias
-oxmemory init
 ```
 
-This creates a `.0xmemory/` directory with:
+This creates a `.0xmemory/` folder. Edit `.0xmemory/brain.md` to add your initial project context!
 
+### 3. Connect your AI Agent
+
+#### 🖱️ Cursor (IDE)
+
+1. Go to **Settings > Cursor Settings > Models > MCP**.
+2. Click **Add new MCP server**.
+3. **Name**: `0xmemory`
+4. **Type**: `SSE`
+5. **URL**: `http://localhost:8000/sse`
+
+_Note: You must have the server running:_
+
+```bash
+0xmemory serve --transport http
 ```
+
+**JSON Configuration (Advanced)**
+If you are configuring via a settings file (e.g., `settings.json` or generic MCP client config), use:
+
+```json
+{
+  "mcpServers": {
+    "0xMemory": {
+      "url": "http://localhost:8000/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+#### 🤖 Claude Desktop
+
+Add this to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "0xmemory": {
+      "command": "0xmemory",
+      "args": ["serve"],
+      "cwd": "/absolute/path/to/your/project"
+    }
+  }
+}
+```
+
+## 🛠️ Usage
+
+Once connected, your AI agent has access to these **Tools**:
+
+- **`remember`**: Save important info.
+  > "Remember that we use Poetry for dependency management."
+- **`recall`**: Search past memories.
+  > "What did we decide about database migrations?"
+- **`extract`**: Auto-extract knowledge from a conversation.
+  > "Extract the key decisions from these meeting notes..."
+
+And these **Resources** (Context):
+
+- **`brain://context`**: Reads your `brain.md` (Project Overview).
+- **`brain://facts`**: List of all stored facts.
+- **`brain://decisions`**: Log of architectural decisions.
+
+## 🧠 The Separation of Powers
+
+0xMemory is designed with a strict separation of concerns:
+
+1.  **Human Territory (`.0xmemory/brain.md`)**
+
+    - **Writable by**: YOU (The Human) only.
+    - **Readable by**: The Agent.
+    - **Purpose**: High-level strategy, mission statements, and "Supreme Laws" (e.g., "Always use TypeScript").
+    - **Note**: The Agent is _forbidden_ from editing this file. It is your space to lead.
+
+2.  **AI Territory (`.0xmemory/memory/*.md`)**
+    - **Writable by**: The Agent (via `remember` tool).
+    - **Readable by**: The Agent (via `recall` tool).
+    - **Purpose**: Tactical details, API schemas, decision logs, and user preferences.
+
+## 📁 Directory Structure
+
+```text
 .0xmemory/
+├── brain.md              # Main project context (Human curated)
 ├── config.yaml           # Configuration
-├── brain.md              # Main project context (edit this!)
-├── memory/
-│   ├── facts.md          # Learned facts
-│   ├── decisions.md      # Decision log
-│   ├── learnings.md      # Lessons learned
-│   └── preferences.md    # Your preferences
-├── documents/            # Documents for RAG
-├── vectordb/             # ChromaDB storage
-└── changelog.md          # Session history
+├── memory/               # AI memory (Auto-managed)
+│   ├── facts.md
+│   ├── decisions.md
+│   ├── learnings.md
+│   └── preferences.md
+├── sessions/             # Chat session archives
+└── .store/               # ChromaDB vector index (Git ignored)
 ```
 
-### Start Chatting
+## ⌨️ CLI Commands
 
-```bash
-0xmemory chat
-```
+| Command            | Description                                 |
+| :----------------- | :------------------------------------------ |
+| `0xmemory init`    | Initialize a brain in the current directory |
+| `0xmemory serve`   | Start the MCP server (stdio or http)        |
+| `0xmemory status`  | View brain statistics                       |
+| `0xmemory add`     | Manually add a memory                       |
+| `0xmemory search`  | Search for memories                         |
+| `0xmemory extract` | Extract knowledge from text                 |
+| `0xmemory export`  | Export memories to JSON/CSV                 |
 
-Your AI now has access to your project context and will remember everything across sessions!
+## 🧪 Real-World Testing
 
-## Features
+We have a detailed guide with 4 real-life scenarios (Context Switching, Decision Logs, etc.) to verify your setup.
 
-### 🧠 Persistent Memory
+👉 **[Read the Real-World Testing Guide](docs/testing_guide.md)**
 
-Edit `.0xmemory/brain.md` to give your AI context about your project:
+> **Pro Tip:** Check the _Optimizing Token Usage_ section in the guide to learn how to scale to infinite memory using `.cursorignore`.
 
-```markdown
-# 🧠 Project Brain
+## 🤝 Contributing
 
-## Project Overview
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-This is a FastAPI backend for our e-commerce platform...
+## 📄 License
 
-## Key Components
-
-- `api/` - REST API endpoints
-- `models/` - SQLAlchemy models
-- `services/` - Business logic
-
-## Conventions
-
-- Use snake_case for Python files
-- All endpoints need auth decorators
-```
-
-### 📥 Document Ingestion
-
-Add your documentation to the brain:
-
-```bash
-# Ingest a single file
-0xmemory ingest docs/architecture.md
-
-# Ingest an entire directory
-0xmemory ingest docs/ --recursive
-```
-
-### 🔍 Semantic Search
-
-Search through your memories:
-
-```bash
-0xmemory search "how does authentication work"
-```
-
-### ⚙️ Configuration
-
-Customize your setup in `.0xmemory/config.yaml`:
-
-```yaml
-llm:
-  provider: gemini # gemini, openai, anthropic, ollama
-  model: gemini-2.0-flash
-  temperature: 0.7
-
-memory:
-  embedding_model: all-MiniLM-L6-v2
-  chunk_size: 512
-  max_retrieval: 5
-
-git:
-  commit_on_end: true
-  commit_prefix: "[0xMemory]"
-```
-
-## Commands
-
-| Command          | Description                                     |
-| ---------------- | ----------------------------------------------- |
-| `init`           | Initialize a new brain in the current directory |
-| `chat`           | Start an interactive chat session               |
-| `status`         | Show brain statistics                           |
-| `ingest <path>`  | Add documents to the brain                      |
-| `search <query>` | Search memories                                 |
-| `config --show`  | Show current configuration                      |
-
-## Environment Variables
-
-Set your API keys:
-
-```bash
-# Google Gemini (default)
-export GEMINI_API_KEY=your-key
-
-# OpenAI
-export OPENAI_API_KEY=your-key
-
-# Anthropic
-export ANTHROPIC_API_KEY=your-key
-```
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         0xMemory                            │
-├─────────────────────────────────────────────────────────────┤
-│   CLI (typer)  ◄──►  Context Files (Markdown)              │
-│        │                                                    │
-│   ┌────▼────────────────────────────────────────┐          │
-│   │           Orchestration (Brain)              │          │
-│   └────┬────────────────────────────────────────┘          │
-│        │                                                    │
-│   ┌────▼────────────────────────────────────────┐          │
-│   │              Memory Layer                    │          │
-│   │  ChromaDB + Embeddings + Retrieval          │          │
-│   └────┬────────────────────────────────────────┘          │
-│        │                                                    │
-│   ┌────▼────────────────────────────────────────┐          │
-│   │           LLM Layer (LiteLLM)                │          │
-│   │   Gemini / OpenAI / Claude / Ollama         │          │
-│   └─────────────────────────────────────────────┘          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-Built with ❤️ for developers who want their AI to actually remember them.
+This project is licensed under the [MIT License](LICENSE).
