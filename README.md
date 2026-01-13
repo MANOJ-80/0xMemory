@@ -39,7 +39,7 @@ Most tools define memory as "storing chat logs". 0xMemory defines it as **curati
 
 ## 🧩 How It Works
 
-0xMemory sits between your AI agent and your codebase, acting as a "hippocampus" that consolidates short-term chat into long-term knowledge.
+0xMemory isn't just a file writer. It's a **living knowledge loop** that runs legally on your machine.
 
 ```mermaid
 flowchart LR
@@ -67,6 +67,22 @@ flowchart LR
     style Agent fill:#e1f5fe,stroke:#0277bd
     style MCP fill:#fff9c4,stroke:#fbc02d
 ```
+
+### The Knowledge Pipeline
+
+1.  **Capture (The Ear)**
+
+    - **Manual**: You explicitly tell it: _"Remember that we use Poetry for deps."_
+    - **Auto-Extraction**: You dump a raw chat log, and 0xMemory uses a local LLM (or API) to distill it into atomic facts: _"Fact: Project uses Poetry. Decision: Switched from pipenv on 2024-01-15."_
+
+2.  **Storage (The Hippocampus)**
+
+    - **Source of Truth**: Everything is saved to `.0xmemory/memory/*.md`. These are standard Markdown files. You can edit, delete, or version control them with Git.
+    - **Indexing**: Every save triggers a background sync to a local **ChromaDB** vector store. This turns text into mathematical embeddings for **semantic** search.
+
+3.  **Recall (The Voice)**
+    - **Hybrid Search**: Use Vector Search (conceptual matches) + Keyword Search (exact matches).
+    - **Context Injection**: When you ask _"How do I install dependencies?"_, 0xMemory finds the relevant facts and injects them into your AI's context window _before_ it answers.
 
 ---
 
