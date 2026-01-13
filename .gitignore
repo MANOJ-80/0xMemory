@@ -59,3 +59,7 @@ Thumbs.db
 
 # 0xMemory vector store (auto-added)
 .0xmemory/.store/
+
+# Local Dev Files
+PROGRESS.md
+docs/
