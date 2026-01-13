@@ -52,8 +52,8 @@ flowchart LR
         MCP[🔌 MCP Server]
 
         subgraph Storage [Dual Storage System]
-            MD[📄 Markdown Files\n(Source of Truth)]
-            Vec[🔎 Vector DB\n(Semantic Search)]
+            MD["📄 Markdown Files\n(Source of Truth)"]
+            Vec["🔎 Vector DB\n(Semantic Search)"]
         end
     end
 
