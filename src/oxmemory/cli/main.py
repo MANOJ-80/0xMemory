@@ -92,6 +92,12 @@ def init(
         "-f",
         help="Overwrite existing brain",
     ),
+    local: bool = typer.Option(
+        False,
+        "--local",
+        "-l",
+        help="Setup explicitly for local AI (Ollama/LM Studio) without cloud APIs",
+    ),
 ) -> None:
     """Initialize a new brain in the current directory.
 
@@ -147,17 +153,32 @@ def init(
     env_path = cwd / ".env"
     env_created = False
     if not env_path.exists():
-        env_content = (
-            "# 0xMemory Configuration\n"
-            "# ----------------------\n"
-            "# PASTE YOUR API KEYS HERE. This file is ignored by git.\n\n"
-            "# 1. LLM Provider (Optional - for knowledge extraction)\n"
-            "# GEMINI_API_KEY=\n"
-            "# GROQ_API_KEY=\n"
-            "# OPENROUTER_API_KEY=\n\n"
-            "# 2. Vector Database (Optional - for cloud embeddings)\n"
-            "# OPENAI_API_KEY=\n"
-        )
+        if local:
+            env_content = (
+                "# 0xMemory Local Configuration\n"
+                "# ----------------------------\n"
+                "# Configured for 100% offline usage.\n\n"
+                "# 1. LLM Provider (Ollama / LM Studio)\n"
+                "# OLLAMA_API_BASE=http://localhost:11434\n"
+                "# LM_STUDIO_API_BASE=http://localhost:1234/v1\n\n"
+                "# 2. Vector Database\n"
+                "# Uses built-in ChromaDB with sentence-transformers.\n"
+                "# No API keys required.\n"
+            )
+        else:
+            env_content = (
+                "# 0xMemory Configuration\n"
+                "# ----------------------\n"
+                "# PASTE YOUR API KEYS HERE. This file is ignored by git.\n\n"
+                "# 1. LLM Provider (Optional - for knowledge extraction)\n"
+                "# GEMINI_API_KEY=\n"
+                "# GROQ_API_KEY=\n"
+                "# OPENROUTER_API_KEY=\n"
+                "# OLLAMA_API_BASE=http://localhost:11434\n"
+                "# LM_STUDIO_API_BASE=http://localhost:1234/v1\n\n"
+                "# 2. Vector Database (Optional - for cloud embeddings)\n"
+                "# OPENAI_API_KEY=\n"
+            )
         env_path.write_text(env_content)
         env_created = True
 
@@ -189,8 +210,54 @@ def init(
     console.print("  4. Configure your AI client (Claude, Gemini, Cursor) to use it")
 
 
+
+@app.command()
+def check_local() -> None:
+    """Verify connections to local LLMs (Ollama / LM Studio)."""
+    import urllib.request
+    import urllib.error
+    import json
+
+    console.print(Panel.fit("🔍 Checking Local AI Status...", title="100% Private Mode", border_style="blue"))
+
+    # Check Ollama
+    ollama_url = "http://localhost:11434/api/tags"
+    try:
+        req = urllib.request.Request(ollama_url)
+        with urllib.request.urlopen(req, timeout=3) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode())
+                models = [m['name'] for m in data.get('models', [])]
+                console.print(f"[green]✅ Ollama is running![/green] (Found {len(models)} models)")
+                if models:
+                    console.print(f"   [dim]Available: {', '.join(models[:3])}{'...' if len(models) > 3 else ''}[/dim]")
+            else:
+                console.print(f"[yellow]⚠️ Ollama responded with status {response.status}[/yellow]")
+    except urllib.error.URLError:
+        console.print("[red]❌ Ollama is not running[/red] (Expected at http://localhost:11434)")
+
+    # Check LM Studio
+    lm_studio_url = "http://localhost:1234/v1/models"
+    try:
+        req = urllib.request.Request(lm_studio_url)
+        with urllib.request.urlopen(req, timeout=3) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode())
+                models = [m['id'] for m in data.get('data', [])]
+                console.print(f"[green]✅ LM Studio is running![/green] (Found {len(models)} models)")
+                if models:
+                    console.print(f"   [dim]Loaded: {models[0]}[/dim]")
+            else:
+                console.print(f"[yellow]⚠️ LM Studio responded with status {response.status}[/yellow]")
+    except urllib.error.URLError:
+        console.print("[red]❌ LM Studio is not running[/red] (Expected at http://localhost:1234)")
+
+    console.print("\n[dim]Note: 0xMemory connects to these automatically during extraction.[/dim]")
+
+
 @app.command()
 def serve(
+
     project_dir: Path | None = typer.Argument(
         None,
         help="Project directory (defaults to current)",

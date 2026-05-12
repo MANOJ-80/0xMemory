@@ -4,19 +4,36 @@
 
 ### The Missing Memory Layer for AI Agents
 
+**Market Trend 2026:** People want **PRIVATE AI systems**. 0xMemory delivers.
+
 [![PyPI](https://img.shields.io/pypi/v/oxmemory?style=for-the-badge&color=blue)](https://pypi.org/project/oxmemory/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![MCP Enabled](https://img.shields.io/badge/MCP-Enabled-green?style=for-the-badge)](https://modelcontextprotocol.io)
-[![Local First](https://img.shields.io/badge/Local-100%25-blueviolet?style=for-the-badge)](https://github.com/MANOJ-80/0xMemory)
+[![100% Local & Private](https://img.shields.io/badge/Privacy-100%25_Offline_First-blueviolet?style=for-the-badge)](https://github.com/MANOJ-80/0xMemory)
 
 **Stop explaining your project to every new chat session.**  
-0xMemory transforms your repository into a self-documenting brain that evolves with your code.
+0xMemory transforms your repository into a self-documenting brain that evolves with your code, **running entirely locally on your machine.**
 
-[Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Features](#-features) • [Installation](#-installation)
-
+[Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Local AI First](#-local-ai-first) • [Features](#-features) • [Installation](#-installation)
 </div>
 
 ---
+
+
+## 🔒 Local AI First-Class Support
+
+**Your data is yours. 0xMemory is engineered from the ground up for the privacy-conscious developer.**
+
+*   **Ollama Native**: Works out-of-the-box with `llama3`, `mistral`, or any Ollama model.
+*   **LM Studio Support**: Seamlessly connect to your local LM Studio server (`http://localhost:1234`).
+*   **Local Embeddings**: Ships with `ChromaDB` and `sentence-transformers` for 100% offline, local semantic search. Zero cloud dependencies.
+*   **Offline Mode**: Go completely off-grid. `0xmemory init --local` configures everything to use your local machine's resources without ever prompting for an API key.
+
+Check your local AI connection instantly:
+```bash
+0xmemory check-local
+```
+
 
 ## 🚀 Why 0xMemory?
 

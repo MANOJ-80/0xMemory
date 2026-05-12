@@ -36,11 +36,15 @@ class LLMProvider:
     host_env: str | None = None  # Environment variable for host
     default_host: str | None = None
 
+
     def get_model_string(self) -> str:
         """Get the LiteLLM model string."""
         if self.name == "ollama":
             return f"ollama/{self.model}"
+        elif self.name == "lm_studio":
+            return f"openai/{self.model}"
         elif self.name == "groq":
+
             return f"groq/{self.model}"
         elif self.name == "gemini":
             return f"gemini/{self.model}"
@@ -59,8 +63,8 @@ class LLMProvider:
 
     def is_available(self) -> bool:
         """Check if this provider is configured."""
-        if self.name == "ollama":
-            # Ollama available if host is set via env or default exists
+        if self.name in ["ollama", "lm_studio"]:
+            # Local providers are available if host is set via env or default exists
             host = self.get_host()
             return host is not None
 
@@ -72,6 +76,12 @@ class LLMProvider:
 
 # Default providers in priority order
 DEFAULT_PROVIDERS = [
+    LLMProvider(
+        name="lm_studio",
+        model="local-model", # Model name is usually ignored by LM Studio but required by LiteLLM
+        host_env="LM_STUDIO_API_BASE",
+        default_host="http://localhost:1234/v1",
+    ),
     LLMProvider(
         name="ollama",
         model="llama3.2:3b",
@@ -174,11 +184,17 @@ class KnowledgeExtractor:
         messages.append({"role": "user", "content": prompt})
 
         try:
-            # Set environment for Ollama if needed
+            # Set environment for local providers if needed
             if provider.name == "ollama":
                 host = provider.get_host()
                 if host:
                     os.environ["OLLAMA_API_BASE"] = host
+            elif provider.name == "lm_studio":
+                host = provider.get_host()
+                if host:
+                    # LiteLLM treats 'openai/' as pointing to OpenAI, so we override the base
+                    os.environ["OPENAI_API_BASE"] = host
+                    os.environ["OPENAI_API_KEY"] = "lm-studio"
 
             response = await self.litellm.acompletion(
                 model=provider.get_model_string(),
