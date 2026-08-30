@@ -1,177 +1,140 @@
 <div align="center">
 
-# 0xMemory
+# 🧠 0xMemory
 
-### The Missing Memory Layer for AI Agents
+### Autonomous Agentic Memory Layer for AI Coding Assistants
 
-**Market Trend 2026:** People want **PRIVATE AI systems**. 0xMemory delivers.
+**Local-First • Git-Native • Human-Editable • MCP Enabled**
 
 [![PyPI](https://img.shields.io/pypi/v/oxmemory?style=for-the-badge&color=blue)](https://pypi.org/project/oxmemory/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![MCP Enabled](https://img.shields.io/badge/MCP-Enabled-green?style=for-the-badge)](https://modelcontextprotocol.io)
 [![100% Local & Private](https://img.shields.io/badge/Privacy-100%25_Offline_First-blueviolet?style=for-the-badge)](https://github.com/MANOJ-80/0xMemory)
 
-**Stop explaining your project to every new chat session.**  
-0xMemory transforms your repository into a self-documenting brain that evolves with your code, **running entirely locally on your machine.**
+**Stop explaining your codebase architecture to every new chat session.**  
+0xMemory provides a persistent, self-evolving cognitive layer for AI agents (Claude, Cursor, Windsurf), **running 100% locally on your machine.**
 
-[Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Local AI First](#-local-ai-first) • [Features](#-features) • [Installation](#-installation)
+[Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Agentic Features](#-agentic-features) • [Installation](#-installation)
 </div>
 
 ---
 
-
 ## 🔒 Local AI First-Class Support
 
-**Your data is yours. 0xMemory is engineered from the ground up for the privacy-conscious developer.**
+**Your proprietary code is yours. 0xMemory is engineered from the ground up for privacy-conscious developers.**
 
-*   **Ollama Native**: Works out-of-the-box with `llama3`, `mistral`, or any Ollama model.
-*   **LM Studio Support**: Seamlessly connect to your local LM Studio server (`http://localhost:1234`).
-*   **Local Embeddings**: Ships with `ChromaDB` and `sentence-transformers` for 100% offline, local semantic search. Zero cloud dependencies.
-*   **Offline Mode**: Go completely off-grid. `0xmemory init --local` configures everything to use your local machine's resources without ever prompting for an API key.
+*   **100% Local Embeddings**: Built-in `sentence-transformers` (`all-MiniLM-L6-v2`) and embedded `ChromaDB` vector engine. Zero cloud dependencies.
+*   **Ollama & LM Studio Native**: Works seamlessly with local LLM providers (`http://localhost:11434` / `http://localhost:1234`).
+*   **Offline Mode**: Operates completely off-grid without requiring third-party API keys.
 
-Check your local AI connection instantly:
+Check your local connection instantly:
 ```bash
 0xmemory check-local
 ```
 
+---
 
 ## 🚀 Why 0xMemory?
 
-Building complex software with AI agents is frustrating because they **forget**. They forget your architecture decisions, your coding conventions, and what you fixed yesterday.
+Modern AI coding agents possess deep reasoning skills but suffer from **session amnesia**—they forget architectural choices, design trade-offs, and past bug fixes the moment a session ends.
 
-**0xMemory bridges the gap between simple CLI tools and complex cloud memory APIs.**
+**0xMemory gives AI agents an autonomous cognitive loop.**
 
-| Feature          | ☁️ Cloud Memory APIs   | ⌨️ CLI Agents    | 🧠 0xMemory                |
-| :--------------- | :--------------------- | :--------------- | :------------------------- |
-| **Primary Goal** | App Integration        | Chat Interaction | **Project Intelligence**   |
-| **Data Privacy** | ❌ Third-party Servers | ⚠️ Session-only  | ✅ **100% Local**          |
-| **Storage**      | ❌ Hidden Vector DB    | ❌ Temp Files    | ✅ **Markdown + Vector**   |
-| **Control**      | ❌ API Access Only     | ❌ Re-prompting  | ✅ **Edit Files Directly** |
-| **Scope**        | 🌍 Global / User       | ⏱️ Session       | 📂 **Per-Repository**      |
-| **Cost**         | ❌ Subscription        | ✅ Free          | ✅ **Free (Open Source)**  |
-
-Most tools define memory as "storing chat logs". 0xMemory defines it as **curating project knowledge**.
+| Feature | ☁️ Cloud Memory APIs | ⌨️ Basic CLI Tools | 🧠 0xMemory |
+| :--- | :--- | :--- | :--- |
+| **Primary Goal** | Application Storage | Chat Interaction | **Autonomous Agentic Memory** |
+| **Data Privacy** | ❌ Third-party Cloud | ⚠️ Session-only | ✅ **100% Local & Private** |
+| **Storage Engine** | ❌ Opaque Vector DB | ❌ Temporary Files | ✅ **Markdown + ChromaDB Vector** |
+| **Human Auditability** | ❌ Read-Only API | ❌ Re-prompting | ✅ **Edit Markdown Directly** |
+| **Scope** | 🌍 Global User | ⏱️ Temporary Session | 📂 **Git-Native Per Repository** |
+| **Cost** | ❌ Monthly SaaS | ✅ Free | ✅ **100% Free & Open Source** |
 
 ---
 
-## 🧩 How It Works
+## 🧩 How It Works: Autonomous Agentic Loop
 
-0xMemory isn't just a file writer. It's a **living knowledge loop** that runs legally on your machine.
+0xMemory operates via the open **Model Context Protocol (MCP)** standard. The AI Agent Model uses its internal reasoning to autonomously decide when to store decisions and when to recall past context.
 
 ```mermaid
-flowchart LR
-    subgraph IDE [Your Environment]
-        Agent[🤖 AI Agent]
+flowchart TD
+    subgraph IDE [Your Coding Environment]
         User[👤 Developer]
+        Agent[🤖 AI Agent Model\nClaude 3.5 / Cursor / GPT-4o]
     end
 
-    subgraph Brain [0xMemory Brain]
-        MCP[🔌 MCP Server]
+    subgraph MemoryEngine [0xMemory Engine]
+        MCP[🔌 MCP Server stdio / SSE]
 
         subgraph Storage [Dual Storage System]
-            MD["📄 Markdown Files\n(Source of Truth)"]
-            Vec["🔎 Vector DB\n(Semantic Search)"]
+            MD["📄 Plain-Text Markdown\n.0xmemory/memory/*.md\n(Human Source of Truth)"]
+            Vec["🧠 ChromaDB Vector Index\n(384d Local Embeddings)"]
         end
     end
 
-    User -->|Prompts| Agent
-    Agent <-->|Read/Write| MCP
-    MCP -->|Save Fact| MD
-    MD -.->|Sync| Vec
-    MCP -->|Search| Vec
-
-    style Brain fill:#f0f4f8,stroke:#333,stroke-width:2px
-    style Agent fill:#e1f5fe,stroke:#0277bd
-    style MCP fill:#fff9c4,stroke:#fbc02d
+    User -->|Prompts Task| Agent
+    Agent -->|Autonomous Tool Call: remember / recall| MCP
+    MCP -->|Dual Write| MD
+    MD -.->|Auto Sync| Vec
+    MCP <-->|Semantic Hybrid Search| Vec
 ```
 
-### The Knowledge Pipeline
+### The 3 Autonomous Memory Streams
 
-1.  **Capture (The Ear)**
+1. **In-Session Agentic Tool Calling (`remember` / `recall`)**  
+   During conversation, the AI Agent model autonomously evaluates key architectural choices (*"We chose PostgreSQL for ACID compliance"*) and issues an MCP tool call to save it. When context is missing, the model autonomously calls `recall` to search past memories.
 
-    - **Manual**: You explicitly tell it: _"Remember that we use Poetry for deps."_
-    - **Auto-Extraction**: You dump a raw chat log, and 0xMemory uses a local LLM (or API) to distill it into atomic facts: _"Fact: Project uses Poetry. Decision: Switched from pipenv on 2024-01-15."_
+2. **Passive Background Memory Harvesting (`0xmemory observe`)**  
+   An automated Git post-commit background loop analyzes your code diffs, harvesting architectural decisions and completed features into memory without human effort.
 
-2.  **Storage (The Hippocampus)**
-
-    - **Source of Truth**: Everything is saved to `.0xmemory/memory/*.md`. These are standard Markdown files. You can edit, delete, or version control them with Git.
-    - **Indexing**: Every save triggers a background sync to a local **ChromaDB** vector store. This turns text into mathematical embeddings for **semantic** search.
-
-3.  **Recall (The Voice)**
-    - **Hybrid Search**: Use Vector Search (conceptual matches) + Keyword Search (exact matches).
-    - **Context Injection**: When you ask _"How do I install dependencies?"_, 0xMemory finds the relevant facts and injects them into your AI's context window _before_ it answers.
+3. **Human Inspection & Direct Editing**  
+   Memories are saved as human-readable Markdown files (`facts.md`, `decisions.md`). You can open them in VS Code, edit, or delete lines anytime. Running `0xmemory rebuild` instantly syncs ChromaDB.
 
 ---
 
-## ✨ Features
+## ✨ Agentic Features
 
-### ✅ Implemented
-
-- [x] **Project-Scoped Brains**: One brain per repository. Context never leaks.
-- [x] **Cross-LLM Compatible**: Works with **Cursor**, **Claude Desktop**, **Windsurf**, and **Gemini CLI**.
-- [x] **Hybrid Search**: Combines keyword matching with semantic vector search for 100% recall.
-- [x] **Human-Editable**: Your memory is just `brain.md` and `facts.md`. Edit them like code.
-- [x] **Knowledge Extraction**: `0xmemory extract` turns messy chat logs into structured facts.
-- [x] **Dual Storage**:
-  - **Read**: Fast semantic search via ChromaDB.
-  - **Write**: Durable Markdown files for version control.
-
-### 🚧 Roadmap
-
-- [ ] **Git Automation**: Auto-commit memory changes (`feat: learned 3 new facts`).
-- [ ] **Memory Decay**: Old, unused memories fade away to keep context fresh.
-- [ ] **Reinforce Tool**: Manually strengthen important memories.
-- [ ] **Context Window Control**: Smartly truncate context to fit token limits.
-- [ ] **Session Summary**: Auto-summarize chat logs into concise insights.
+- [x] **Autonomous Memory Decisions**: AI agent models independently determine what information is worth remembering and when to search.
+- [x] **Project-Scoped Brains**: One brain per repository (`.0xmemory/`). Context never leaks between projects.
+- [x] **Cross-Agent Compatibility**: Seamlessly works across **Cursor**, **Claude Desktop**, **Windsurf**, **VS Code (Cline/Roo)**, and **Custom Python Agents**.
+- [x] **Dual Persistence Engine**:
+  - **Human-Readable**: Durable Markdown files (`facts.md`, `decisions.md`) for Git version control.
+  - **Machine-Readable**: In-process `ChromaDB` vector DB for fast semantic search.
+- [x] **Passive Git Harvesting**: Background observer reads commit diffs to record completed features automatically.
+- [x] **Context Window Protection**: Top-$N$ candidate search limits (`limit=5`) prevent prompt bloat.
 
 ---
 
 ## ⚡ Quick Start
 
-### 1. Set Up Environment
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-### 2. Install
+### 1. Installation
 
 ```bash
 pip install oxmemory
 ```
 
-### 3. Initialize
+### 2. Initialize Brain in Repository
 
-Go to your project root and create a brain:
+Navigate to your project root and initialize 0xMemory:
 
 ```bash
 cd my-project
 0xmemory init
 ```
 
-\*This creates a `.0xmemory/` directory. **Add `.0xmemory/brain.md` to your editor and describe your project high-level goals.\***
+*This creates a `.0xmemory/` directory containing `brain.md` and `memory/` storage files.*
 
-### 4. Serve
-
-Start the memory server:
-
-```bash
-0xmemory serve --transport http
-```
-
-### 5. Connect
+### 3. Connect to Your AI Agent
 
 #### For Cursor / Windsurf
 
-Add this to your MCP config:
+Add 0xMemory to your MCP server configuration:
 
 ```json
 {
   "mcpServers": {
     "0xMemory": {
-      "url": "http://localhost:8000/sse",
-      "transport": "sse"
+      "command": "0xmemory",
+      "args": ["serve"]
     }
   }
 }
@@ -186,8 +149,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "0xmemory": {
       "command": "0xmemory",
-      "args": ["serve"],
-      "cwd": "/absolute/path/to/your/project"
+      "args": ["serve"]
     }
   }
 }
@@ -195,104 +157,41 @@ Add to `claude_desktop_config.json`:
 
 ---
 
-## 🛠️ Usage Patterns
+## 🛠️ Execution Patterns
 
-### The "Disciplined" Flow (Manual)
+### 1. Interactive Agentic Flow
+Simply chat with your AI agent as usual. When you make architectural decisions or complete features, the AI Agent model autonomously invokes `remember` to persist the state.
 
-_Best for keeping a clean, high-quality brain._
-
-1. **Teach**: "Remember that we use `black` for formatting."
-2. **Verify**: "What are our formatting rules?"
-3. **Correct**: Open `.0xmemory/memory/facts.md` and edit the text directly if the AI got it wrong.
-
-### The "Lazy" Flow (Automated)
-
-_Best for fast-moving development sessions._
-
-1. **Dump**: Provide a messy brain dump or paste a conversation logs.
-2. **Extract**: Run `0xmemory extract "..."`
-3. **Review**: 0xMemory uses an LLM (Groq/Ollama) to parse out the facts for you.
-
----
-
-## 📂 Project Structure
-
-Your brain is transparent. Here's what's inside `.0xmemory/`:
-
-| File                  | Purpose                                                         |
-| :-------------------- | :-------------------------------------------------------------- |
-| `brain.md`            | **The Core**. High-level architecture, goals, and user context. |
-| `memory/facts.md`     | Technical facts (e.g., "API runs on port 8000").                |
-| `memory/decisions.md` | Decision logs (e.g., "Why we chose HTMX over React").           |
-| `sessions/`           | Archived chat logs for historical retrieval.                    |
-| `.store/`             | (Git-ignored) Local ChromaDB vector index.                      |
-
----
-
-## 🏗️ Advanced: Token Optimization
-
-As your memory grows, you can optimize how Cursor uses it.
-
-### Default Mode (Direct Access)
-
-Cursor reads `.0xmemory/*.md` files directly into its context window.
-
-- ✅ Fast - no tool calls needed
-- ❌ Uses tokens - can fill context with large memories
-
-### Token Saver Mode
-
-Force Cursor to use the `recall` tool (vector search) instead of reading files directly. This scales to unlimited memories with zero token cost until needed.
-
-**Step 1**: Create `.cursorignore` in your project root:
-
-```text
-.0xmemory/memory/*.md
-```
-
-**Step 2**: Copy the rules template to your project:
-
+### 2. Passive Background Observer Flow
+Enable the Git hook to let 0xMemory passively monitor code changes:
 ```bash
-cp examples/cursorrules.template .cursorrules
+0xmemory observe
 ```
 
-Or create a minimal `.cursorrules`:
+---
 
-```markdown
-# 0xMemory Rules
+## 📂 Repository Brain Structure
 
-You have a long-term memory system called 0xMemory.
-When you need project context or past decisions, use the `recall` tool to search for it.
-ALWAYS check `recall` before saying "I don't know".
-```
+Your repository brain is 100% transparent and Git-native inside `.0xmemory/`:
 
-## 📝 AI Context Templates
-
-We provide ready-to-use context files for different AI agents. Copy these to your project root:
-
-| File                            | For                 | Usage                  |
-| :------------------------------ | :------------------ | :--------------------- |
-| `examples/cursorrules.template` | Cursor IDE          | Copy as `.cursorrules` |
-| `examples/CLAUDE.md`            | Claude Code/Desktop | Copy as `CLAUDE.md`    |
-| `examples/GEMINI.md`            | Gemini CLI          | Copy as `GEMINI.md`    |
-| `examples/AGENT.md`             | Any AI agent        | Universal template     |
-
-Each template includes:
-
-- Full tools and resources reference
-- Behavior guidelines
-- Customization section for your project context
+| File / Path | Purpose |
+| :--- | :--- |
+| `brain.md` | **Main Overview**. High-level architecture, conventions, and project goals. |
+| `memory/facts.md` | Technical constraints, environment setup, and configurations. |
+| `memory/decisions.md` | Architectural decision logs and trade-off rationales. |
+| `memory/learnings.md` | Gotchas, lessons learned, and bug resolution patterns. |
+| `memory/preferences.md` | User coding preferences and style guidelines. |
+| `.store/` | *(Git-ignored)* Local ChromaDB vector database index. |
 
 ---
 
 ## 🤝 Contributing
 
-We are building the standard for local AI memory.
+We are building the open standard for local, autonomous AI agent memory.
 
-- **Bugs?** Open an issue.
-- **Ideas?** Discussions are open.
-- **Code?** PRs welcome!
+- **Bugs & Issues?** Open an issue on GitHub.
+- **Pull Requests?** PRs are warmly welcome!
 
 <div align="center">
-  <sub>Built for developers who want their AI to actually remember things.</sub>
+  <sub>Built for developers who want their AI agents to actually remember decisions.</sub>
 </div>
