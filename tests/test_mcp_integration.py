@@ -14,8 +14,19 @@ from oxmemory.storage.markdown import MarkdownManager
 
 
 @pytest.fixture
-def temp_project():
+def temp_project(monkeypatch):
     """Create a temporary project directory with initialized brain."""
+    import oxmemory.mcp.server as server_module
+    from oxmemory.storage.memory_store import MemoryStore
+
+    stores = []
+
+    def tracked_store(*args, **kwargs):
+        store = MemoryStore(*args, **kwargs)
+        stores.append(store)
+        return store
+
+    monkeypatch.setattr(server_module, "MemoryStore", tracked_store)
     with tempfile.TemporaryDirectory() as tmpdir:
         project_dir = Path(tmpdir)
 
@@ -26,7 +37,11 @@ def temp_project():
         markdown = MarkdownManager(project_dir)
         markdown.initialize_brain("Test Project", "A test project")
 
-        yield project_dir
+        try:
+            yield project_dir
+        finally:
+            for store in stores:
+                store.close()
 
 
 class TestMCPServerCreation:
@@ -45,7 +60,7 @@ class TestMCPServerCreation:
         server, _ = create_server(temp_project)
 
         # Server name should be set
-        assert server.name == "0xmemory"
+        assert server.server_info.name == "0xmemory"
 
 
 class TestMCPTools:

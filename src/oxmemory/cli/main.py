@@ -16,6 +16,7 @@ from oxmemory import __version__
 load_dotenv()  # noqa: E402
 
 from oxmemory.cli.export import app as export_app  # noqa: E402
+from oxmemory.cli.lifecycle import app as lifecycle_app  # noqa: E402
 from oxmemory.core.config import (  # noqa: E402
     brain_exists,
     get_brain_path,
@@ -37,6 +38,7 @@ app = typer.Typer(
 
 # Register export command
 app.add_typer(export_app, name="export")
+app.add_typer(lifecycle_app, name="memory")
 
 console = Console()
 
@@ -839,6 +841,7 @@ def extract(
                 tags=memory.tags,
                 source="extraction",
                 salience=memory.salience,
+                confidence=memory.confidence,
             )
         console.print(f"\n[green]✅ Saved {len(memories)} memories[/green]")
 

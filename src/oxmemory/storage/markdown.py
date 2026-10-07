@@ -5,6 +5,9 @@ that store brain context, facts, decisions, and other memories.
 """
 
 import re
+import json
+import os
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -121,6 +124,7 @@ def serialize_memory_entry(memory: Memory) -> str:
         "",
         f"_Source: {memory.source}_",
         f"_ID: {memory.id}_",
+        "<!-- 0xmemory: " + json.dumps(memory.model_dump(mode="json", exclude={"content", "type", "tags", "source", "id"}), ensure_ascii=True) + " -->",
         "",
         "---",
         "",
@@ -180,6 +184,9 @@ def parse_memory_entries(content: str, memory_type: MemoryType) -> list[Memory]:
             current_content = []
 
         elif current_entry:
+            if line.startswith("<!-- 0xmemory: ") and line.endswith(" -->"):
+                current_entry["metadata"] = json.loads(line[len("<!-- 0xmemory: "):-len(" -->")])
+                continue
             # Check for metadata lines
             id_match = ID_PATTERN.search(line)
             source_match = SOURCE_PATTERN.search(line)
@@ -188,7 +195,7 @@ def parse_memory_entries(content: str, memory_type: MemoryType) -> list[Memory]:
                 current_entry["id"] = id_match.group(1)
             elif source_match:
                 current_entry["source"] = source_match.group(1)
-            elif line.strip() != "---" and not line.startswith("_"):
+            elif line.strip() != "---":
                 current_content.append(line)
 
     # Don't forget last entry
@@ -201,7 +208,7 @@ def parse_memory_entries(content: str, memory_type: MemoryType) -> list[Memory]:
 
 def _build_memory(entry: dict, memory_type: MemoryType) -> Memory:
     """Build a Memory object from parsed entry data."""
-    return Memory(
+    values = dict(
         id=entry.get("id") or f"mem-{entry['created_at'].strftime('%Y%m%d%H%M%S')}",
         content=entry.get("content", ""),
         type=memory_type,
@@ -211,6 +218,9 @@ def _build_memory(entry: dict, memory_type: MemoryType) -> Memory:
         updated_at=entry.get("created_at", datetime.now()),
         accessed_at=datetime.now(),
     )
+    allowed = set(Memory.model_fields) - {"id", "content", "type", "tags", "source"}
+    values.update({k: v for k, v in entry.get("metadata", {}).items() if k in allowed})
+    return Memory(**values)
 
 
 class MarkdownManager:
@@ -245,7 +255,7 @@ class MarkdownManager:
         """
         brain_file = self.get_brain_file_path()
         if brain_file.exists():
-            return brain_file.read_text()
+            return brain_file.read_text(encoding="utf-8")
         return ""
 
     def write_brain(self, content: str) -> None:
@@ -256,7 +266,7 @@ class MarkdownManager:
         """
         brain_file = self.get_brain_file_path()
         brain_file.parent.mkdir(parents=True, exist_ok=True)
-        brain_file.write_text(content)
+        brain_file.write_text(content, encoding="utf-8")
 
     def create_brain(self, project_name: str = "My Project", project_description: str = "") -> Path:
         """Create brain.md with template.
@@ -275,7 +285,7 @@ class MarkdownManager:
         )
         brain_file = self.get_brain_file_path()
         brain_file.parent.mkdir(parents=True, exist_ok=True)
-        brain_file.write_text(content)
+        brain_file.write_text(content, encoding="utf-8")
         return brain_file
 
     # -------------------------------------------------------------------------
@@ -313,7 +323,7 @@ class MarkdownManager:
             file_path = self._get_memory_file_path(memory_type)
             if not file_path.exists():
                 file_path.parent.mkdir(parents=True, exist_ok=True)
-                file_path.write_text(self._get_template(memory_type))
+                file_path.write_text(self._get_template(memory_type), encoding="utf-8")
                 created.append(file_path)
         return created
 
@@ -330,7 +340,7 @@ class MarkdownManager:
         if not file_path.exists():
             return []
 
-        content = file_path.read_text()
+        content = file_path.read_text(encoding="utf-8")
         return parse_memory_entries(content, memory_type)
 
     def add_memory(self, memory: Memory) -> None:
@@ -344,11 +354,11 @@ class MarkdownManager:
         # Ensure file exists with template
         if not file_path.exists():
             file_path.parent.mkdir(parents=True, exist_ok=True)
-            file_path.write_text(self._get_template(memory.type))
+            file_path.write_text(self._get_template(memory.type), encoding="utf-8")
 
         # Append new memory
         entry = serialize_memory_entry(memory)
-        with open(file_path, "a") as f:
+        with open(file_path, "a", encoding="utf-8") as f:
             f.write(entry)
 
     def remove_memory(self, memory_id: str, memory_type: MemoryType) -> bool:
@@ -365,18 +375,41 @@ class MarkdownManager:
         if not file_path.exists():
             return False
 
-        content = file_path.read_text()
+        return self.replace_entries(memory_type, {memory_id: None})
 
-        # Find and remove the entry
-        # Pattern matches from header to next separator
-        pattern = rf"(## \[[^\]]+\].*?_ID:\s*{re.escape(memory_id)}_.*?---\n*)"
+    def replace_with_successor(self, old: Memory, new: Memory) -> None:
+        if not self.replace_entries(old.type, {old.id: old}, append=new):
+            raise ValueError(f"Memory disappeared: {old.id}")
 
-        new_content, count = re.subn(pattern, "", content, flags=re.DOTALL)
+    def replace_entries(self, memory_type: MemoryType, replacements: dict[str, Memory | None],
+                        append: Memory | None = None) -> bool:
+        """Replace only selected entries, atomically, preserving neighboring text.
 
-        if count > 0:
-            file_path.write_text(new_content)
-            return True
-        return False
+        Callers serialize writes; this is not a multi-process transaction manager.
+        """
+        path = self._get_memory_file_path(memory_type)
+        content = path.read_text(encoding="utf-8")
+        parts = re.split(r"(?=^## \[\d{4}-\d{2}-\d{2})", content, flags=re.MULTILINE)
+        found = set()
+        for index, part in enumerate(parts):
+            match = re.search(r"^_ID:\s*(\S+)_\s*$", part, flags=re.MULTILINE)
+            if match and match[1] in replacements:
+                replacement = replacements[match[1]]
+                parts[index] = serialize_memory_entry(replacement) if replacement else ""
+                found.add(match[1])
+        if found != set(replacements):
+            return False
+        if append:
+            parts.append(serialize_memory_entry(append))
+        fd, temp = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                stream.write("".join(parts))
+            os.replace(temp, path)
+        finally:
+            if os.path.exists(temp):
+                os.unlink(temp)
+        return True
 
     def get_memory_by_id(self, memory_id: str) -> Memory | None:
         """Find a memory by ID across all types.

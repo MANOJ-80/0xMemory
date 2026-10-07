@@ -1,6 +1,7 @@
 """HTTP Server implementation for 0xMemory (FastAPI + SSE)."""
 
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
@@ -71,8 +72,16 @@ def create_app(project_dir: Path | None = None, debug: bool = False) -> FastAPI:
             }
         )
 
+    @asynccontextmanager
+    async def lifespan(app):
+        try:
+            yield
+        finally:
+            store.close()
+
     app = FastAPI(
         title="0xMemory MCP Server",
+        lifespan=lifespan,
         description="Cross-LLM memory layer for AI agents",
         version=__version__,
         routes=[

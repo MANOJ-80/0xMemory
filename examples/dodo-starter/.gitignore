@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+data/
+.0xmemory/
+.vscode/
+
+# 0xMemory (auto-added)
+.0xmemory/.store/
+
+.cursor/
+.agents/

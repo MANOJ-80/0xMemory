@@ -2,9 +2,10 @@
 
 from datetime import datetime
 from enum import Enum
+from pathlib import PurePosixPath
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class MemoryType(str, Enum):
@@ -14,6 +15,12 @@ class MemoryType(str, Enum):
     DECISION = "decision"
     LEARNING = "learning"
     PREFERENCE = "preference"
+
+
+class MemoryStatus(str, Enum):
+    ACTIVE = "active"
+    STALE = "stale"
+    SUPERSEDED = "superseded"
 
 
 class Memory(BaseModel):
@@ -36,6 +43,37 @@ class Memory(BaseModel):
     # Optional metadata
     session_id: str | None = Field(default=None, description="Session that created this")
     related_to: list[str] = Field(default_factory=list, description="Related memory IDs")
+    status: MemoryStatus = MemoryStatus.ACTIVE
+    file_paths: list[str] = Field(default_factory=list)
+    symbols: list[str] = Field(default_factory=list)
+    commit_sha: str | None = None
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    supersedes: str | None = None
+    superseded_by: str | None = None
+    verification_note: str | None = None
+    stale_at_commit: str | None = None
+    revisions: list[dict] = Field(default_factory=list)
+
+    @field_validator("content")
+    @classmethod
+    def nonempty_content(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Memory content cannot be empty")
+        return value.strip()
+
+    @field_validator("file_paths")
+    @classmethod
+    def normalize_paths(cls, values: list[str]) -> list[str]:
+        paths = []
+        for value in values:
+            value = value.replace("\\", "/")
+            path = PurePosixPath(value)
+            if not value or path.is_absolute() or ".." in path.parts or ":" in value:
+                raise ValueError("Evidence paths must be repository-relative")
+            if str(path) == ".":
+                raise ValueError("Evidence must reference a file")
+            paths.append(str(path))
+        return list(dict.fromkeys(paths))
 
     def touch(self) -> None:
         """Mark memory as accessed (updates accessed_at)."""

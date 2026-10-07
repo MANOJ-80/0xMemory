@@ -9,15 +9,7 @@ from oxmemory.storage.memory_store import MemoryStore
 
 def _memory_to_dict(memory: Memory) -> dict:
     """Convert a Memory to a serializable dictionary."""
-    return {
-        "id": memory.id,
-        "content": memory.content,
-        "type": memory.type.value,
-        "tags": memory.tags,
-        "source": memory.source,
-        "salience": memory.salience,
-        "created_at": memory.created_at.isoformat(),
-    }
+    return memory.model_dump(mode="json")
 
 
 async def handle_remember(
@@ -26,6 +18,9 @@ async def handle_remember(
     type: str = "fact",
     tags: list[str] | None = None,
     source: str = "conversation",
+    file_paths: list[str] | None = None,
+    symbols: list[str] | None = None,
+    commit_sha: str | None = None,
 ) -> dict:
     """Handle the 'remember' tool call.
 
@@ -47,7 +42,7 @@ async def handle_remember(
     except ValueError:
         return {
             "success": False,
-            "error": "Invalid memory type: {type}. Must be one of: "
+            "error": f"Invalid memory type: {type}. Must be one of: "
             "fact, decision, learning, preference",
         }
 
@@ -57,6 +52,9 @@ async def handle_remember(
             memory_type=memory_type,
             tags=tags or [],
             source=source,
+            file_paths=file_paths,
+            symbols=symbols,
+            commit_sha=commit_sha,
         )
 
         return {
@@ -77,6 +75,10 @@ async def handle_recall(
     query: str,
     limit: int = 5,
     types: list[str] | None = None,
+    file_paths: list[str] | None = None,
+    symbols: list[str] | None = None,
+    include_history: bool = False,
+    token_budget: int = 1500,
 ) -> dict:
     """Handle the 'recall' tool call.
 
@@ -102,22 +104,27 @@ async def handle_recall(
                 except ValueError:
                     pass  # Ignore invalid types
 
-        memories = store.search(
+        context = store.recall_context(
             query=query,
             limit=limit,
             memory_types=memory_types,
+            file_paths=file_paths, symbols=symbols,
+            include_history=include_history, token_budget=token_budget,
         )
+        memories = [item["memory"] for item in context["results"]]
 
         if not memories:
             return {
                 "found": 0,
                 "memories": [],
-                "message": f"No memories found matching: {query}",
+                "context": context,
+                "message": "No memories fit this query and context budget.",
             }
 
         return {
             "found": len(memories),
-            "memories": [_memory_to_dict(m) for m in memories],
+            "memories": memories,
+            "context": context,
             "message": f"Found {len(memories)} relevant memories",
         }
     except Exception as e:
@@ -323,6 +330,7 @@ async def handle_extract(
                     tags=memory.tags,
                     source="extraction",
                     salience=memory.salience,
+                    confidence=memory.confidence,
                 )
                 saved_count += 1
 

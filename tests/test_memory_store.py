@@ -26,7 +26,8 @@ class TestMemoryStore:
             config = get_default_config("Test Project")
             save_config(config, project_dir)
 
-            yield MemoryStore(project_dir)
+            with MemoryStore(project_dir) as store:
+                yield store
 
     def test_is_initialized(self, initialized_store):
         """Should detect initialized brain."""

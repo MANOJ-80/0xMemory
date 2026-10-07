@@ -1,0 +1,254 @@
+{
+  "dataset": "4 hand-authored synthetic smoke scenarios; not a research benchmark",
+  "mode": "semantic",
+  "limit": 3,
+  "limitations": [
+    "No model responses or coding-task success are measured",
+    "No-memory metrics describe empty retrieval, not model capability",
+    "Keyword mode is not a reproduction of semantic 0xMemory",
+    "Single-run local latency is diagnostic, not a performance conclusion",
+    "Lifecycle labels are fixture inputs; use test_lifecycle.py for commit transitions",
+    "Bytes are not measured model tokens"
+  ],
+  "summary": {
+    "no_memory": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "stale_fraction": 0.0,
+      "correct_abstention": 1.0
+    },
+    "basic_memory": {
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "reciprocal_rank": 0.8333333333333334,
+      "stale_fraction": 0.20833333333333331,
+      "correct_abstention": 0.0
+    },
+    "enhanced_memory": {
+      "precision": 0.375,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "stale_fraction": 0.0,
+      "correct_abstention": 0.0
+    }
+  },
+  "results": [
+    {
+      "scenario": "authentication replacement",
+      "variant": "no_memory",
+      "retrieved": [],
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "reciprocal_rank": 0.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 0.001300009898841381,
+      "index_setup_ms": 7268.648500001291,
+      "content_bytes": 0,
+      "markdown_bytes": 2503
+    },
+    {
+      "scenario": "authentication replacement",
+      "variant": "basic_memory",
+      "retrieved": [
+        "new",
+        "old",
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.3333333333333333,
+        "recall": 1.0,
+        "reciprocal_rank": 1.0,
+        "stale_fraction": 0.3333333333333333,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 13.368999992962927,
+      "index_setup_ms": 7268.648500001291,
+      "content_bytes": 67,
+      "markdown_bytes": 2503
+    },
+    {
+      "scenario": "authentication replacement",
+      "variant": "enhanced_memory",
+      "retrieved": [
+        "new",
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "reciprocal_rank": 1.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 12.197400006698444,
+      "index_setup_ms": 7268.648500001291,
+      "content_bytes": 44,
+      "markdown_bytes": 2503
+    },
+    {
+      "scenario": "unverified code change",
+      "variant": "no_memory",
+      "retrieved": [],
+      "metrics": {
+        "precision": 0.0,
+        "recall": null,
+        "reciprocal_rank": null,
+        "stale_fraction": 0.0,
+        "correct_abstention": true
+      },
+      "retrieval_ms": 0.006999995093792677,
+      "index_setup_ms": 206.7700000188779,
+      "content_bytes": 0,
+      "markdown_bytes": 1989
+    },
+    {
+      "scenario": "unverified code change",
+      "variant": "basic_memory",
+      "retrieved": [
+        "stale",
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.0,
+        "recall": null,
+        "reciprocal_rank": null,
+        "stale_fraction": 0.5,
+        "correct_abstention": false
+      },
+      "retrieval_ms": 11.479899985715747,
+      "index_setup_ms": 206.7700000188779,
+      "content_bytes": 43,
+      "markdown_bytes": 1989
+    },
+    {
+      "scenario": "unverified code change",
+      "variant": "enhanced_memory",
+      "retrieved": [
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.0,
+        "recall": null,
+        "reciprocal_rank": null,
+        "stale_fraction": 0.0,
+        "correct_abstention": false
+      },
+      "retrieval_ms": 9.548600006382912,
+      "index_setup_ms": 206.7700000188779,
+      "content_bytes": 17,
+      "markdown_bytes": 1989
+    },
+    {
+      "scenario": "same words different module",
+      "variant": "no_memory",
+      "retrieved": [],
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "reciprocal_rank": 0.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 0.0049000082071870565,
+      "index_setup_ms": 216.69080000719987,
+      "content_bytes": 0,
+      "markdown_bytes": 2033
+    },
+    {
+      "scenario": "same words different module",
+      "variant": "basic_memory",
+      "retrieved": [
+        "profile",
+        "payment"
+      ],
+      "metrics": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "reciprocal_rank": 0.5,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 11.161899979924783,
+      "index_setup_ms": 216.69080000719987,
+      "content_bytes": 67,
+      "markdown_bytes": 2033
+    },
+    {
+      "scenario": "same words different module",
+      "variant": "enhanced_memory",
+      "retrieved": [
+        "payment",
+        "profile"
+      ],
+      "metrics": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "reciprocal_rank": 1.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 11.43509999383241,
+      "index_setup_ms": 216.69080000719987,
+      "content_bytes": 67,
+      "markdown_bytes": 2033
+    },
+    {
+      "scenario": "unchanged convention",
+      "variant": "no_memory",
+      "retrieved": [],
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "reciprocal_rank": 0.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 0.007199996616691351,
+      "index_setup_ms": 208.62240000860766,
+      "content_bytes": 0,
+      "markdown_bytes": 1992
+    },
+    {
+      "scenario": "unchanged convention",
+      "variant": "basic_memory",
+      "retrieved": [
+        "dates",
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "reciprocal_rank": 1.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 12.657799990847707,
+      "index_setup_ms": 208.62240000860766,
+      "content_bytes": 45,
+      "markdown_bytes": 1992
+    },
+    {
+      "scenario": "unchanged convention",
+      "variant": "enhanced_memory",
+      "retrieved": [
+        "dates",
+        "noise"
+      ],
+      "metrics": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "reciprocal_rank": 1.0,
+        "stale_fraction": 0.0,
+        "correct_abstention": null
+      },
+      "retrieval_ms": 10.93560000299476,
+      "index_setup_ms": 208.62240000860766,
+      "content_bytes": 45,
+      "markdown_bytes": 1992
+    }
+  ]
+}

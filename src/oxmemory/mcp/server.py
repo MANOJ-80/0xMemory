@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+import mcp.types as types
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
@@ -49,22 +50,20 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
     Returns:
         Tuple of (Server, MemoryStore).
     """
-    server = Server("0xmemory")
     store = MemoryStore(project_dir)
 
     # -------------------------------------------------------------------------
     # Tool definitions
     # -------------------------------------------------------------------------
 
-    @server.list_tools()
     async def list_tools() -> list[Tool]:
         """List available tools."""
-        return [
+        definitions = [
             Tool(
                 name="remember",
                 description="Store a new memory (fact, decision, learning, or preference). "
                 "Use this to save important information from the conversation.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "content": {
@@ -95,7 +94,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
                 name="recall",
                 description="Search memories by meaning/content. "
                 "Use this to find relevant past information.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "query": {
@@ -119,7 +118,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             Tool(
                 name="list",
                 description="List all stored memories, optionally filtered by type.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "type": {
@@ -138,7 +137,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             Tool(
                 name="forget",
                 description="Remove a memory by its ID.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "id": {
@@ -152,7 +151,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             Tool(
                 name="update",
                 description="Update an existing memory's content.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "id": {
@@ -170,7 +169,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             Tool(
                 name="status",
                 description="Get brain statistics - number of facts, decisions, etc.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {},
                 },
@@ -179,7 +178,7 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
                 name="extract",
                 description="Extract facts, decisions, and learnings from a conversation "
                 "using LLM. Requires Ollama, Groq, or Gemini.",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "conversation": {
@@ -197,17 +196,52 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             ),
         ]
 
-    @server.call_tool()
+        array = {"type": "array", "items": {"type": "string"}}
+        for tool in definitions:
+            props = tool.input_schema["properties"]
+            if tool.name in {"remember", "recall"}:
+                props["file_paths"] = dict(array, description="Repository-relative evidence files")
+                props["symbols"] = dict(array, description="Relevant function/class names")
+            if tool.name == "remember":
+                props["commit_sha"] = {"type": "string", "description": "Evidence commit"}
+            if tool.name == "recall":
+                props["include_history"] = {"type": "boolean", "default": False}
+                props["token_budget"] = {"type": "integer", "minimum": 1, "default": 1500}
+        for name, description, properties, required in [
+            ("observe_commit", "Mark memories affected by committed file changes as needing verification.",
+             {"commit": {"type": "string", "default": "HEAD"}}, []),
+            ("verify_memory", "Record your explicit verification of a memory against a commit. Read its evidence first.",
+             {"id": {"type": "string"}, "commit": {"type": "string"}, "note": {"type": "string"}},
+             ["id", "commit", "note"]),
+            ("supersede_memory", "Replace a decision after checking the new evidence; preserve the original in history.",
+             {"id": {"type": "string"}, "content": {"type": "string"}, "commit": {"type": "string"},
+              "note": {"type": "string"}, "file_paths": array}, ["id", "content", "commit", "note"]),
+        ]:
+            definitions.append(Tool(name=name, description=description, input_schema={
+                "type": "object", "properties": properties, "required": required,
+            }))
+        return definitions
+
     async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         """Handle tool calls."""
         try:
-            if name == "remember":
+            if name == "observe_commit":
+                result = store.observe_commit(arguments.get("commit", "HEAD"))
+            elif name == "verify_memory":
+                result = store.verify(arguments["id"], arguments["commit"], arguments["note"]).model_dump(mode="json")
+            elif name == "supersede_memory":
+                result = store.supersede(arguments["id"], arguments["content"], arguments["commit"],
+                                         arguments["note"], arguments.get("file_paths")).model_dump(mode="json")
+            elif name == "remember":
                 result = await handle_remember(
                     store=store,
                     content=arguments["content"],
                     type=arguments.get("type", "fact"),
                     tags=arguments.get("tags"),
                     source=arguments.get("source", "conversation"),
+                    file_paths=arguments.get("file_paths"),
+                    symbols=arguments.get("symbols"),
+                    commit_sha=arguments.get("commit_sha"),
                 )
             elif name == "recall":
                 result = await handle_recall(
@@ -215,6 +249,10 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
                     query=arguments["query"],
                     limit=arguments.get("limit", 5),
                     types=arguments.get("types"),
+                    file_paths=arguments.get("file_paths"),
+                    symbols=arguments.get("symbols"),
+                    include_history=arguments.get("include_history", False),
+                    token_budget=arguments.get("token_budget", 1500),
                 )
             elif name == "list":
                 result = await handle_list(
@@ -254,7 +292,6 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
     # Resource definitions
     # -------------------------------------------------------------------------
 
-    @server.list_resources()
     async def list_resources() -> list[Resource]:
         """List available resources."""
         return [
@@ -262,29 +299,28 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
                 uri="brain://context",
                 name="Project Context",
                 description="Main project brain (brain.md)",
-                mimeType="text/markdown",
+                mime_type="text/markdown",
             ),
             Resource(
                 uri="brain://facts",
                 name="Known Facts",
                 description="All extracted and stored facts",
-                mimeType="text/markdown",
+                mime_type="text/markdown",
             ),
             Resource(
                 uri="brain://decisions",
                 name="Decision Log",
                 description="Past decisions and their rationale",
-                mimeType="text/markdown",
+                mime_type="text/markdown",
             ),
             Resource(
                 uri="brain://full",
                 name="Full Context",
                 description="Combined brain, facts, and decisions",
-                mimeType="text/markdown",
+                mime_type="text/markdown",
             ),
         ]
 
-    @server.read_resource()
     async def read_resource(uri: str) -> str:
         """Read a resource by URI."""
         logger.info(f"Reading resource: {str(uri)!r}")
@@ -310,7 +346,6 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
     # Prompt definitions
     # -------------------------------------------------------------------------
 
-    @server.list_prompts()
     async def list_prompts() -> list[Prompt]:
         """List available prompts."""
         return [
@@ -332,7 +367,6 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
             ),
         ]
 
-    @server.get_prompt()
     async def get_prompt(name: str, arguments: dict | None = None) -> GetPromptResult:
         """Get a prompt by name."""
         if name == "project_context":
@@ -372,6 +406,31 @@ Conversation:
         else:
             raise ValueError(f"Unknown prompt: {name}")
 
+    async def on_list_tools(ctx, params):
+        return types.ListToolsResult(tools=await list_tools())
+
+    async def on_call_tool(ctx, params):
+        return types.CallToolResult(content=await call_tool(params.name, params.arguments or {}))
+
+    async def on_list_resources(ctx, params):
+        return types.ListResourcesResult(resources=await list_resources())
+
+    async def on_read_resource(ctx, params):
+        return types.ReadResourceResult(contents=[types.TextResourceContents(
+            uri=params.uri, mime_type="text/markdown", text=await read_resource(str(params.uri)),
+        )])
+
+    async def on_list_prompts(ctx, params):
+        return types.ListPromptsResult(prompts=await list_prompts())
+
+    async def on_get_prompt(ctx, params):
+        return await get_prompt(params.name, params.arguments)
+
+    server = Server(
+        "0xmemory", on_list_tools=on_list_tools, on_call_tool=on_call_tool,
+        on_list_resources=on_list_resources, on_read_resource=on_read_resource,
+        on_list_prompts=on_list_prompts, on_get_prompt=on_get_prompt,
+    )
     return server, store
 
 
@@ -390,9 +449,10 @@ async def run_server(project_dir: Path | None = None) -> None:
         )
 
     # Run with stdio transport
-    async with stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            server.create_initialization_options(),
-        )
+    try:
+        async with stdio_server() as (read_stream, write_stream):
+            await server.run(
+                read_stream, write_stream, server.create_initialization_options(),
+            )
+    finally:
+        store.close()

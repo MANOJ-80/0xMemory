@@ -334,7 +334,7 @@ class KnowledgeExtractor:
                     type=MemoryType.FACT,
                     tags=fact.get("tags", []),
                     source="extraction",
-                    salience=fact.get("confidence", 0.5),
+                    confidence=fact.get("confidence"),
                 )
             )
 
@@ -345,7 +345,7 @@ class KnowledgeExtractor:
                     type=MemoryType.DECISION,
                     tags=decision.get("tags", []),
                     source="extraction",
-                    salience=decision.get("confidence", 0.5),
+                    confidence=decision.get("confidence"),
                 )
             )
 
@@ -356,7 +356,7 @@ class KnowledgeExtractor:
                     type=MemoryType.LEARNING,
                     tags=learning.get("tags", []),
                     source="extraction",
-                    salience=learning.get("confidence", 0.5),
+                    confidence=learning.get("confidence"),
                 )
             )
 

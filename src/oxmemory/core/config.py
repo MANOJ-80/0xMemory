@@ -3,8 +3,6 @@
 import os
 from pathlib import Path
 
-import yaml
-
 from oxmemory.core.models import Config
 
 # Default brain directory name
@@ -110,6 +108,8 @@ def load_config(project_dir: Path | None = None) -> Config:
             f"Config file not found: {config_path}\nRun '0xmemory init' to create a new brain."
         )
 
+    import yaml
+
     with open(config_path) as f:
         raw_config = yaml.safe_load(f)
 
@@ -132,6 +132,8 @@ def save_config(config: Config, project_dir: Path | None = None) -> Path:
     Returns:
         Path to saved config file.
     """
+    import yaml
+
     config_path = get_config_path(project_dir)
     config_path.parent.mkdir(parents=True, exist_ok=True)
 

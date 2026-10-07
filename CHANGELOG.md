@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Clone-to-demo handoff with virtual environment setup, model preparation,
+  verification, and sequential fresh-chat lifecycle prompts.
+- VS Code Copilot, Antigravity, and Cursor configuration instructions.
+- Reusable JSON-backed Dodo starter, independent test report template, and
+  original Copilot demonstration record with evidence provenance and limits.
+
+### Documentation corrections
+
+- Record the developer's full 79-test Windows verification and Copilot lifecycle
+  run, superseding earlier sandbox-only status. Additional editor tests remain open.
+- Distinguish the completed local SQLite app from the clean starter required by
+  new testers, and document publishing the correct engine revision before cloning.
+
 ## [1.0.3] - 2026-01-12
 
 ### Changed

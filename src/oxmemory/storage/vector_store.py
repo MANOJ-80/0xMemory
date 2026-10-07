@@ -74,6 +74,14 @@ class VectorStore:
             )
         return self._client
 
+    def close(self) -> None:
+        """Release Chroma's shared-system reference and Windows file handles."""
+        if self._client is not None:
+            self._client.close()
+            self._client = None
+        self._collection = None
+
+
     @property
     def collection(self):
         """Get or create the memories collection."""
@@ -146,6 +154,13 @@ class VectorStore:
             embeddings=[embedding],
             documents=[memory.content],
             metadatas=[self._memory_to_metadata(memory)],
+        )
+
+    def upsert(self, memory: Memory) -> None:
+        """Refresh an existing embedding or repair a missing entry."""
+        self.collection.upsert(
+            ids=[memory.id], embeddings=self._embed([memory.content]),
+            documents=[memory.content], metadatas=[self._memory_to_metadata(memory)],
         )
 
     def add_many(self, memories: list[Memory]) -> None:

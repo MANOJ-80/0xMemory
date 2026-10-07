@@ -1,0 +1,182 @@
+{
+  "scenario": "Synthetic authentication migration using real local Git commits",
+  "initial_recall": {
+    "context": "[mem-bc6a5e2a; active] Authentication uses JWT\nEvidence: auth.py; commit: 05fdbc2b03084e2dc4db7982ee86e1435558486b\nRetrieved because: keyword match",
+    "results": [
+      {
+        "memory": {
+          "id": "mem-bc6a5e2a",
+          "content": "Authentication uses JWT",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T12:58:58.775462",
+          "updated_at": "2026-10-07T12:58:58.775462",
+          "accessed_at": "2026-10-07T12:58:58.775462",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [
+            "auth.py"
+          ],
+          "symbols": [],
+          "commit_sha": "05fdbc2b03084e2dc4db7982ee86e1435558486b",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null
+        },
+        "score": 0.01639344262295082,
+        "reasons": [
+          "keyword match"
+        ]
+      }
+    ],
+    "budget_used": 147,
+    "budget_unit": "conservative_utf8_bytes",
+    "token_budget": 1500,
+    "omitted": 0
+  },
+  "commit_observation": {
+    "commit": "dce0a922bb313d8bc578b45262d3c0e2367e466c",
+    "changed_files": [
+      "auth.py"
+    ],
+    "affected": [
+      {
+        "id": "mem-bc6a5e2a",
+        "files": [
+          "auth.py"
+        ]
+      }
+    ]
+  },
+  "stale_recall": {
+    "context": "",
+    "results": [],
+    "budget_used": 0,
+    "budget_unit": "conservative_utf8_bytes",
+    "token_budget": 1500,
+    "omitted": 0
+  },
+  "fresh_session_recall": {
+    "context": "[mem-04af7a64; active] Authentication uses cookie sessions\nEvidence: auth.py; commit: dce0a922bb313d8bc578b45262d3c0e2367e466c\nRetrieved because: keyword match, linked file match",
+    "results": [
+      {
+        "memory": {
+          "id": "mem-04af7a64",
+          "content": "Authentication uses cookie sessions",
+          "type": "decision",
+          "tags": [],
+          "source": "verified-replacement",
+          "salience": 0.5,
+          "created_at": "2026-10-07T12:58:59.223646",
+          "updated_at": "2026-10-07T12:58:59.223646",
+          "accessed_at": "2026-10-07T12:58:59.223646",
+          "session_id": null,
+          "related_to": [
+            "mem-bc6a5e2a"
+          ],
+          "status": "active",
+          "file_paths": [
+            "auth.py"
+          ],
+          "symbols": [],
+          "commit_sha": "dce0a922bb313d8bc578b45262d3c0e2367e466c",
+          "confidence": null,
+          "supersedes": "mem-bc6a5e2a",
+          "superseded_by": null,
+          "verification_note": "Demo reviewer checked AUTH_METHOD in auth.py",
+          "stale_at_commit": null
+        },
+        "score": 0.04098360655737705,
+        "reasons": [
+          "keyword match",
+          "linked file match"
+        ]
+      }
+    ],
+    "budget_used": 178,
+    "budget_unit": "conservative_utf8_bytes",
+    "token_budget": 1500,
+    "omitted": 0
+  },
+  "preserved_history": {
+    "id": "mem-bc6a5e2a",
+    "content": "Authentication uses JWT",
+    "type": "decision",
+    "tags": [],
+    "source": "manual",
+    "salience": 0.5,
+    "created_at": "2026-10-07T12:58:58.775462",
+    "updated_at": "2026-10-07T12:58:59.380721",
+    "accessed_at": "2026-10-07T12:58:58.775462",
+    "session_id": null,
+    "related_to": [],
+    "status": "superseded",
+    "file_paths": [
+      "auth.py"
+    ],
+    "symbols": [],
+    "commit_sha": "05fdbc2b03084e2dc4db7982ee86e1435558486b",
+    "confidence": null,
+    "supersedes": null,
+    "superseded_by": "mem-04af7a64",
+    "verification_note": "Supporting files changed; verification required.",
+    "stale_at_commit": "dce0a922bb313d8bc578b45262d3c0e2367e466c",
+    "revisions": [
+      {
+        "id": "mem-bc6a5e2a",
+        "content": "Authentication uses JWT",
+        "type": "decision",
+        "tags": [],
+        "source": "manual",
+        "salience": 0.5,
+        "created_at": "2026-10-07T12:58:58.775462",
+        "updated_at": "2026-10-07T12:58:58.775462",
+        "accessed_at": "2026-10-07T12:58:58.775462",
+        "session_id": null,
+        "related_to": [],
+        "status": "active",
+        "file_paths": [
+          "auth.py"
+        ],
+        "symbols": [],
+        "commit_sha": "05fdbc2b03084e2dc4db7982ee86e1435558486b",
+        "confidence": null,
+        "supersedes": null,
+        "superseded_by": null,
+        "verification_note": null,
+        "stale_at_commit": null
+      },
+      {
+        "id": "mem-bc6a5e2a",
+        "content": "Authentication uses JWT",
+        "type": "decision",
+        "tags": [],
+        "source": "manual",
+        "salience": 0.5,
+        "created_at": "2026-10-07T12:58:58.775462",
+        "updated_at": "2026-10-07T12:58:59.220612",
+        "accessed_at": "2026-10-07T12:58:58.775462",
+        "session_id": null,
+        "related_to": [],
+        "status": "stale",
+        "file_paths": [
+          "auth.py"
+        ],
+        "symbols": [],
+        "commit_sha": "05fdbc2b03084e2dc4db7982ee86e1435558486b",
+        "confidence": null,
+        "supersedes": null,
+        "superseded_by": null,
+        "verification_note": "Supporting files changed; verification required.",
+        "stale_at_commit": "dce0a922bb313d8bc578b45262d3c0e2367e466c"
+      }
+    ]
+  },
+  "passed": true,
+  "note": "Explicit scripted review; no automatic inference of authentication semantics"
+}

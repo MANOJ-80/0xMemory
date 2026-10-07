@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dodo · My tasks</title>
+<style>
+  body { margin: 0; background: #f4f2ed; color: #173a32; font: 16px system-ui; }
+  main { max-width: 660px; margin: 9vh auto; padding: 28px; }
+  header { display: flex; align-items: center; gap: 12px; }
+  .mark { background: #173a32; color: white; border-radius: 14px; padding: 12px; font-size: 22px; }
+  h1 { font-size: 44px; letter-spacing: -2px; margin: 0; }
+  p, small { color: #61736e; } form { display: flex; gap: 10px; margin: 28px 0; }
+  input, button { font: inherit; border-radius: 9px; padding: 12px; }
+  input[type=text] { min-width: 0; flex: 1; border: 1px solid #bfcac3; background: white; }
+  button { border: 0; background: #173a32; color: white; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: wait; }
+  ul { list-style: none; padding: 0; } li { display: flex; align-items: center; gap: 12px; background: white; margin: 10px 0; padding: 15px; border-radius: 12px; }
+  li span { flex: 1; overflow-wrap: anywhere; } li.done span { text-decoration: line-through; color: #7b8a84; }
+  li button { background: #f0f2ed; color: #53655b; font-size: 13px; }
+  #error { color: #a43b32; } footer { margin-top: 32px; font-size: 13px; }
+</style>
+<main>
+  <header><div class="mark" aria-hidden="true">D</div><h1>Dodo</h1></header>
+  <p>A little space for everything you need to do.</p>
+  <form id="add"><input id="title" type="text" maxlength="200" required placeholder="What needs doing?" aria-label="New task"><button>Add task</button></form>
+  <p id="error" role="alert"></p><small id="count"></small><ul id="tasks"></ul>
+  <footer>Local tasks. One thing at a time.</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+async function api(path, method = 'GET', body) {
+  const response = await fetch(path, {method, headers: {'Content-Type':'application/json'}, body: body === undefined ? undefined : JSON.stringify(body)});
+  if (!response.ok) { const error = await response.json(); throw Error(typeof error.detail === 'string' ? error.detail : 'Please check your task title.'); }
+  return response.status === 204 ? null : response.json();
+}
+async function refresh() {
+  const tasks = await api('/api/tasks'); $('tasks').replaceChildren();
+  $('count').textContent = tasks.length ? `${tasks.filter(t => !t.completed).length} remaining · ${tasks.length} total` : 'No tasks yet. Add your first one above.';
+  for (const task of tasks) {
+    const row = document.createElement('li'); row.className = task.completed ? 'done' : '';
+    const check = document.createElement('input'); check.type = 'checkbox'; check.checked = task.completed; check.setAttribute('aria-label', `Complete ${task.title}`);
+    check.onchange = () => act(() => api(`/api/tasks/${task.id}`, 'PATCH', {completed: check.checked}));
+    const title = document.createElement('span'); title.textContent = task.title;
+    const remove = document.createElement('button'); remove.textContent = 'Delete'; remove.setAttribute('aria-label', `Delete ${task.title}`);
+    remove.onclick = () => act(() => api(`/api/tasks/${task.id}`, 'DELETE'));
+    row.append(check, title, remove); $('tasks').append(row);
+  }
+}
+async function act(action) { try { $('error').textContent = ''; await action(); await refresh(); } catch (error) { $('error').textContent = error.message; } }
+$('add').onsubmit = async event => {
+  event.preventDefault(); const button = event.target.querySelector('button'); button.disabled = true;
+  await act(async () => { await api('/api/tasks', 'POST', {title: $('title').value}); $('title').value = ''; });
+  button.disabled = false; $('title').focus();
+};
+act(async () => {});
+</script>
+</html>

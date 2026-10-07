@@ -9,14 +9,15 @@ from datetime import datetime
 from pathlib import Path
 
 from oxmemory.core.config import brain_exists, get_brain_path, load_config
-from oxmemory.core.models import BrainInfo, Memory, MemoryType
+from oxmemory.core.models import BrainInfo, Memory, MemoryType, MemoryStatus
+from oxmemory.storage.lifecycle import LifecycleMixin
 from oxmemory.storage.markdown import MarkdownManager
 from oxmemory.storage.session import SessionManager
 
 logger = logging.getLogger(__name__)
 
 
-class MemoryStore:
+class MemoryStore(LifecycleMixin):
     """Unified memory storage interface.
 
     Provides CRUD operations for memories with dual storage:
@@ -36,7 +37,6 @@ class MemoryStore:
             enable_vectors: Whether to enable vector search (requires chromadb).
         """
         self.project_dir = Path(project_dir) if project_dir else Path.cwd()
-        self.project_dir = Path(project_dir) if project_dir else Path.cwd()
         self.markdown = MarkdownManager(self.project_dir)
         self.sessions = SessionManager(self.project_dir)
         self._config = None
@@ -52,6 +52,18 @@ class MemoryStore:
             except FileNotFoundError:
                 self._config = None
         return self._config
+
+    def close(self) -> None:
+        """Release initialized resources without loading optional backends."""
+        if self._vector_store is not None:
+            self._vector_store.close()
+            self._vector_store = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
     @property
     def vector_store(self):
@@ -85,6 +97,10 @@ class MemoryStore:
         tags: list[str] | None = None,
         source: str = "manual",
         salience: float = 0.5,
+        file_paths: list[str] | None = None,
+        symbols: list[str] | None = None,
+        commit_sha: str | None = None,
+        confidence: float | None = None,
     ) -> Memory:
         """Add a new memory.
 
@@ -104,7 +120,23 @@ class MemoryStore:
             tags=tags or [],
             source=source,
             salience=salience,
+            file_paths=file_paths or [],
+            symbols=symbols or [],
+            commit_sha=commit_sha,
+            confidence=confidence,
         )
+
+        if commit_sha:
+            from oxmemory.storage.repository import Repository
+            memory.commit_sha = Repository(self.project_dir).validate_evidence(commit_sha, memory.file_paths)
+        for existing in self.markdown.read_memories(memory_type):
+            if (existing.status == MemoryStatus.ACTIVE
+                and " ".join(existing.content.split()) == " ".join(memory.content.split())
+                and existing.file_paths == memory.file_paths
+                and existing.symbols == memory.symbols
+                and existing.commit_sha == memory.commit_sha
+                and existing.tags == memory.tags):
+                return existing
 
         # Store in Markdown (source of truth)
         self.markdown.add_memory(memory)
@@ -186,49 +218,28 @@ class MemoryStore:
         return removed
 
     def search(
-        self,
-        query: str,
-        limit: int = 5,
-        memory_types: list[MemoryType] | None = None,
-        semantic: bool = True,
+        self, query: str, limit: int = 5,
+        memory_types: list[MemoryType] | None = None, semantic: bool = True,
+        file_paths: list[str] | None = None, symbols: list[str] | None = None,
+        include_history: bool = False,
     ) -> list[Memory]:
-        """Search memories by content using hybrid search.
+        return [item["memory"] for item in self.search_ranked(
+            query, limit, memory_types, semantic, file_paths, symbols, include_history,
+        )]
 
-        Combines semantic (vector) search with keyword matching for best results.
+    def search_ranked(
+        self, query: str, limit: int = 5,
+        memory_types: list[MemoryType] | None = None, semantic: bool = True,
+        file_paths: list[str] | None = None, symbols: list[str] | None = None,
+        include_history: bool = False,
+    ) -> list[dict]:
+        from oxmemory.storage.retrieval import rank_memories
+        return rank_memories(self, query, limit, memory_types, semantic,
+                             file_paths, symbols, include_history)
 
-        Args:
-            query: Search query.
-            limit: Maximum number of results.
-            memory_types: Filter by types. None for all types.
-            semantic: Use semantic search if available.
-
-        Returns:
-            List of matching memories, sorted by relevance.
-        """
-        # Try semantic search first if enabled
-        if semantic and self.vector_store:
-            try:
-                vector_results = self.vector_store.search(
-                    query=query,
-                    limit=limit * 2,  # Get more for reranking
-                    memory_types=memory_types,
-                )
-
-                if vector_results:
-                    # Convert vector results to Memory objects
-                    memories = []
-                    for result in vector_results[:limit]:
-                        memory = self.get(result["id"])
-                        if memory:
-                            memories.append(memory)
-
-                    if memories:
-                        return memories
-            except Exception as e:
-                logger.warning(f"Vector search failed, falling back to keyword: {e}")
-
-        # Fallback to keyword search
-        return self._keyword_search(query, limit, memory_types)
+    def recall_context(self, query: str, token_budget: int = 1500, **kwargs) -> dict:
+        from oxmemory.storage.retrieval import build_context
+        return build_context(self.search_ranked(query, **kwargs), token_budget)
 
     def _keyword_search(
         self,
@@ -288,11 +299,11 @@ class MemoryStore:
         if not memory:
             return None
 
-        # Remove old and add new (simple approach for Phase 1)
-        self.delete(memory_id)
-
+        content = Memory(content=content).content
+        memory.revisions.append(memory.model_dump(mode="json", exclude={"revisions"}))
         memory.update_content(content)
-        self.markdown.add_memory(memory)
+        # Editing text does not validate changed code or reactivate stale evidence.
+        self._persist(memory)
 
         return memory
 
@@ -319,7 +330,6 @@ class MemoryStore:
                     last_updated = mtime
 
         # Get project name from config if available
-        project_name = "Unknown Project"
         project_name = "0xMemory"
         if self.config:
             project_name = self.config.project.name
@@ -334,8 +344,8 @@ class MemoryStore:
             learnings_count=counts[MemoryType.LEARNING],
             preferences_count=counts[MemoryType.PREFERENCE],
             sessions_count=sessions_count,
-            last_updated=datetime.now(),
-            brain_path=str(self.project_dir),
+            last_updated=last_updated,
+            brain_path=str(brain_path),
         )
 
     def get_brain_context(self) -> str:
@@ -352,7 +362,7 @@ class MemoryStore:
         Returns:
             Formatted facts for LLM context.
         """
-        memories = self.markdown.read_memories(MemoryType.FACT)
+        memories = [m for m in self.markdown.read_memories(MemoryType.FACT) if m.status == MemoryStatus.ACTIVE]
         if not memories:
             return "No facts recorded yet."
 
@@ -369,7 +379,7 @@ class MemoryStore:
         Returns:
             Formatted decisions for LLM context.
         """
-        memories = self.markdown.read_memories(MemoryType.DECISION)
+        memories = [m for m in self.markdown.read_memories(MemoryType.DECISION) if m.status == MemoryStatus.ACTIVE]
         if not memories:
             return "No decisions recorded yet."
 
@@ -395,22 +405,15 @@ class MemoryStore:
         if not self.vector_store:
             return {"synced": 0, "error": "Vector store not available"}
 
-        markdown_memories = self.markdown.get_all_memories()
+        memories = self.markdown.get_all_memories()
         vector_ids = set(self.vector_store.get_all_ids())
-
-        missing = []
-        for memory in markdown_memories:
-            if memory.id not in vector_ids:
-                missing.append(memory)
-
-        if missing:
-            self.vector_store.add_many(missing)
-
-        return {
-            "total_markdown": len(markdown_memories),
-            "total_vectors": len(vector_ids),
-            "synced": len(missing),
-        }
+        current_ids = {m.id for m in memories}
+        for memory in memories:
+            self.vector_store.upsert(memory)
+        for orphan in vector_ids - current_ids:
+            self.vector_store.delete(orphan)
+        return {"total_markdown": len(memories), "total_vectors": len(current_ids),
+                "synced": len(memories), "removed": len(vector_ids - current_ids)}
 
     def rebuild_vectors(self) -> dict:
         """Rebuild vector store from Markdown files.

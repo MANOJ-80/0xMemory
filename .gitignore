@@ -29,6 +29,7 @@ env/
 # IDE
 .idea/
 .vscode/
+/.agents/mcp_config.json
 *.swp
 *.swo
 *~
