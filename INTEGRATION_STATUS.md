@@ -3,6 +3,33 @@
 Updated 2026-10-07 after normal-terminal verification and the developer-reported
 Copilot Dodo demonstration. Fresh setup: [START_HERE.md](START_HERE.md).
 
+## Latest relevance and final-materials validation
+
+- Current collection: **89 tests**. The restricted-session run completed with
+  **88 passed, 1 explicitly deselected in 147.09 seconds**. Only
+  `tests/test_stdio_transport.py::test_stdio_transport` was excluded because the
+  native SDK launcher needs Windows pipes unavailable in this sandbox. That test
+  remains enabled in verify-local.ps1. The earlier user-run 79-test result below
+  is historical and is not relabelled as a current 89-test normal-terminal run.
+- Six relevance tests cover cosine math, non-bypass by file hints, fallback,
+  empty-context reasons, opt-in configuration, and the fixed data partitions.
+- A real MCP SDK/server smoke check enabled the gate through config, rejected an
+  unrelated question, and retained the logging answer. Recorded at
+  [mcp-smoke.json](evaluation/relevance/mcp-smoke.json).
+- Eight development and 16 newly reserved relevance cases ran with real embeddings.
+  The selected 0.25 policy did not improve reserved no-answer false positives
+  (8/8 for both modes). The gate is disabled by default. See
+  [relevance methodology/results](evaluation/relevance/README.md).
+- New modules and the presentation generator passed targeted Ruff checks.
+  Dataset/policy hashes, Markdown links, HTML slide count, and JavaScript syntax
+  were checked. Committed baseline source snapshots match their recorded hashes.
+- The 15-slide offline HTML deck is generated. Edge's automatic PDF/visual preview
+  failed at Windows IPC creation in the restricted session; no PDF or visual
+  inspection is claimed. Print from a normal browser if a PDF is needed.
+- Final technical report and demo/viva script are in
+  [review-materials](review-materials/README.md). Team/institution formatting and
+  independent editor/user replication remain external submission tasks.
+
 ## Fixed
 
 - Migrated MCP handlers from the removed v1 decorator API to MCP 2.3 request

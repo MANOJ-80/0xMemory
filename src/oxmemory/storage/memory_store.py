@@ -231,11 +231,17 @@ class MemoryStore(LifecycleMixin):
         self, query: str, limit: int = 5,
         memory_types: list[MemoryType] | None = None, semantic: bool = True,
         file_paths: list[str] | None = None, symbols: list[str] | None = None,
-        include_history: bool = False,
+        include_history: bool = False, relevance_gate: bool | None = None,
+        min_similarity: float | None = None,
     ) -> list[dict]:
         from oxmemory.storage.retrieval import rank_memories
+        if relevance_gate is None:
+            relevance_gate = self.config.retrieval.relevance_gate if self.config else False
+        if min_similarity is None and self.config:
+            min_similarity = self.config.retrieval.min_similarity
         return rank_memories(self, query, limit, memory_types, semantic,
-                             file_paths, symbols, include_history)
+                             file_paths, symbols, include_history,
+                             relevance_gate=relevance_gate, min_similarity=min_similarity)
 
     def recall_context(self, query: str, token_budget: int = 1500, **kwargs) -> dict:
         from oxmemory.storage.retrieval import build_context

@@ -141,7 +141,11 @@ if ($LASTEXITCODE -ne 0) { throw 'Verification failed; inspect the first error.'
 
 This execution-policy setting applies to the launched PowerShell process; no permanent policy change is needed. `-SkipInstall` is appropriate because step 3 installed dependencies. `-OfflineModels` is appropriate only after the model was cached successfully. If package installation is incomplete, omit `-SkipInstall`; if model downloads are still required, omit `-OfflineModels` and ensure offline flags are not set to `1`.
 
-Expected for this revision: **79 tests pass**, then a PASS line covering dependencies, CLI, tests, the real MCP client, embeddings, and semantic evaluation. A later revision may have more tests. Do not continue after failures merely because some tests passed.
+Expected current collection: **89 tests**, then a PASS line covering dependencies,
+CLI, tests, the real MCP client, embeddings, and semantic evaluation. The original
+team run passed 79 before the evaluation/relevance tests were added. A later
+revision may have more tests. Do not continue after failures merely because some
+tests passed. See INTEGRATION_STATUS for the current restricted-session checks.
 
 The script creates `demo-result.json` and `evaluation-semantic.json` in the engine directory. The built-in temporary Git demo is separate from Dodo. The evaluation contains four synthetic scenarios; successful execution is not a research accuracy claim.
 
@@ -551,6 +555,12 @@ After those pass, copy `examples/dodo-starter/.` to a new sibling directory with
 Use the manual JSON templates in [EDITOR_SETUP.md](EDITOR_SETUP.md), replacing `command` with the absolute `.venv/bin/python` path and the final argument with the absolute app path. Replace the Windows Python command in the migration prompt too. Launch uvicorn with `../0xMemory/.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8090`. The agent prompts and pass conditions otherwise remain the same. Record any platform-specific failures rather than assuming Windows results transfer.
 
 ## 19. Maintainer handoff before a friend clones
+
+For the evaluation and final review package after the application demo, read
+[evaluation/README.md](evaluation/README.md),
+[evaluation/relevance/README.md](evaluation/relevance/README.md), and
+[review-materials/README.md](review-materials/README.md). The experimental relevance
+gate is off by default and is not necessary for the lifecycle demonstration.
 
 This documentation was prepared against local working-tree changes. It does not itself publish them. Before distributing a clone URL:
 

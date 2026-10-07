@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0xMemory — Final Review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;
+background:#09151d;
+color:#edf5f5;
+font:20px/1.5 system-ui,sans-serif}
+.slide{display:none;
+min-height:100vh;
+padding:6vh 8vw 9vh;
+position:relative;
+background:radial-gradient(ellipse at top right,#163c44,transparent 65%)}
+.slide.active{display:block}.eyebrow{font-size:13px;
+letter-spacing:2px;
+color:#76d9bd}
+h1{font-size:clamp(32px,4.5vw,66px);
+line-height:1.1;
+max-width:1100px;
+margin:3vh 0}
+.lead{font-size:clamp(22px,2.4vw,34px);
+color:#b3dfd4;
+max-width:1050px}
+ul{max-width:1050px;
+padding-left:24px}li{margin:12px 0}footer{font-size:12px;
+color:#8dabae;
+margin-top:36px}
+aside{display:none;
+background:#152c35;
+border-left:4px solid #76d9bd;
+padding:16px;
+font-size:16px}
+body.notes aside{display:block}nav{position:fixed;
+bottom:14px;
+right:20px;
+display:flex;
+gap:10px}
+button{border:1px solid #6aa899;
+background:#17332d;
+color:white;
+padding:10px 18px;
+border-radius:6px;
+cursor:pointer}
+@media print{@page{size:A4 landscape;
+margin:10mm}body{background:white;
+color:#132b32;
+font-size:16px}
+.slide,.slide.active{display:block;
+min-height:185mm;
+height:auto;
+padding:6mm;
+break-after:page;
+background:white}
+.slide:last-of-type{break-after:auto}h1{font-size:34px}.lead{font-size:23px;
+color:#235d50}.eyebrow{color:#235d50}
+aside,body.notes aside,nav{display:none}li{margin:8px 0}footer{color:#555}}
+</style>
+</head>
+<body><section class="slide" aria-label="Slide 1"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 01/15</p><h1>0xMemory</h1><p class="lead">Commit-aware persistent memory for AI coding agents</p><ul><li>Team 9 · Final-year prototype</li><li>Preserve project decisions across conversations</li><li>Review changed evidence before returning old advice</li></ul><aside><b>Speaker notes</b><p>Introduce actual team members and institution verbally; add their names before submission. State the contribution as lifecycle management, not invention of persistent memory.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 2"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 02/15</p><h1>The problem</h1><p class="lead">A remembered decision can become outdated.</p><ul><li>A new conversation loses the rationale behind a design choice.</li><li>Saved context can outlive the implementation that supported it.</li><li>Semantic similarity alone does not establish current truth.</li></ul><aside><b>Speaker notes</b><p>Use JSON-to-SQLite as the concrete example. Distinguish lost context from outdated context.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 3"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 03/15</p><h1>Our objective</h1><p class="lead">Return current decisions with inspectable evidence.</p><ul><li>Project-scoped memory with IDs and commit links</li><li>Explicit observation, verification, and replacement</li><li>History preserved for audit and explanation</li><li>MCP tools available to coding agents</li></ul><aside><b>Speaker notes</b><p>Observation is explicit. Do not claim a background watcher or autonomous truth checker.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 4"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 04/15</p><h1>Architecture</h1><p class="lead">Agent → MCP → MemoryStore → evidence and retrieval</p><ul><li>Markdown: authoritative memories and revision history</li><li>ChromaDB + Sentence Transformer: local semantic index</li><li>Git: file-change and commit-order evidence</li><li>CLI/dashboard: inspection; MCP stdio: editor integration</li></ul><aside><b>Speaker notes</b><p>The engine executable and application root are separate. Each application owns its .0xmemory directory. Use the diagram in FINAL_REPORT for a detailed architecture view.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 5"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 05/15</p><h1>Memory lifecycle</h1><p class="lead">Active → stale → verified or superseded</p><ul><li>Remember a decision and its supporting file/commit.</li><li>Observe a committed code change.</li><li>Review the evidence: retain the statement or replace it.</li><li>Normal recall excludes stale and superseded entries.</li></ul><aside><b>Speaker notes</b><p>A file change does not prove the statement false. Still-valid decisions use verify; changed decisions use supersede.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 6"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 06/15</p><h1>A real editor demonstration</h1><p class="lead">Dodo task storage changed from JSON to SQLite.</p><ul><li>Copilot saved the JSON rationale and recalled it in another chat.</li><li>The migration was tested and committed locally.</li><li>Observation marked the old decision stale.</li><li>After review, a fresh chat recalled the SQLite replacement.</li></ul><aside><b>Speaker notes</b><p>This is the developer-reported Copilot case study. Show expanded tool calls from the actual run if available. Do not invent screenshots or claim Cursor/Antigravity testing.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 7"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 07/15</p><h1>Controlled experiment A</h1><p class="lead">Same ranking; only lifecycle eligibility differs.</p><ul><li>30 synthetic Git-backed scenarios: 5 development + 25 reserved</li><li>Changed decisions, unrelated edits, valid refactors, replacements, no-answer cases</li><li>Real embeddings and Git transitions</li><li>Basic: filtering disabled; lifecycle: active memories only</li></ul><aside><b>Speaker notes</b><p>This is an ablation, not a comparison against a different historical search implementation. Labels are assistant-authored and need human review.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 8"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 08/15</p><h1>Outdated context was excluded</h1><p class="lead">Outdated-hit checkpoints: 12/12 → 0/12</p><ul><li>Reserved partition: 25 scenarios, 30 checkpoints</li><li>Clean replacement retrieval: 0/5 → 5/5</li><li>Unrelated-change preservation: 5/5 in both variants</li><li>Each result includes IDs, status, scores, commits, and labels</li></ul><aside><b>Speaker notes</b><p>These are small synthetic counts, not general accuracy percentages. The 12 applicable checkpoints are seven changed decisions and five replacements.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 9"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 09/15</p><h1>Filtering has a cost</h1><p class="lead">Recall@5: 100% → 75% while review is pending</p><ul><li>Five changed files still supported their original decisions.</li><li>Those true memories were withheld pending review.</li><li>All five were retrieved after explicit verification.</li><li>Truth labels were kept independent of lifecycle state.</li></ul><aside><b>Speaker notes</b><p>Explain the denominator: twenty answerable checkpoints, five withheld. This tradeoff is reported rather than hidden by relabelling stale memories irrelevant.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 10"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 10/15</p><h1>The no-answer weakness</h1><p class="lead">Active does not necessarily mean relevant.</p><ul><li>Both baseline variants returned content in all ten unanswered checkpoints.</li><li>Nearest neighbors can be unrelated or lack the requested detail.</li><li>The experiment measures context retrieval, not LLM hallucinations.</li></ul><aside><b>Speaker notes</b><p>Separate outdated retrieval from semantic relevance. A current statement about backup timing does not answer who approved the policy.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 11"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 11/15</p><h1>Controlled experiment B</h1><p class="lead">Calibrate a relevance gate, then freeze it.</p><ul><li>24 new questions: 8 development + 16 reserved</li><li>Balanced answerable and unanswered cases</li><li>Cosine cutoff selected only on development data</li><li>Threshold 0.25; full grid and selection rule preserved</li></ul><aside><b>Speaker notes</b><p>The policy minimizes twice the missed-answer rate plus no-answer false positives, with lower-threshold tie breaking. Cosine is not a probability of correctness.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 12"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 12/15</p><h1>A negative result we kept</h1><p class="lead">Development improvement did not generalize.</p><ul><li>Development no-answer false positives: 4/4 → 2/4</li><li>Reserved no-answer false positives: 8/8 → 8/8</li><li>Reserved valid answers retained: 8/8</li><li>Gate implemented but experimental and disabled by default</li></ul><aside><b>Speaker notes</b><p>Do not present this as a solved feature. Topic-related statements can omit requested ownership, rationale, budget, or contract details.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 13"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 13/15</p><h1>Reproducibility and validation</h1><p class="lead">Code, fixtures, raw outputs, and setup are documented.</p><ul><li>Fresh-clone guide and reusable JSON Dodo starter</li><li>Real model/index checks fail rather than silently use a proxy</li><li>Unit, lifecycle, API, embedding, and MCP transport tests</li><li>Reports preserve failures and explicit test denominators</li></ul><aside><b>Speaker notes</b><p>Refer to INTEGRATION_STATUS for the current exact test count and restricted-session native-pipe exclusion. The original normal-terminal suite passed 79 tests before additions.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 14"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 14/15</p><h1>Limits and future work</h1><p class="lead">A working prototype with clear boundaries.</p><ul><li>Explicit observation and supplied review assertions</li><li>Single writer per project; no automatic contradiction proof</li><li>Small synthetic corpora and pending independent label review</li><li>Next: answerability-aware retrieval and matched-model coding tasks</li></ul><aside><b>Speaker notes</b><p>Independent teammate replication and other editor UI tests remain open. Future changes need a new reserved dataset because current results have been inspected.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section>
+<section class="slide" aria-label="Slide 15"><p class="eyebrow">TEAM 9 · FINAL YEAR PROJECT · 15/15</p><h1>Project outcome</h1><p class="lead">Persistent decisions with auditable change management</p><ul><li>Cross-session Copilot demonstration completed as reported</li><li>Lifecycle filtering behaved as designed in controlled fixtures</li><li>Review-delay and relevance failures measured openly</li><li>Report, runnable experiments, demo script, and setup guide included</li></ul><aside><b>Speaker notes</b><p>Conclude with the specific delivered contribution. Invite questions about evidence handling and evaluation design rather than claiming universal superiority.</p></aside><footer>0xMemory · Evidence, lifecycle, and current context</footer></section><nav>
+<button id="prev">Previous</button>
+<button id="notes">Notes</button>
+<button id="next">Next</button>
+</nav>
+<script>const slides=[...document.querySelectorAll('.slide')];
+let current=0;
+
+function show(i){current=Math.max(0,Math.min(slides.length-1,i));
+slides.forEach((s,n)=>s.classList.toggle('active',n===current));
+location.hash=String(current+1)}
+document.querySelector('#prev').onclick=()=>show(current-1);
+document.querySelector('#next').onclick=()=>show(current+1);
+
+document.querySelector('#notes').onclick=()=>document.body.classList.toggle('notes');
+
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();
+show(current+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();
+show(current-1)}if(e.key.toLowerCase()==='n')document.body.classList.toggle('notes')});
+
+show((Number(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>

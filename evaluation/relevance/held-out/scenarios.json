@@ -1,0 +1,302 @@
+[
+  {
+    "partition": "development",
+    "id": "dev-connection",
+    "query": "How many database connections can we open?",
+    "memories": [
+      "The database connection pool allows twenty concurrent connections.",
+      "Deployment artifacts are compressed with gzip.",
+      "The interface supports dark mode."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-health",
+    "query": "Where should a load balancer check service health?",
+    "memories": [
+      "The readiness probe is available at /ready for load balancer health checks.",
+      "Database migrations run before deployment.",
+      "User avatars are square."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-dedupe",
+    "query": "How are duplicate webhook deliveries prevented?",
+    "memories": [
+      "Webhook deliveries are deduplicated using the event identifier.",
+      "The webhook endpoint accepts JSON requests.",
+      "Logs are kept for a week."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-paraphrase",
+    "query": "Can clients submit the same purchase twice safely?",
+    "memories": [
+      "Order creation uses an idempotency key to avoid duplicate purchases.",
+      "Product prices exclude tax.",
+      "Orders contain a shipping address."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-owner",
+    "query": "Who is responsible for production incident escalation?",
+    "memories": [
+      "The service writes errors to stderr.",
+      "Health checks run every ten seconds."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-sla",
+    "query": "What uptime guarantee is promised to customers?",
+    "memories": [
+      "Customer records have a UUID primary key.",
+      "The status page uses a blue theme."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-same-topic",
+    "query": "Who approved the webhook retry policy?",
+    "memories": [
+      "Webhook retry delay is exponential.",
+      "Webhook payloads use JSON."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "development",
+    "id": "dev-cost",
+    "query": "What is the monthly database hosting cost?",
+    "memories": [
+      "The database pool has twenty connections.",
+      "The database uses TLS connections."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-pool",
+    "query": "When do unused connections close?",
+    "memories": [
+      "Idle database connections are closed after two minutes.",
+      "Database backups are encrypted.",
+      "The API accepts JSON payloads."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-health",
+    "query": "Which URL confirms the process is alive?",
+    "memories": [
+      "The process liveness endpoint is /alive.",
+      "The readiness check tests database connectivity.",
+      "The admin interface uses port 9000."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-limit",
+    "query": "What happens when a caller exceeds its request quota?",
+    "memories": [
+      "Rate-limited callers receive HTTP 429 and a Retry-After header.",
+      "Requests include a correlation identifier.",
+      "The server returns JSON errors."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-paraphrase",
+    "query": "How do we keep two workers from processing the same item?",
+    "memories": [
+      "Workers claim queue items using an exclusive database lock.",
+      "Queue items include a creation timestamp.",
+      "Worker logs contain job identifiers."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-upload",
+    "query": "How is the uploaded file's integrity checked?",
+    "memories": [
+      "Uploaded files are verified using a SHA-256 checksum.",
+      "Uploaded files go to object storage.",
+      "Upload progress is shown as a percentage."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-redaction",
+    "query": "Are access credentials allowed in application logs?",
+    "memories": [
+      "Passwords and access tokens are redacted before log messages are written.",
+      "Application logs are rotated daily.",
+      "Metrics are collected every minute."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-deletion",
+    "query": "Can a user recover an account immediately after deleting it?",
+    "memories": [
+      "Deleted accounts are soft-deleted for seven days before permanent removal.",
+      "Account identifiers use UUIDs.",
+      "Usernames are case-insensitive."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-cors",
+    "query": "Which browser origin can call the API?",
+    "memories": [
+      "The API permits cross-origin requests only from https://app.example.invalid.",
+      "API requests use HTTPS.",
+      "The development frontend runs on port 3000."
+    ],
+    "relevant": [
+      "m0"
+    ],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-owner",
+    "query": "Who is the security incident commander?",
+    "memories": [
+      "Security events are logged to the audit table.",
+      "Incident identifiers use UUIDs."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-budget",
+    "query": "What budget is allocated to cloud storage?",
+    "memories": [
+      "Cloud storage objects are encrypted.",
+      "Storage uploads use signed URLs."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-approval",
+    "query": "Who approved the rate limit settings?",
+    "memories": [
+      "The rate limit is one hundred requests per minute.",
+      "Excess requests return HTTP 429."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-law",
+    "query": "Which jurisdiction governs customer contracts?",
+    "memories": [
+      "Customer records store a billing country.",
+      "Invoices use ISO currency codes."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-rpo",
+    "query": "What recovery point objective did the business agree to?",
+    "memories": [
+      "Database backups run at midnight.",
+      "Recovery scripts verify file checksums."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-vendor",
+    "query": "When does our cloud vendor contract expire?",
+    "memories": [
+      "Cloud access tokens expire after one hour.",
+      "Object storage keeps file versions."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-contact",
+    "query": "What is the emergency support phone number?",
+    "memories": [
+      "Support tickets receive sequential numbers.",
+      "User profiles can contain phone numbers."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  },
+  {
+    "partition": "held_out",
+    "id": "test-why",
+    "query": "Why did the team choose this message broker?",
+    "memories": [
+      "The message broker is RabbitMQ.",
+      "Messages use durable queues."
+    ],
+    "relevant": [],
+    "label_note": "Only the explicit answer is relevant; topic overlap alone is insufficient."
+  }
+]

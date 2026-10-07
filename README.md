@@ -20,6 +20,8 @@ VS Code Copilot / Antigravity / Cursor setup, and the entire memory lifecycle.
 | [Project plan](PROJECT_PLAN.md) | Implementation map and research work |
 | [Controlled evaluation](evaluation/README.md) | 30 Git-backed synthetic scenarios, reproducible runs, and metrics |
 | [Evaluation findings](evaluation/FINDINGS.md) | Measured stale-filtering benefit, review delay, and no-answer failures |
+| [Relevance experiment](evaluation/relevance/README.md) | Development-only calibration and the negative reserved result |
+| [Final review materials](review-materials/README.md) | Technical report, offline slides, speaker notes, and demo/viva script |
 
 The JSON baseline is in `examples/dodo-starter`. Copy it into a separate Git
 repository following START_HERE; do not modify the template for your experiment.
@@ -35,6 +37,9 @@ repository following START_HERE; do not modify the template for your experiment.
 - Exclude stale/superseded memories from normal recall; inspect history explicitly.
 - Integrate through MCP tools, CLI commands, or a local inspection dashboard.
 - Extract knowledge through configured local or cloud LLM providers.
+- Experiment with an opt-in relevance gate and explicit empty-context reasons.
+  The gate is **disabled by default**: it did not improve no-answer retrieval on
+  the newly reserved cases. See [the complete result](evaluation/relevance/README.md).
 
 ## Install the repository version
 

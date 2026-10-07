@@ -1,0 +1,816 @@
+{
+  "partition": "development",
+  "policy": {
+    "threshold": 0.25,
+    "dataset_sha256": "2e0ef6e1b992e0bc939bcbaf1124ad21e0b3c74ad1e2cff2d0372e0aae2a5273",
+    "criterion": "minimize 2*(1-recall)+no_answer_fp; ties choose lower threshold",
+    "model": "all-MiniLM-L6-v2",
+    "development_trials": [
+      {
+        "threshold": 0.25,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.3,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.35,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.4,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.45,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.5,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.55,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.6,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.65,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.7,
+        "loss": 1.0,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.5,
+        "false_abstention": 0.5,
+        "no_answer_fp": 0.0
+      },
+      {
+        "threshold": 0.75,
+        "loss": 2.0,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.0,
+        "false_abstention": 1.0,
+        "no_answer_fp": 0.0
+      }
+    ]
+  },
+  "dataset_sha256": "2e0ef6e1b992e0bc939bcbaf1124ad21e0b3c74ad1e2cff2d0372e0aae2a5273",
+  "summary": {
+    "ungated": {
+      "answerable_n": 4,
+      "no_answer_n": 4,
+      "recall": 1.0,
+      "false_abstention": 0.0,
+      "no_answer_fp": 1.0
+    },
+    "gated": {
+      "answerable_n": 4,
+      "no_answer_n": 4,
+      "recall": 1.0,
+      "false_abstention": 0.0,
+      "no_answer_fp": 0.5
+    }
+  },
+  "results": {
+    "ungated": [
+      {
+        "id": "dev-connection",
+        "query": "How many database connections can we open?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m2",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The database connection pool allows twenty concurrent connections.",
+            "cosine": 0.7394361168895581,
+            "distance": 0.5211277604103088
+          },
+          {
+            "id": "m2",
+            "content": "The interface supports dark mode.",
+            "cosine": 0.07019180519836817,
+            "distance": 1.8596165180206299
+          },
+          {
+            "id": "m1",
+            "content": "Deployment artifacts are compressed with gzip.",
+            "cosine": -0.053008318824101786,
+            "distance": 2.1060166358947754
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-health",
+        "query": "Where should a load balancer check service health?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The readiness probe is available at /ready for load balancer health checks.",
+            "cosine": 0.67900273273229,
+            "distance": 0.6419944763183594
+          },
+          {
+            "id": "m1",
+            "content": "Database migrations run before deployment.",
+            "cosine": 0.10467608113368451,
+            "distance": 1.7906475067138672
+          },
+          {
+            "id": "m2",
+            "content": "User avatars are square.",
+            "cosine": -0.04467877454372926,
+            "distance": 2.089357376098633
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-dedupe",
+        "query": "How are duplicate webhook deliveries prevented?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Webhook deliveries are deduplicated using the event identifier.",
+            "cosine": 0.708499007418289,
+            "distance": 0.5830020308494568
+          },
+          {
+            "id": "m1",
+            "content": "The webhook endpoint accepts JSON requests.",
+            "cosine": 0.44213484412368564,
+            "distance": 1.1157304048538208
+          },
+          {
+            "id": "m2",
+            "content": "Logs are kept for a week.",
+            "cosine": 0.18334846957315487,
+            "distance": 1.633303165435791
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-paraphrase",
+        "query": "Can clients submit the same purchase twice safely?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m2",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Order creation uses an idempotency key to avoid duplicate purchases.",
+            "cosine": 0.44792689953950193,
+            "distance": 1.104146122932434
+          },
+          {
+            "id": "m2",
+            "content": "Orders contain a shipping address.",
+            "cosine": 0.2063852538069772,
+            "distance": 1.587229609489441
+          },
+          {
+            "id": "m1",
+            "content": "Product prices exclude tax.",
+            "cosine": 0.10917984058873154,
+            "distance": 1.7816402912139893
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-owner",
+        "query": "Who is responsible for production incident escalation?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The service writes errors to stderr.",
+            "cosine": 0.18540014215588155,
+            "distance": 1.6291996240615845
+          },
+          {
+            "id": "m1",
+            "content": "Health checks run every ten seconds.",
+            "cosine": -0.0022061456842531794,
+            "distance": 2.0044119358062744
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-sla",
+        "query": "What uptime guarantee is promised to customers?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Customer records have a UUID primary key.",
+            "cosine": 0.23164493732175173,
+            "distance": 1.5367100238800049
+          },
+          {
+            "id": "m1",
+            "content": "The status page uses a blue theme.",
+            "cosine": 0.015772640958933416,
+            "distance": 1.9684547185897827
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-same-topic",
+        "query": "Who approved the webhook retry policy?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Webhook retry delay is exponential.",
+            "cosine": 0.6682779229346542,
+            "distance": 0.6634442210197449
+          },
+          {
+            "id": "m1",
+            "content": "Webhook payloads use JSON.",
+            "cosine": 0.49153697075049263,
+            "distance": 1.0169260501861572
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-cost",
+        "query": "What is the monthly database hosting cost?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The database pool has twenty connections.",
+            "cosine": 0.4028992862436777,
+            "distance": 1.1942014694213867
+          },
+          {
+            "id": "m1",
+            "content": "The database uses TLS connections.",
+            "cosine": 0.39230502816102314,
+            "distance": 1.215389609336853
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      }
+    ],
+    "gated": [
+      {
+        "id": "dev-connection",
+        "query": "How many database connections can we open?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The database connection pool allows twenty concurrent connections.",
+            "cosine": 0.7394361168895581,
+            "distance": 0.5211277604103088
+          },
+          {
+            "id": "m2",
+            "content": "The interface supports dark mode.",
+            "cosine": 0.07019180519836817,
+            "distance": 1.8596165180206299
+          },
+          {
+            "id": "m1",
+            "content": "Deployment artifacts are compressed with gzip.",
+            "cosine": -0.053008318824101786,
+            "distance": 2.1060166358947754
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-health",
+        "query": "Where should a load balancer check service health?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The readiness probe is available at /ready for load balancer health checks.",
+            "cosine": 0.67900273273229,
+            "distance": 0.6419944763183594
+          },
+          {
+            "id": "m1",
+            "content": "Database migrations run before deployment.",
+            "cosine": 0.10467608113368451,
+            "distance": 1.7906475067138672
+          },
+          {
+            "id": "m2",
+            "content": "User avatars are square.",
+            "cosine": -0.04467877454372926,
+            "distance": 2.089357376098633
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-dedupe",
+        "query": "How are duplicate webhook deliveries prevented?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Webhook deliveries are deduplicated using the event identifier.",
+            "cosine": 0.708499007418289,
+            "distance": 0.5830020308494568
+          },
+          {
+            "id": "m1",
+            "content": "The webhook endpoint accepts JSON requests.",
+            "cosine": 0.44213484412368564,
+            "distance": 1.1157304048538208
+          },
+          {
+            "id": "m2",
+            "content": "Logs are kept for a week.",
+            "cosine": 0.18334846957315487,
+            "distance": 1.633303165435791
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-paraphrase",
+        "query": "Can clients submit the same purchase twice safely?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Order creation uses an idempotency key to avoid duplicate purchases.",
+            "cosine": 0.44792689953950193,
+            "distance": 1.104146122932434
+          },
+          {
+            "id": "m2",
+            "content": "Orders contain a shipping address.",
+            "cosine": 0.2063852538069772,
+            "distance": 1.587229609489441
+          },
+          {
+            "id": "m1",
+            "content": "Product prices exclude tax.",
+            "cosine": 0.10917984058873154,
+            "distance": 1.7816402912139893
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-owner",
+        "query": "Who is responsible for production incident escalation?",
+        "relevant": [],
+        "retrieved": [],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The service writes errors to stderr.",
+            "cosine": 0.18540014215588155,
+            "distance": 1.6291996240615845
+          },
+          {
+            "id": "m1",
+            "content": "Health checks run every ten seconds.",
+            "cosine": -0.0022061456842531794,
+            "distance": 2.0044119358062744
+          }
+        ],
+        "ranking": []
+      },
+      {
+        "id": "dev-sla",
+        "query": "What uptime guarantee is promised to customers?",
+        "relevant": [],
+        "retrieved": [],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Customer records have a UUID primary key.",
+            "cosine": 0.23164493732175173,
+            "distance": 1.5367100238800049
+          },
+          {
+            "id": "m1",
+            "content": "The status page uses a blue theme.",
+            "cosine": 0.015772640958933416,
+            "distance": 1.9684547185897827
+          }
+        ],
+        "ranking": []
+      },
+      {
+        "id": "dev-same-topic",
+        "query": "Who approved the webhook retry policy?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Webhook retry delay is exponential.",
+            "cosine": 0.6682779229346542,
+            "distance": 0.6634442210197449
+          },
+          {
+            "id": "m1",
+            "content": "Webhook payloads use JSON.",
+            "cosine": 0.49153697075049263,
+            "distance": 1.0169260501861572
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dev-cost",
+        "query": "What is the monthly database hosting cost?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The database pool has twenty connections.",
+            "cosine": 0.4028992862436777,
+            "distance": 1.1942014694213867
+          },
+          {
+            "id": "m1",
+            "content": "The database uses TLS connections.",
+            "cosine": 0.39230502816102314,
+            "distance": 1.215389609336853
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "Assistant-authored synthetic data; independent label review pending",
+    "No-answer labels include missing rationale and ownership questions",
+    "Cosine similarity measures relatedness, not answer entailment",
+    "No production coding-success or general accuracy claim"
+  ]
+}

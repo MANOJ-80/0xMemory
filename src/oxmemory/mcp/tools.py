@@ -118,7 +118,9 @@ async def handle_recall(
                 "found": 0,
                 "memories": [],
                 "context": context,
-                "message": "No memories fit this query and context budget.",
+                "message": ("No memories fit the context budget."
+                            if context["abstention_reason"] == "context_budget"
+                            else "No relevant memory found. Do not infer an answer from unrelated memories."),
             }
 
         return {

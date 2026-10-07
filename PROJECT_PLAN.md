@@ -140,6 +140,15 @@ python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
 
 ## Remaining project phases
 
+A subsequent 24-case relevance experiment selected a cosine cutoff on eight
+development questions and tested it unchanged on 16 new reserved questions. It
+retained all eight valid test answers but returned content for all eight unanswered
+test questions. The gate is implemented, opt-in, and disabled by default; no-answer
+retrieval is still unresolved. See [the result](evaluation/relevance/README.md).
+The technical report, 15-slide offline presentation, and demo/viva script are in
+[review-materials](review-materials/README.md). Institution-specific names and
+formatting still need to be filled in before academic submission.
+
 The first controlled synthetic evaluation is now implemented and executed:
 30 Git-backed scenarios, five development and 25 reserved, using identical hybrid
 retrieval with lifecycle filtering enabled/disabled. Results include raw evidence,

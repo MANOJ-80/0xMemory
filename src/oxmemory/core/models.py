@@ -134,12 +134,20 @@ class LLMConfig(BaseModel):
     )
 
 
+class RetrievalConfig(BaseModel):
+    """Experimental abstention is opt-in until independently validated."""
+
+    relevance_gate: bool = False
+    min_similarity: float = Field(default=0.25, ge=-1, le=1, allow_inf_nan=False)
+
+
 class Config(BaseModel):
     """Main configuration schema for 0xMemory."""
 
     version: str = Field(default="1.0", description="Config schema version")
     project: ProjectConfig = Field(default_factory=ProjectConfig)
     embeddings: EmbeddingsConfig = Field(default_factory=EmbeddingsConfig)
+    retrieval: RetrievalConfig = Field(default_factory=RetrievalConfig)
     memory: MemoryConfig = Field(default_factory=MemoryConfig)
     git: GitConfig = Field(default_factory=GitConfig)
     llm: LLMConfig = Field(default_factory=LLMConfig)

@@ -1,0 +1,88 @@
+{
+  "transport": "Real MCP SDK over ordinary subprocess pipes",
+  "gate_enabled": true,
+  "threshold": 0.25,
+  "unrelated_query": {
+    "found": 0,
+    "memories": [],
+    "context": {
+      "context": "",
+      "results": [],
+      "budget_used": 0,
+      "budget_unit": "conservative_utf8_bytes",
+      "token_budget": 1500,
+      "omitted": 0,
+      "abstained": true,
+      "abstention_reason": "no_relevant_memory"
+    },
+    "message": "No relevant memory found. Do not infer an answer from unrelated memories."
+  },
+  "relevant_query": {
+    "found": 1,
+    "memories": [
+      {
+        "id": "mem-10f94c23",
+        "content": "Application logs use structured JSON.",
+        "type": "decision",
+        "tags": [],
+        "source": "conversation",
+        "salience": 0.5,
+        "created_at": "2026-10-07T21:32:03.362030",
+        "updated_at": "2026-10-07T21:32:03.362030",
+        "accessed_at": "2026-10-07T21:32:03.362030",
+        "session_id": null,
+        "related_to": [],
+        "status": "active",
+        "file_paths": [],
+        "symbols": [],
+        "commit_sha": null,
+        "confidence": null,
+        "supersedes": null,
+        "superseded_by": null,
+        "verification_note": null,
+        "stale_at_commit": null
+      }
+    ],
+    "context": {
+      "context": "[mem-10f94c23; active] Application logs use structured JSON.\nEvidence: conversation/manual; commit: unrecorded\nRetrieved because: keyword match, semantic match",
+      "results": [
+        {
+          "memory": {
+            "id": "mem-10f94c23",
+            "content": "Application logs use structured JSON.",
+            "type": "decision",
+            "tags": [],
+            "source": "conversation",
+            "salience": 0.5,
+            "created_at": "2026-10-07T21:32:03.362030",
+            "updated_at": "2026-10-07T21:32:03.362030",
+            "accessed_at": "2026-10-07T21:32:03.362030",
+            "session_id": null,
+            "related_to": [],
+            "status": "active",
+            "file_paths": [],
+            "symbols": [],
+            "commit_sha": null,
+            "confidence": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_note": null,
+            "stale_at_commit": null
+          },
+          "score": 0.03278688524590164,
+          "reasons": [
+            "keyword match",
+            "semantic match"
+          ]
+        }
+      ],
+      "budget_used": 159,
+      "budget_unit": "conservative_utf8_bytes",
+      "token_budget": 1500,
+      "omitted": 0,
+      "abstained": false,
+      "abstention_reason": null
+    },
+    "message": "Found 1 relevant memories"
+  }
+}

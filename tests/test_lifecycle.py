@@ -146,7 +146,8 @@ class MemoryLifecycleTests(unittest.TestCase):
     def test_file_relevance_and_bounded_context(self):
         self.store.add("Login is handled by middleware")
         linked = self.store.add("Cookie expiry is one hour", file_paths=["auth.py"])
-        results = self.store.search_ranked("Login", semantic=False, file_paths=["auth.py"])
+        results = self.store.search_ranked("Login", semantic=False, file_paths=["auth.py"],
+                                           relevance_gate=False)
         self.assertEqual(results[0]["memory"].id, linked.id)
         self.assertIn("linked file match", results[0]["reasons"])
         context = self.store.recall_context("Login", file_paths=["auth.py"], token_budget=300)
@@ -160,7 +161,8 @@ class MemoryLifecycleTests(unittest.TestCase):
         stale.status = MemoryStatus.STALE
         self.store._persist(stale)
         vector = Mock()
-        vector.search.return_value = [{"id": stale.id}, {"id": second.id}]
+        vector.search.return_value = [{"id": stale.id, "similarity": 0.9},
+                                      {"id": second.id, "similarity": 0.8}]
         self.store._vector_store = vector
         results = self.store.search_ranked("Login")
         ids = {r["memory"].id for r in results}

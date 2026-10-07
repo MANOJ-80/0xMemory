@@ -240,10 +240,12 @@ class VectorStore:
             query_embeddings=[query_embedding],
             n_results=limit,
             where=where_filter,
+            include=["documents", "metadatas", "distances", "embeddings"],
         )
 
         memories = []
         if results["ids"] and results["ids"][0]:
+            from oxmemory.storage.relevance import cosine_similarity
             for i, memory_id in enumerate(results["ids"][0]):
                 memories.append(
                     {
@@ -251,6 +253,9 @@ class VectorStore:
                         "content": results["documents"][0][i] if results["documents"] else "",
                         "metadata": results["metadatas"][0][i] if results["metadatas"] else {},
                         "distance": results["distances"][0][i] if results["distances"] else 0,
+                        "similarity": cosine_similarity(
+                            query_embedding, list(results["embeddings"][0][i])
+                        ),
                     }
                 )
 

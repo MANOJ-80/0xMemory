@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 def rank_memories(
     store, query, limit, memory_types, semantic, file_paths, symbols, include_history,
+    relevance_gate=False, min_similarity=None,
 ):
     if not 1 <= limit <= 100:
         raise ValueError("limit must be between 1 and 100")
@@ -20,7 +21,7 @@ def rank_memories(
     memories = {m.id: m for m in store.markdown.get_all_memories()
                 if (include_history or m.status == MemoryStatus.ACTIVE)
                 and (not memory_types or m.type in memory_types)}
-    scores, reasons = {}, {}
+    scores, reasons, similarities = {}, {}, {}
 
     def contribute(ids, label, weight=1.0):
         for rank, memory_id in enumerate(ids, 1):
@@ -45,6 +46,7 @@ def rank_memories(
                     memory_types=memory_types,
                 )
                 contribute([r["id"] for r in results if r["id"] in memories], "semantic match")
+                similarities = {r["id"]: r.get("similarity") for r in results}
         except Exception as exc:
             logger.warning("Semantic search unavailable; using keyword/file matches: %s", exc)
     for memory in memories.values():
@@ -52,9 +54,15 @@ def rank_memories(
             contribute([memory.id], "linked file match", 1.5)
         if symbols & set(memory.symbols):
             contribute([memory.id], "linked symbol match", 1.5)
+    if relevance_gate:
+        from oxmemory.storage.relevance import DEFAULT_MIN_SIMILARITY, relevant
+        threshold = DEFAULT_MIN_SIMILARITY if min_similarity is None else min_similarity
+        scores = {mid: score for mid, score in scores.items()
+                  if relevant(query, memories[mid], similarities.get(mid), threshold)}
     ordered = sorted(scores, key=lambda mid: (-scores[mid], mid))[:limit]
     return [
-        {"memory": memories[mid], "score": scores[mid], "reasons": reasons[mid]}
+        {"memory": memories[mid], "score": scores[mid], "reasons": reasons[mid],
+         "similarity": similarities.get(mid)}
         for mid in ordered
     ]
 
@@ -79,4 +87,7 @@ def build_context(ranked: list[dict], token_budget: int) -> dict:
                          "score": item["score"], "reasons": item["reasons"]})
     return {"context": "\n\n".join(blocks), "results": selected,
             "budget_used": used, "budget_unit": "conservative_utf8_bytes",
-            "token_budget": token_budget, "omitted": len(ranked) - len(selected)}
+            "token_budget": token_budget, "omitted": len(ranked) - len(selected),
+            "abstained": not selected,
+            "abstention_reason": (None if selected else
+                                  "context_budget" if ranked else "no_relevant_memory")}

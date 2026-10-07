@@ -1,0 +1,1608 @@
+{
+  "partition": "held_out",
+  "policy": {
+    "threshold": 0.25,
+    "dataset_sha256": "2e0ef6e1b992e0bc939bcbaf1124ad21e0b3c74ad1e2cff2d0372e0aae2a5273",
+    "criterion": "minimize 2*(1-recall)+no_answer_fp; ties choose lower threshold",
+    "model": "all-MiniLM-L6-v2",
+    "development_trials": [
+      {
+        "threshold": 0.25,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.3,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.35,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.4,
+        "loss": 0.5,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 1.0,
+        "false_abstention": 0.0,
+        "no_answer_fp": 0.5
+      },
+      {
+        "threshold": 0.45,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.5,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.55,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.6,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.65,
+        "loss": 0.75,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.75,
+        "false_abstention": 0.25,
+        "no_answer_fp": 0.25
+      },
+      {
+        "threshold": 0.7,
+        "loss": 1.0,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.5,
+        "false_abstention": 0.5,
+        "no_answer_fp": 0.0
+      },
+      {
+        "threshold": 0.75,
+        "loss": 2.0,
+        "answerable_n": 4,
+        "no_answer_n": 4,
+        "recall": 0.0,
+        "false_abstention": 1.0,
+        "no_answer_fp": 0.0
+      }
+    ]
+  },
+  "dataset_sha256": "2e0ef6e1b992e0bc939bcbaf1124ad21e0b3c74ad1e2cff2d0372e0aae2a5273",
+  "summary": {
+    "ungated": {
+      "answerable_n": 8,
+      "no_answer_n": 8,
+      "recall": 1.0,
+      "false_abstention": 0.0,
+      "no_answer_fp": 1.0
+    },
+    "gated": {
+      "answerable_n": 8,
+      "no_answer_n": 8,
+      "recall": 1.0,
+      "false_abstention": 0.0,
+      "no_answer_fp": 1.0
+    }
+  },
+  "results": {
+    "ungated": [
+      {
+        "id": "test-pool",
+        "query": "When do unused connections close?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Idle database connections are closed after two minutes.",
+            "cosine": 0.5796809151038219,
+            "distance": 0.8406381607055664
+          },
+          {
+            "id": "m1",
+            "content": "Database backups are encrypted.",
+            "cosine": 0.038903254430642936,
+            "distance": 1.9221936464309692
+          },
+          {
+            "id": "m2",
+            "content": "The API accepts JSON payloads.",
+            "cosine": -0.06941983536705248,
+            "distance": 2.1388399600982666
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-health",
+        "query": "Which URL confirms the process is alive?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The process liveness endpoint is /alive.",
+            "cosine": 0.6946426143976555,
+            "distance": 0.6107146739959717
+          },
+          {
+            "id": "m1",
+            "content": "The readiness check tests database connectivity.",
+            "cosine": 0.33861443641059535,
+            "distance": 1.3227708339691162
+          },
+          {
+            "id": "m2",
+            "content": "The admin interface uses port 9000.",
+            "cosine": 0.1618881444364431,
+            "distance": 1.676223635673523
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-limit",
+        "query": "What happens when a caller exceeds its request quota?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Rate-limited callers receive HTTP 429 and a Retry-After header.",
+            "cosine": 0.6047703940924212,
+            "distance": 0.790459156036377
+          },
+          {
+            "id": "m1",
+            "content": "Requests include a correlation identifier.",
+            "cosine": 0.2799838074639132,
+            "distance": 1.4400324821472168
+          },
+          {
+            "id": "m2",
+            "content": "The server returns JSON errors.",
+            "cosine": 0.13417720369099925,
+            "distance": 1.7316457033157349
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-paraphrase",
+        "query": "How do we keep two workers from processing the same item?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m2",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Workers claim queue items using an exclusive database lock.",
+            "cosine": 0.4983320533805335,
+            "distance": 1.0033358335494995
+          },
+          {
+            "id": "m2",
+            "content": "Worker logs contain job identifiers.",
+            "cosine": 0.2806527120842182,
+            "distance": 1.4386945962905884
+          },
+          {
+            "id": "m1",
+            "content": "Queue items include a creation timestamp.",
+            "cosine": 0.22069670362042199,
+            "distance": 1.5586063861846924
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-upload",
+        "query": "How is the uploaded file's integrity checked?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Uploaded files are verified using a SHA-256 checksum.",
+            "cosine": 0.8035174059374535,
+            "distance": 0.392965167760849
+          },
+          {
+            "id": "m1",
+            "content": "Uploaded files go to object storage.",
+            "cosine": 0.5113326971881508,
+            "distance": 0.9773346185684204
+          },
+          {
+            "id": "m2",
+            "content": "Upload progress is shown as a percentage.",
+            "cosine": 0.2923821833600882,
+            "distance": 1.4152355194091797
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-redaction",
+        "query": "Are access credentials allowed in application logs?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Passwords and access tokens are redacted before log messages are written.",
+            "cosine": 0.5225060305484693,
+            "distance": 0.9549880027770996
+          },
+          {
+            "id": "m1",
+            "content": "Application logs are rotated daily.",
+            "cosine": 0.4371381891448299,
+            "distance": 1.1257234811782837
+          },
+          {
+            "id": "m2",
+            "content": "Metrics are collected every minute.",
+            "cosine": 0.055359239268758936,
+            "distance": 1.8892815113067627
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-deletion",
+        "query": "Can a user recover an account immediately after deleting it?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m1",
+          "m0",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Deleted accounts are soft-deleted for seven days before permanent removal.",
+            "cosine": 0.5968575362382219,
+            "distance": 0.8062848448753357
+          },
+          {
+            "id": "m1",
+            "content": "Account identifiers use UUIDs.",
+            "cosine": 0.25564786464868544,
+            "distance": 1.4887042045593262
+          },
+          {
+            "id": "m2",
+            "content": "Usernames are case-insensitive.",
+            "cosine": 0.10204926878205825,
+            "distance": 1.7959016561508179
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.015873015873015872,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-cors",
+        "query": "Which browser origin can call the API?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The API permits cross-origin requests only from https://app.example.invalid.",
+            "cosine": 0.6529182647180898,
+            "distance": 0.6941635012626648
+          },
+          {
+            "id": "m1",
+            "content": "API requests use HTTPS.",
+            "cosine": 0.5469855991446823,
+            "distance": 0.9060287475585938
+          },
+          {
+            "id": "m2",
+            "content": "The development frontend runs on port 3000.",
+            "cosine": 0.22158119584453057,
+            "distance": 1.556837558746338
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-owner",
+        "query": "Who is the security incident commander?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m1",
+            "content": "Incident identifiers use UUIDs.",
+            "cosine": 0.3278647229528979,
+            "distance": 1.3442704677581787
+          },
+          {
+            "id": "m0",
+            "content": "Security events are logged to the audit table.",
+            "cosine": 0.32535336215985994,
+            "distance": 1.3492932319641113
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-budget",
+        "query": "What budget is allocated to cloud storage?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Cloud storage objects are encrypted.",
+            "cosine": 0.5122278569824102,
+            "distance": 0.9755443334579468
+          },
+          {
+            "id": "m1",
+            "content": "Storage uploads use signed URLs.",
+            "cosine": 0.3302546283907183,
+            "distance": 1.3394910097122192
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-approval",
+        "query": "Who approved the rate limit settings?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The rate limit is one hundred requests per minute.",
+            "cosine": 0.5343655236078235,
+            "distance": 0.9312688112258911
+          },
+          {
+            "id": "m1",
+            "content": "Excess requests return HTTP 429.",
+            "cosine": 0.2043831160497835,
+            "distance": 1.5912338495254517
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-law",
+        "query": "Which jurisdiction governs customer contracts?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Customer records store a billing country.",
+            "cosine": 0.5014594858351396,
+            "distance": 0.9970810413360596
+          },
+          {
+            "id": "m1",
+            "content": "Invoices use ISO currency codes.",
+            "cosine": 0.35638628954895435,
+            "distance": 1.2872276306152344
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-rpo",
+        "query": "What recovery point objective did the business agree to?",
+        "relevant": [],
+        "retrieved": [
+          "m1",
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m1",
+            "content": "Recovery scripts verify file checksums.",
+            "cosine": 0.28191847951016313,
+            "distance": 1.4361631870269775
+          },
+          {
+            "id": "m0",
+            "content": "Database backups run at midnight.",
+            "cosine": 0.12607772657440788,
+            "distance": 1.7478446960449219
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m1",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m0",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-vendor",
+        "query": "When does our cloud vendor contract expire?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Cloud access tokens expire after one hour.",
+            "cosine": 0.6078897089798501,
+            "distance": 0.7842205762863159
+          },
+          {
+            "id": "m1",
+            "content": "Object storage keeps file versions.",
+            "cosine": 0.17585160274290546,
+            "distance": 1.6482969522476196
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-contact",
+        "query": "What is the emergency support phone number?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Support tickets receive sequential numbers.",
+            "cosine": 0.419813438163731,
+            "distance": 1.1603729724884033
+          },
+          {
+            "id": "m1",
+            "content": "User profiles can contain phone numbers.",
+            "cosine": 0.37637852137785993,
+            "distance": 1.2472426891326904
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-why",
+        "query": "Why did the team choose this message broker?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The message broker is RabbitMQ.",
+            "cosine": 0.6825068554505344,
+            "distance": 0.6349862813949585
+          },
+          {
+            "id": "m1",
+            "content": "Messages use durable queues.",
+            "cosine": 0.5103976690751723,
+            "distance": 0.9792047142982483
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      }
+    ],
+    "gated": [
+      {
+        "id": "test-pool",
+        "query": "When do unused connections close?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Idle database connections are closed after two minutes.",
+            "cosine": 0.5796809151038219,
+            "distance": 0.8406381607055664
+          },
+          {
+            "id": "m1",
+            "content": "Database backups are encrypted.",
+            "cosine": 0.038903254430642936,
+            "distance": 1.9221936464309692
+          },
+          {
+            "id": "m2",
+            "content": "The API accepts JSON payloads.",
+            "cosine": -0.06941983536705248,
+            "distance": 2.1388399600982666
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-health",
+        "query": "Which URL confirms the process is alive?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The process liveness endpoint is /alive.",
+            "cosine": 0.6946426143976555,
+            "distance": 0.6107146739959717
+          },
+          {
+            "id": "m1",
+            "content": "The readiness check tests database connectivity.",
+            "cosine": 0.33861443641059535,
+            "distance": 1.3227708339691162
+          },
+          {
+            "id": "m2",
+            "content": "The admin interface uses port 9000.",
+            "cosine": 0.1618881444364431,
+            "distance": 1.676223635673523
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-limit",
+        "query": "What happens when a caller exceeds its request quota?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Rate-limited callers receive HTTP 429 and a Retry-After header.",
+            "cosine": 0.6047703940924212,
+            "distance": 0.790459156036377
+          },
+          {
+            "id": "m1",
+            "content": "Requests include a correlation identifier.",
+            "cosine": 0.2799838074639132,
+            "distance": 1.4400324821472168
+          },
+          {
+            "id": "m2",
+            "content": "The server returns JSON errors.",
+            "cosine": 0.13417720369099925,
+            "distance": 1.7316457033157349
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-paraphrase",
+        "query": "How do we keep two workers from processing the same item?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Workers claim queue items using an exclusive database lock.",
+            "cosine": 0.4983320533805335,
+            "distance": 1.0033358335494995
+          },
+          {
+            "id": "m2",
+            "content": "Worker logs contain job identifiers.",
+            "cosine": 0.2806527120842182,
+            "distance": 1.4386945962905884
+          },
+          {
+            "id": "m1",
+            "content": "Queue items include a creation timestamp.",
+            "cosine": 0.22069670362042199,
+            "distance": 1.5586063861846924
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-upload",
+        "query": "How is the uploaded file's integrity checked?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1",
+          "m2"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Uploaded files are verified using a SHA-256 checksum.",
+            "cosine": 0.8035174059374535,
+            "distance": 0.392965167760849
+          },
+          {
+            "id": "m1",
+            "content": "Uploaded files go to object storage.",
+            "cosine": 0.5113326971881508,
+            "distance": 0.9773346185684204
+          },
+          {
+            "id": "m2",
+            "content": "Upload progress is shown as a percentage.",
+            "cosine": 0.2923821833600882,
+            "distance": 1.4152355194091797
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m2",
+            "score": 0.031746031746031744,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-redaction",
+        "query": "Are access credentials allowed in application logs?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Passwords and access tokens are redacted before log messages are written.",
+            "cosine": 0.5225060305484693,
+            "distance": 0.9549880027770996
+          },
+          {
+            "id": "m1",
+            "content": "Application logs are rotated daily.",
+            "cosine": 0.4371381891448299,
+            "distance": 1.1257234811782837
+          },
+          {
+            "id": "m2",
+            "content": "Metrics are collected every minute.",
+            "cosine": 0.055359239268758936,
+            "distance": 1.8892815113067627
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-deletion",
+        "query": "Can a user recover an account immediately after deleting it?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m1",
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Deleted accounts are soft-deleted for seven days before permanent removal.",
+            "cosine": 0.5968575362382219,
+            "distance": 0.8062848448753357
+          },
+          {
+            "id": "m1",
+            "content": "Account identifiers use UUIDs.",
+            "cosine": 0.25564786464868544,
+            "distance": 1.4887042045593262
+          },
+          {
+            "id": "m2",
+            "content": "Usernames are case-insensitive.",
+            "cosine": 0.10204926878205825,
+            "distance": 1.7959016561508179
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m0",
+            "score": 0.01639344262295082,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-cors",
+        "query": "Which browser origin can call the API?",
+        "relevant": [
+          "m0"
+        ],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The API permits cross-origin requests only from https://app.example.invalid.",
+            "cosine": 0.6529182647180898,
+            "distance": 0.6941635012626648
+          },
+          {
+            "id": "m1",
+            "content": "API requests use HTTPS.",
+            "cosine": 0.5469855991446823,
+            "distance": 0.9060287475585938
+          },
+          {
+            "id": "m2",
+            "content": "The development frontend runs on port 3000.",
+            "cosine": 0.22158119584453057,
+            "distance": 1.556837558746338
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-owner",
+        "query": "Who is the security incident commander?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m1",
+            "content": "Incident identifiers use UUIDs.",
+            "cosine": 0.3278647229528979,
+            "distance": 1.3442704677581787
+          },
+          {
+            "id": "m0",
+            "content": "Security events are logged to the audit table.",
+            "cosine": 0.32535336215985994,
+            "distance": 1.3492932319641113
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03252247488101534,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-budget",
+        "query": "What budget is allocated to cloud storage?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Cloud storage objects are encrypted.",
+            "cosine": 0.5122278569824102,
+            "distance": 0.9755443334579468
+          },
+          {
+            "id": "m1",
+            "content": "Storage uploads use signed URLs.",
+            "cosine": 0.3302546283907183,
+            "distance": 1.3394910097122192
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-approval",
+        "query": "Who approved the rate limit settings?",
+        "relevant": [],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The rate limit is one hundred requests per minute.",
+            "cosine": 0.5343655236078235,
+            "distance": 0.9312688112258911
+          },
+          {
+            "id": "m1",
+            "content": "Excess requests return HTTP 429.",
+            "cosine": 0.2043831160497835,
+            "distance": 1.5912338495254517
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-law",
+        "query": "Which jurisdiction governs customer contracts?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Customer records store a billing country.",
+            "cosine": 0.5014594858351396,
+            "distance": 0.9970810413360596
+          },
+          {
+            "id": "m1",
+            "content": "Invoices use ISO currency codes.",
+            "cosine": 0.35638628954895435,
+            "distance": 1.2872276306152344
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-rpo",
+        "query": "What recovery point objective did the business agree to?",
+        "relevant": [],
+        "retrieved": [
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m1",
+            "content": "Recovery scripts verify file checksums.",
+            "cosine": 0.28191847951016313,
+            "distance": 1.4361631870269775
+          },
+          {
+            "id": "m0",
+            "content": "Database backups run at midnight.",
+            "cosine": 0.12607772657440788,
+            "distance": 1.7478446960449219
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m1",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-vendor",
+        "query": "When does our cloud vendor contract expire?",
+        "relevant": [],
+        "retrieved": [
+          "m0"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Cloud access tokens expire after one hour.",
+            "cosine": 0.6078897089798501,
+            "distance": 0.7842205762863159
+          },
+          {
+            "id": "m1",
+            "content": "Object storage keeps file versions.",
+            "cosine": 0.17585160274290546,
+            "distance": 1.6482969522476196
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-contact",
+        "query": "What is the emergency support phone number?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "Support tickets receive sequential numbers.",
+            "cosine": 0.419813438163731,
+            "distance": 1.1603729724884033
+          },
+          {
+            "id": "m1",
+            "content": "User profiles can contain phone numbers.",
+            "cosine": 0.37637852137785993,
+            "distance": 1.2472426891326904
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.03225806451612903,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "test-why",
+        "query": "Why did the team choose this message broker?",
+        "relevant": [],
+        "retrieved": [
+          "m0",
+          "m1"
+        ],
+        "candidates": [
+          {
+            "id": "m0",
+            "content": "The message broker is RabbitMQ.",
+            "cosine": 0.6825068554505344,
+            "distance": 0.6349862813949585
+          },
+          {
+            "id": "m1",
+            "content": "Messages use durable queues.",
+            "cosine": 0.5103976690751723,
+            "distance": 0.9792047142982483
+          }
+        ],
+        "ranking": [
+          {
+            "id": "m0",
+            "score": 0.03278688524590164,
+            "reasons": [
+              "keyword match",
+              "semantic match"
+            ]
+          },
+          {
+            "id": "m1",
+            "score": 0.016129032258064516,
+            "reasons": [
+              "semantic match"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "Assistant-authored synthetic data; independent label review pending",
+    "No-answer labels include missing rationale and ownership questions",
+    "Cosine similarity measures relatedness, not answer entailment",
+    "No production coding-success or general accuracy claim"
+  ]
+}

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Experimental configurable cosine relevance gate, conservative keyword fallback,
+  explicit empty-context reasons, and actual cosine scores from stored embeddings.
+  Disabled by default after no improvement on new reserved no-answer cases.
+- A separate 24-case relevance experiment with development-only policy selection,
+  frozen-policy test results, and retained failure examples.
+- Final technical report, 15-slide offline HTML presentation with speaker notes,
+  and a timed demo/viva script.
+
 - Controlled 30-scenario Git-backed lifecycle evaluation with fixed development
   and reserved partitions, shared real semantic candidates, audited transitions,
   metric denominators, CSV/JSON results, SVG charts, and documented limitations.
