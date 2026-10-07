@@ -1,0 +1,2482 @@
+{
+  "mode": "semantic_hybrid",
+  "created_utc": "2026-10-07T10:26:37.196252+00:00",
+  "limit": 5,
+  "dataset_sha256": "3731d6d9cd33e33ff01af0e75c829441e501bf48b46bf8990e71a60ccd0336c9",
+  "scenario_count": 5,
+  "categories": {
+    "changed": 1,
+    "unrelated": 1,
+    "valid": 1,
+    "superseded": 1,
+    "no_answer": 1
+  },
+  "environment": {
+    "python": "3.12.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "versions": {
+      "chromadb": "1.5.9",
+      "sentence-transformers": "6.1.0",
+      "mcp": "2.3.0"
+    },
+    "engine_commit": "dfffe5a04f9ba026310e094ffebac043159b4c66",
+    "dirty_status": "?? evaluation/\n?? src/oxmemory/benchmark.py\n?? src/oxmemory/benchmark_data.py\n?? tests/test_benchmark.py",
+    "source_sha256": {
+      "benchmark.py": "cc40fa59c3950833495f7c93ae8f479240e0f527b6f9c21e110c30ca7e4d0d21",
+      "benchmark_data.py": "7e588d0827d0c08345601b441e49a9a7e5488da75ab679414ff51e3b9ae4640a"
+    }
+  },
+  "summary": [
+    {
+      "partition": "development",
+      "category": "all",
+      "variant": "basic",
+      "checkpoints": 6,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 4,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 4,
+      "outdated_hit": 1.0,
+      "outdated_hit_n": 2,
+      "outdated_fraction": 0.06666666666666667,
+      "outdated_fraction_n": 6,
+      "ineligible_hit": 1.0,
+      "ineligible_hit_n": 3,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 2,
+      "update_correct": 0.0,
+      "update_correct_n": 1
+    },
+    {
+      "partition": "development",
+      "category": "all",
+      "variant": "lifecycle",
+      "checkpoints": 6,
+      "recall_at_k": 0.75,
+      "recall_at_k_n": 4,
+      "reciprocal_rank": 0.75,
+      "reciprocal_rank_n": 4,
+      "outdated_hit": 0.0,
+      "outdated_hit_n": 2,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 6,
+      "ineligible_hit": 0.0,
+      "ineligible_hit_n": 3,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 2,
+      "update_correct": 1.0,
+      "update_correct_n": 1
+    },
+    {
+      "partition": "development",
+      "category": "changed",
+      "variant": "basic",
+      "checkpoints": 1,
+      "recall_at_k": null,
+      "recall_at_k_n": 0,
+      "reciprocal_rank": null,
+      "reciprocal_rank_n": 0,
+      "outdated_hit": 1.0,
+      "outdated_hit_n": 1,
+      "outdated_fraction": 0.2,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": 1.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 1,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "changed",
+      "variant": "lifecycle",
+      "checkpoints": 1,
+      "recall_at_k": null,
+      "recall_at_k_n": 0,
+      "reciprocal_rank": null,
+      "reciprocal_rank_n": 0,
+      "outdated_hit": 0.0,
+      "outdated_hit_n": 1,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": 0.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 1,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "no_answer",
+      "variant": "basic",
+      "checkpoints": 1,
+      "recall_at_k": null,
+      "recall_at_k_n": 0,
+      "reciprocal_rank": null,
+      "reciprocal_rank_n": 0,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": null,
+      "ineligible_hit_n": 0,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 1,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "no_answer",
+      "variant": "lifecycle",
+      "checkpoints": 1,
+      "recall_at_k": null,
+      "recall_at_k_n": 0,
+      "reciprocal_rank": null,
+      "reciprocal_rank_n": 0,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": null,
+      "ineligible_hit_n": 0,
+      "no_answer_false_positive": 1.0,
+      "no_answer_false_positive_n": 1,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "superseded",
+      "variant": "basic",
+      "checkpoints": 1,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 1,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 1,
+      "outdated_hit": 1.0,
+      "outdated_hit_n": 1,
+      "outdated_fraction": 0.2,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": 1.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": 0.0,
+      "update_correct_n": 1
+    },
+    {
+      "partition": "development",
+      "category": "superseded",
+      "variant": "lifecycle",
+      "checkpoints": 1,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 1,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 1,
+      "outdated_hit": 0.0,
+      "outdated_hit_n": 1,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": 0.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": 1.0,
+      "update_correct_n": 1
+    },
+    {
+      "partition": "development",
+      "category": "unrelated",
+      "variant": "basic",
+      "checkpoints": 1,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 1,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 1,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": null,
+      "ineligible_hit_n": 0,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "unrelated",
+      "variant": "lifecycle",
+      "checkpoints": 1,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 1,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 1,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 1,
+      "ineligible_hit": null,
+      "ineligible_hit_n": 0,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "valid",
+      "variant": "basic",
+      "checkpoints": 2,
+      "recall_at_k": 1.0,
+      "recall_at_k_n": 2,
+      "reciprocal_rank": 1.0,
+      "reciprocal_rank_n": 2,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 2,
+      "ineligible_hit": 1.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": null,
+      "update_correct_n": 0
+    },
+    {
+      "partition": "development",
+      "category": "valid",
+      "variant": "lifecycle",
+      "checkpoints": 2,
+      "recall_at_k": 0.5,
+      "recall_at_k_n": 2,
+      "reciprocal_rank": 0.5,
+      "reciprocal_rank_n": 2,
+      "outdated_hit": null,
+      "outdated_hit_n": 0,
+      "outdated_fraction": 0.0,
+      "outdated_fraction_n": 2,
+      "ineligible_hit": 0.0,
+      "ineligible_hit_n": 1,
+      "no_answer_false_positive": null,
+      "no_answer_false_positive_n": 0,
+      "update_correct": null,
+      "update_correct_n": 0
+    }
+  ],
+  "results": [
+    {
+      "scenario": "s01-storage",
+      "partition": "development",
+      "category": "changed",
+      "checkpoint": "after_observation",
+      "variant": "basic",
+      "query": "How are tasks persisted?",
+      "file_hint": "storage.py",
+      "relevant_ids": [],
+      "outdated_ids": [
+        "original"
+      ],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "Tasks persist in JSON files.",
+          "status": "stale",
+          "score": 0.05711263881544157,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.4977264702320099,
+          "commit": "ff04b760d8367d30c07550016725949d3a620169"
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.032018442622950824,
+          "reasons": [
+            "keyword match",
+            "semantic match"
+          ],
+          "semantic_distance": 1.8099108934402466,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6173951625823975,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.77193284034729,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.824182152748108,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "outdated_hit": true,
+        "outdated_fraction": 0.2,
+        "ineligible_hit": true,
+        "no_answer_false_positive": true,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s01-storage",
+      "partition": "development",
+      "category": "changed",
+      "checkpoint": "after_observation",
+      "variant": "lifecycle",
+      "query": "How are tasks persisted?",
+      "file_hint": "storage.py",
+      "relevant_ids": [],
+      "outdated_ids": [
+        "original"
+      ],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.032266458495966696,
+          "reasons": [
+            "keyword match",
+            "semantic match"
+          ],
+          "semantic_distance": 1.8099108934402466,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.01639344262295082,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6173951625823975,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.77193284034729,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.824182152748108,
+          "commit": null
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.9780538082122803,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "outdated_hit": false,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": false,
+        "no_answer_false_positive": true,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s09-billing",
+      "partition": "development",
+      "category": "unrelated",
+      "checkpoint": "after_observation",
+      "variant": "basic",
+      "query": "Which currency does billing use?",
+      "file_hint": "billing.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "Billing amounts use US dollars.",
+          "status": "active",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.3707743287086487,
+          "commit": "d12b2208baa3a81e67fd59c477a600abf8ea4dac"
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.03128054740957967,
+          "reasons": [
+            "keyword match",
+            "semantic match"
+          ],
+          "semantic_distance": 1.9110305309295654,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5827436447143555,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7311233282089233,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.849924087524414,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s09-billing",
+      "partition": "development",
+      "category": "unrelated",
+      "checkpoint": "after_observation",
+      "variant": "lifecycle",
+      "query": "Which currency does billing use?",
+      "file_hint": "billing.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "Billing amounts use US dollars.",
+          "status": "active",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.3707743287086487,
+          "commit": "d12b2208baa3a81e67fd59c477a600abf8ea4dac"
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.03128054740957967,
+          "reasons": [
+            "keyword match",
+            "semantic match"
+          ],
+          "semantic_distance": 1.9110305309295654,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5827436447143555,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7311233282089233,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.849924087524414,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s15-database",
+      "partition": "development",
+      "category": "valid",
+      "checkpoint": "pending_review",
+      "variant": "basic",
+      "query": "Which database engine is configured?",
+      "file_hint": "database.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "The database engine is SQLite.",
+          "status": "stale",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.537696123123169,
+          "commit": "499530fcd5efd7370d4051e0e64dadaf503e5ced"
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5062134265899658,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6865358352661133,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7393686771392822,
+          "commit": null
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.837063193321228,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": true,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s15-database",
+      "partition": "development",
+      "category": "valid",
+      "checkpoint": "pending_review",
+      "variant": "lifecycle",
+      "query": "Which database engine is configured?",
+      "file_hint": "database.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.01639344262295082,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5062134265899658,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6865358352661133,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7393686771392822,
+          "commit": null
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.837063193321228,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.8742902278900146,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": false,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s15-database",
+      "partition": "development",
+      "category": "valid",
+      "checkpoint": "after_review",
+      "variant": "basic",
+      "query": "Which database engine is configured?",
+      "file_hint": "database.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "The database engine is SQLite.",
+          "status": "active",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.537696123123169,
+          "commit": "2c0caff0561db54394ad37cc15766eea8d6ba997"
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5062134265899658,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6865358352661133,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7393686771392822,
+          "commit": null
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.837063193321228,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s15-database",
+      "partition": "development",
+      "category": "valid",
+      "checkpoint": "after_review",
+      "variant": "lifecycle",
+      "query": "Which database engine is configured?",
+      "file_hint": "database.py",
+      "relevant_ids": [
+        "original"
+      ],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "original",
+          "content": "The database engine is SQLite.",
+          "status": "active",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.537696123123169,
+          "commit": "2c0caff0561db54394ad37cc15766eea8d6ba997"
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5062134265899658,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6865358352661133,
+          "commit": null
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7393686771392822,
+          "commit": null
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.837063193321228,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": null,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s21-payments",
+      "partition": "development",
+      "category": "superseded",
+      "checkpoint": "after_review",
+      "variant": "basic",
+      "query": "Which provider processes payments?",
+      "file_hint": "payments.py",
+      "relevant_ids": [
+        "mem-ff1a7d1c"
+      ],
+      "outdated_ids": [
+        "original"
+      ],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "mem-ff1a7d1c",
+          "content": "Payments use Adyen as the provider.",
+          "status": "active",
+          "score": 0.05711263881544157,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.660149872303009,
+          "commit": "e5144648b279a37447af58de5220c2e99df5467a"
+        },
+        {
+          "id": "original",
+          "content": "Payments use Stripe as the provider.",
+          "status": "superseded",
+          "score": 0.05711263881544157,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.5477701425552368,
+          "commit": "2a35b8ee34e2dd0f2b7433bc0c61edc9231a23d8"
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6430543661117554,
+          "commit": null
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.784962773323059,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7918040752410889,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": true,
+        "outdated_fraction": 0.2,
+        "ineligible_hit": true,
+        "no_answer_false_positive": null,
+        "update_correct": false
+      }
+    },
+    {
+      "scenario": "s21-payments",
+      "partition": "development",
+      "category": "superseded",
+      "checkpoint": "after_review",
+      "variant": "lifecycle",
+      "query": "Which provider processes payments?",
+      "file_hint": "payments.py",
+      "relevant_ids": [
+        "mem-ff1a7d1c"
+      ],
+      "outdated_ids": [
+        "original"
+      ],
+      "ineligible_ids": [
+        "original"
+      ],
+      "retrieved": [
+        {
+          "id": "mem-ff1a7d1c",
+          "content": "Payments use Adyen as the provider.",
+          "status": "active",
+          "score": 0.05737704918032787,
+          "reasons": [
+            "keyword match",
+            "semantic match",
+            "linked file match"
+          ],
+          "semantic_distance": 0.660149872303009,
+          "commit": "e5144648b279a37447af58de5220c2e99df5467a"
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.6430543661117554,
+          "commit": null
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.784962773323059,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7918040752410889,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.9705238342285156,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "outdated_hit": false,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": false,
+        "no_answer_false_positive": null,
+        "update_correct": true
+      }
+    },
+    {
+      "scenario": "s27-localization",
+      "partition": "development",
+      "category": "no_answer",
+      "checkpoint": "after_observation",
+      "variant": "basic",
+      "query": "Who approves production deployment requests?",
+      "file_hint": null,
+      "relevant_ids": [],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.01639344262295082,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.4897778034210205,
+          "commit": null
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5977749824523926,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7619550228118896,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7664434909820557,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.8121581077575684,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": true,
+        "update_correct": null
+      }
+    },
+    {
+      "scenario": "s27-localization",
+      "partition": "development",
+      "category": "no_answer",
+      "checkpoint": "after_observation",
+      "variant": "lifecycle",
+      "query": "Who approves production deployment requests?",
+      "file_hint": null,
+      "relevant_ids": [],
+      "outdated_ids": [],
+      "ineligible_ids": [],
+      "retrieved": [
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "status": "active",
+          "score": 0.01639344262295082,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.4897778034210205,
+          "commit": null
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "status": "active",
+          "score": 0.016129032258064516,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.5977749824523926,
+          "commit": null
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "status": "active",
+          "score": 0.015873015873015872,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7619550228118896,
+          "commit": null
+        },
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "status": "active",
+          "score": 0.015625,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.7664434909820557,
+          "commit": null
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "status": "active",
+          "score": 0.015384615384615385,
+          "reasons": [
+            "semantic match"
+          ],
+          "semantic_distance": 1.8121581077575684,
+          "commit": null
+        }
+      ],
+      "metrics": {
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "outdated_hit": null,
+        "outdated_fraction": 0.0,
+        "ineligible_hit": null,
+        "no_answer_false_positive": true,
+        "update_correct": null
+      }
+    }
+  ],
+  "audits": [
+    {
+      "scenario": "s01-storage",
+      "initial_commit": "ff04b760d8367d30c07550016725949d3a620169",
+      "changed_commit": "7e14c8ad011fedd24da3c4eb0bd900e9f43fb194",
+      "initial_file": "storage.py",
+      "initial_code": "BACKEND = 'json'\n",
+      "changed_file": "storage.py",
+      "changed_code": "BACKEND = 'sqlite'\n",
+      "diff": "diff --git a/storage.py b/storage.py\nindex 04eed8e..69922da 100644\n--- a/storage.py\n+++ b/storage.py\n@@ -1 +1 @@\n-BACKEND = 'json'\n+BACKEND = 'sqlite'",
+      "events": [
+        {
+          "operation": "observe_commit",
+          "result": {
+            "commit": "7e14c8ad011fedd24da3c4eb0bd900e9f43fb194",
+            "changed_files": [
+              "storage.py"
+            ],
+            "affected": [
+              {
+                "id": "original",
+                "files": [
+                  "storage.py"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "memories": [
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.423954",
+          "updated_at": "2026-10-07T15:56:30.423954",
+          "accessed_at": "2026-10-07T15:56:30.423954",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.424970",
+          "updated_at": "2026-10-07T15:56:30.424970",
+          "accessed_at": "2026-10-07T15:56:30.424970",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.424970",
+          "updated_at": "2026-10-07T15:56:30.424970",
+          "accessed_at": "2026-10-07T15:56:30.424970",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.425962",
+          "updated_at": "2026-10-07T15:56:30.425962",
+          "accessed_at": "2026-10-07T15:56:30.425962",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.425962",
+          "updated_at": "2026-10-07T15:56:30.425962",
+          "accessed_at": "2026-10-07T15:56:30.425962",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.425962",
+          "updated_at": "2026-10-07T15:56:30.425962",
+          "accessed_at": "2026-10-07T15:56:30.425962",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "original",
+          "content": "Tasks persist in JSON files.",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:30.307186",
+          "updated_at": "2026-10-07T15:56:30.825946",
+          "accessed_at": "2026-10-07T15:56:30.307186",
+          "session_id": null,
+          "related_to": [],
+          "status": "stale",
+          "file_paths": [
+            "storage.py"
+          ],
+          "symbols": [],
+          "commit_sha": "ff04b760d8367d30c07550016725949d3a620169",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": "Supporting files changed; verification required.",
+          "stale_at_commit": "7e14c8ad011fedd24da3c4eb0bd900e9f43fb194",
+          "revisions": [
+            {
+              "id": "original",
+              "content": "Tasks persist in JSON files.",
+              "type": "decision",
+              "tags": [],
+              "source": "manual",
+              "salience": 0.5,
+              "created_at": "2026-10-07T15:56:30.307186",
+              "updated_at": "2026-10-07T15:56:30.307186",
+              "accessed_at": "2026-10-07T15:56:30.307186",
+              "session_id": null,
+              "related_to": [],
+              "status": "active",
+              "file_paths": [
+                "storage.py"
+              ],
+              "symbols": [],
+              "commit_sha": "ff04b760d8367d30c07550016725949d3a620169",
+              "confidence": null,
+              "supersedes": null,
+              "superseded_by": null,
+              "verification_note": null,
+              "stale_at_commit": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": "s09-billing",
+      "initial_commit": "d12b2208baa3a81e67fd59c477a600abf8ea4dac",
+      "changed_commit": "ed98f8a04d4b3bab472f14f61dfdc10947d6d4e0",
+      "initial_file": "billing.py",
+      "initial_code": "CURRENCY = 'USD'\n",
+      "changed_file": "other.py",
+      "changed_code": "VERSION = 2\n",
+      "diff": "diff --git a/other.py b/other.py\nindex b71dad9..e184f95 100644\n--- a/other.py\n+++ b/other.py\n@@ -1 +1 @@\n-VERSION = 1\n+VERSION = 2",
+      "events": [
+        {
+          "operation": "observe_commit",
+          "result": {
+            "commit": "ed98f8a04d4b3bab472f14f61dfdc10947d6d4e0",
+            "changed_files": [
+              "other.py"
+            ],
+            "affected": []
+          }
+        }
+      ],
+      "memories": [
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.361554",
+          "updated_at": "2026-10-07T15:56:32.361554",
+          "accessed_at": "2026-10-07T15:56:32.361554",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.362557",
+          "updated_at": "2026-10-07T15:56:32.362557",
+          "accessed_at": "2026-10-07T15:56:32.362557",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.363555",
+          "updated_at": "2026-10-07T15:56:32.363555",
+          "accessed_at": "2026-10-07T15:56:32.363555",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.364553",
+          "updated_at": "2026-10-07T15:56:32.364553",
+          "accessed_at": "2026-10-07T15:56:32.364553",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.364553",
+          "updated_at": "2026-10-07T15:56:32.364553",
+          "accessed_at": "2026-10-07T15:56:32.364553",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.364553",
+          "updated_at": "2026-10-07T15:56:32.364553",
+          "accessed_at": "2026-10-07T15:56:32.364553",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "original",
+          "content": "Billing amounts use US dollars.",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:32.239705",
+          "updated_at": "2026-10-07T15:56:32.239705",
+          "accessed_at": "2026-10-07T15:56:32.239705",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [
+            "billing.py"
+          ],
+          "symbols": [],
+          "commit_sha": "d12b2208baa3a81e67fd59c477a600abf8ea4dac",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        }
+      ]
+    },
+    {
+      "scenario": "s15-database",
+      "initial_commit": "499530fcd5efd7370d4051e0e64dadaf503e5ced",
+      "changed_commit": "2c0caff0561db54394ad37cc15766eea8d6ba997",
+      "initial_file": "database.py",
+      "initial_code": "ENGINE = 'sqlite'\n",
+      "changed_file": "database.py",
+      "changed_code": "ENGINE = 'sqlite'\n\n# Refactor helper; configured policy is unchanged.\ndef configured_value():\n    return ENGINE\n",
+      "diff": "diff --git a/database.py b/database.py\nindex c2681f7..57a5ade 100644\n--- a/database.py\n+++ b/database.py\n@@ -1 +1,5 @@\n ENGINE = 'sqlite'\n+\n+# Refactor helper; configured policy is unchanged.\n+def configured_value():\n+    return ENGINE",
+      "events": [
+        {
+          "operation": "observe_commit",
+          "result": {
+            "commit": "2c0caff0561db54394ad37cc15766eea8d6ba997",
+            "changed_files": [
+              "database.py"
+            ],
+            "affected": [
+              {
+                "id": "original",
+                "files": [
+                  "database.py"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "operation": "verify",
+          "memory": {
+            "id": "original",
+            "content": "The database engine is SQLite.",
+            "type": "decision",
+            "tags": [],
+            "source": "manual",
+            "salience": 0.5,
+            "created_at": "2026-10-07T15:56:33.383874",
+            "updated_at": "2026-10-07T15:56:34.383856",
+            "accessed_at": "2026-10-07T15:56:33.383874",
+            "session_id": null,
+            "related_to": [],
+            "status": "active",
+            "file_paths": [
+              "database.py"
+            ],
+            "symbols": [],
+            "commit_sha": "2c0caff0561db54394ad37cc15766eea8d6ba997",
+            "confidence": null,
+            "supersedes": null,
+            "superseded_by": null,
+            "verification_note": "Fixture review: setting is unchanged; only a helper was added.",
+            "stale_at_commit": null,
+            "revisions": [
+              {
+                "id": "original",
+                "content": "The database engine is SQLite.",
+                "type": "decision",
+                "tags": [],
+                "source": "manual",
+                "salience": 0.5,
+                "created_at": "2026-10-07T15:56:33.383874",
+                "updated_at": "2026-10-07T15:56:33.383874",
+                "accessed_at": "2026-10-07T15:56:33.383874",
+                "session_id": null,
+                "related_to": [],
+                "status": "active",
+                "file_paths": [
+                  "database.py"
+                ],
+                "symbols": [],
+                "commit_sha": "499530fcd5efd7370d4051e0e64dadaf503e5ced",
+                "confidence": null,
+                "supersedes": null,
+                "superseded_by": null,
+                "verification_note": null,
+                "stale_at_commit": null
+              },
+              {
+                "id": "original",
+                "content": "The database engine is SQLite.",
+                "type": "decision",
+                "tags": [],
+                "source": "manual",
+                "salience": 0.5,
+                "created_at": "2026-10-07T15:56:33.383874",
+                "updated_at": "2026-10-07T15:56:33.906596",
+                "accessed_at": "2026-10-07T15:56:33.383874",
+                "session_id": null,
+                "related_to": [],
+                "status": "stale",
+                "file_paths": [
+                  "database.py"
+                ],
+                "symbols": [],
+                "commit_sha": "499530fcd5efd7370d4051e0e64dadaf503e5ced",
+                "confidence": null,
+                "supersedes": null,
+                "superseded_by": null,
+                "verification_note": "Supporting files changed; verification required.",
+                "stale_at_commit": "2c0caff0561db54394ad37cc15766eea8d6ba997"
+              }
+            ]
+          }
+        }
+      ],
+      "memories": [
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.512158",
+          "updated_at": "2026-10-07T15:56:33.512158",
+          "accessed_at": "2026-10-07T15:56:33.512158",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.512158",
+          "updated_at": "2026-10-07T15:56:33.512158",
+          "accessed_at": "2026-10-07T15:56:33.512158",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.514274",
+          "updated_at": "2026-10-07T15:56:33.514274",
+          "accessed_at": "2026-10-07T15:56:33.514274",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.514274",
+          "updated_at": "2026-10-07T15:56:33.514274",
+          "accessed_at": "2026-10-07T15:56:33.514274",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.515295",
+          "updated_at": "2026-10-07T15:56:33.515295",
+          "accessed_at": "2026-10-07T15:56:33.515295",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.515295",
+          "updated_at": "2026-10-07T15:56:33.515295",
+          "accessed_at": "2026-10-07T15:56:33.515295",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "original",
+          "content": "The database engine is SQLite.",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:33.383874",
+          "updated_at": "2026-10-07T15:56:34.383856",
+          "accessed_at": "2026-10-07T15:56:33.383874",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [
+            "database.py"
+          ],
+          "symbols": [],
+          "commit_sha": "2c0caff0561db54394ad37cc15766eea8d6ba997",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": "Fixture review: setting is unchanged; only a helper was added.",
+          "stale_at_commit": null,
+          "revisions": [
+            {
+              "id": "original",
+              "content": "The database engine is SQLite.",
+              "type": "decision",
+              "tags": [],
+              "source": "manual",
+              "salience": 0.5,
+              "created_at": "2026-10-07T15:56:33.383874",
+              "updated_at": "2026-10-07T15:56:33.383874",
+              "accessed_at": "2026-10-07T15:56:33.383874",
+              "session_id": null,
+              "related_to": [],
+              "status": "active",
+              "file_paths": [
+                "database.py"
+              ],
+              "symbols": [],
+              "commit_sha": "499530fcd5efd7370d4051e0e64dadaf503e5ced",
+              "confidence": null,
+              "supersedes": null,
+              "superseded_by": null,
+              "verification_note": null,
+              "stale_at_commit": null
+            },
+            {
+              "id": "original",
+              "content": "The database engine is SQLite.",
+              "type": "decision",
+              "tags": [],
+              "source": "manual",
+              "salience": 0.5,
+              "created_at": "2026-10-07T15:56:33.383874",
+              "updated_at": "2026-10-07T15:56:33.906596",
+              "accessed_at": "2026-10-07T15:56:33.383874",
+              "session_id": null,
+              "related_to": [],
+              "status": "stale",
+              "file_paths": [
+                "database.py"
+              ],
+              "symbols": [],
+              "commit_sha": "499530fcd5efd7370d4051e0e64dadaf503e5ced",
+              "confidence": null,
+              "supersedes": null,
+              "superseded_by": null,
+              "verification_note": "Supporting files changed; verification required.",
+              "stale_at_commit": "2c0caff0561db54394ad37cc15766eea8d6ba997"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": "s21-payments",
+      "initial_commit": "2a35b8ee34e2dd0f2b7433bc0c61edc9231a23d8",
+      "changed_commit": "e5144648b279a37447af58de5220c2e99df5467a",
+      "initial_file": "payments.py",
+      "initial_code": "PROVIDER = 'stripe'\n",
+      "changed_file": "payments.py",
+      "changed_code": "PROVIDER = 'adyen'\n",
+      "diff": "diff --git a/payments.py b/payments.py\nindex be5cbab..4d503b3 100644\n--- a/payments.py\n+++ b/payments.py\n@@ -1 +1 @@\n-PROVIDER = 'stripe'\n+PROVIDER = 'adyen'",
+      "events": [
+        {
+          "operation": "observe_commit",
+          "result": {
+            "commit": "e5144648b279a37447af58de5220c2e99df5467a",
+            "changed_files": [
+              "payments.py"
+            ],
+            "affected": [
+              {
+                "id": "original",
+                "files": [
+                  "payments.py"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "operation": "supersede",
+          "memory": {
+            "id": "mem-ff1a7d1c",
+            "content": "Payments use Adyen as the provider.",
+            "type": "decision",
+            "tags": [],
+            "source": "verified-replacement",
+            "salience": 0.5,
+            "created_at": "2026-10-07T15:56:35.425680",
+            "updated_at": "2026-10-07T15:56:35.425680",
+            "accessed_at": "2026-10-07T15:56:35.425680",
+            "session_id": null,
+            "related_to": [
+              "original"
+            ],
+            "status": "active",
+            "file_paths": [
+              "payments.py"
+            ],
+            "symbols": [],
+            "commit_sha": "e5144648b279a37447af58de5220c2e99df5467a",
+            "confidence": null,
+            "supersedes": "original",
+            "superseded_by": null,
+            "verification_note": "Fixture review: the setting now matches the replacement claim.",
+            "stale_at_commit": null,
+            "revisions": []
+          }
+        }
+      ],
+      "memories": [
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.020581",
+          "updated_at": "2026-10-07T15:56:35.020581",
+          "accessed_at": "2026-10-07T15:56:35.020581",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.020581",
+          "updated_at": "2026-10-07T15:56:35.020581",
+          "accessed_at": "2026-10-07T15:56:35.020581",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.022065",
+          "updated_at": "2026-10-07T15:56:35.022065",
+          "accessed_at": "2026-10-07T15:56:35.022065",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.022065",
+          "updated_at": "2026-10-07T15:56:35.022065",
+          "accessed_at": "2026-10-07T15:56:35.022065",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.023106",
+          "updated_at": "2026-10-07T15:56:35.023106",
+          "accessed_at": "2026-10-07T15:56:35.023106",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.023106",
+          "updated_at": "2026-10-07T15:56:35.023106",
+          "accessed_at": "2026-10-07T15:56:35.023106",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "original",
+          "content": "Payments use Stripe as the provider.",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:34.900114",
+          "updated_at": "2026-10-07T15:56:35.602444",
+          "accessed_at": "2026-10-07T15:56:34.900114",
+          "session_id": null,
+          "related_to": [],
+          "status": "superseded",
+          "file_paths": [
+            "payments.py"
+          ],
+          "symbols": [],
+          "commit_sha": "2a35b8ee34e2dd0f2b7433bc0c61edc9231a23d8",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": "mem-ff1a7d1c",
+          "verification_note": "Supporting files changed; verification required.",
+          "stale_at_commit": "e5144648b279a37447af58de5220c2e99df5467a",
+          "revisions": [
+            {
+              "id": "original",
+              "content": "Payments use Stripe as the provider.",
+              "type": "decision",
+              "tags": [],
+              "source": "manual",
+              "salience": 0.5,
+              "created_at": "2026-10-07T15:56:34.900114",
+              "updated_at": "2026-10-07T15:56:34.900114",
+              "accessed_at": "2026-10-07T15:56:34.900114",
+              "session_id": null,
+              "related_to": [],
+              "status": "active",
+              "file_paths": [
+                "payments.py"
+              ],
+              "symbols": [],
+              "commit_sha": "2a35b8ee34e2dd0f2b7433bc0c61edc9231a23d8",
+              "confidence": null,
+              "supersedes": null,
+              "superseded_by": null,
+              "verification_note": null,
+              "stale_at_commit": null
+            },
+            {
+              "id": "original",
+              "content": "Payments use Stripe as the provider.",
+              "type": "decision",
+              "tags": [],
+              "source": "manual",
+              "salience": 0.5,
+              "created_at": "2026-10-07T15:56:34.900114",
+              "updated_at": "2026-10-07T15:56:35.423321",
+              "accessed_at": "2026-10-07T15:56:34.900114",
+              "session_id": null,
+              "related_to": [],
+              "status": "stale",
+              "file_paths": [
+                "payments.py"
+              ],
+              "symbols": [],
+              "commit_sha": "2a35b8ee34e2dd0f2b7433bc0c61edc9231a23d8",
+              "confidence": null,
+              "supersedes": null,
+              "superseded_by": null,
+              "verification_note": "Supporting files changed; verification required.",
+              "stale_at_commit": "e5144648b279a37447af58de5220c2e99df5467a"
+            }
+          ]
+        },
+        {
+          "id": "mem-ff1a7d1c",
+          "content": "Payments use Adyen as the provider.",
+          "type": "decision",
+          "tags": [],
+          "source": "verified-replacement",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:35.425680",
+          "updated_at": "2026-10-07T15:56:35.425680",
+          "accessed_at": "2026-10-07T15:56:35.425680",
+          "session_id": null,
+          "related_to": [
+            "original"
+          ],
+          "status": "active",
+          "file_paths": [
+            "payments.py"
+          ],
+          "symbols": [],
+          "commit_sha": "e5144648b279a37447af58de5220c2e99df5467a",
+          "confidence": null,
+          "supersedes": "original",
+          "superseded_by": null,
+          "verification_note": "Fixture review: the setting now matches the replacement claim.",
+          "stale_at_commit": null,
+          "revisions": []
+        }
+      ]
+    },
+    {
+      "scenario": "s27-localization",
+      "initial_commit": "8854c118275470f6359ad41e795e8fc7f9d5d85e",
+      "changed_commit": "7b708dce16f8caa13dc5635b8a14acd3be940728",
+      "initial_file": "localization.py",
+      "initial_code": "DEFAULT = 'en'\n",
+      "changed_file": "other.py",
+      "changed_code": "VERSION = 2\n",
+      "diff": "diff --git a/other.py b/other.py\nindex b71dad9..e184f95 100644\n--- a/other.py\n+++ b/other.py\n@@ -1 +1 @@\n-VERSION = 1\n+VERSION = 2",
+      "events": [
+        {
+          "operation": "observe_commit",
+          "result": {
+            "commit": "7b708dce16f8caa13dc5635b8a14acd3be940728",
+            "changed_files": [
+              "other.py"
+            ],
+            "affected": []
+          }
+        }
+      ],
+      "memories": [
+        {
+          "id": "noise-0",
+          "content": "Documentation uses Markdown headings.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.371707",
+          "updated_at": "2026-10-07T15:56:36.371707",
+          "accessed_at": "2026-10-07T15:56:36.371707",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-1",
+          "content": "The development server listens on port 8090.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.371707",
+          "updated_at": "2026-10-07T15:56:36.371707",
+          "accessed_at": "2026-10-07T15:56:36.371707",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-2",
+          "content": "Unit tests run through the unittest runner.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.373092",
+          "updated_at": "2026-10-07T15:56:36.373092",
+          "accessed_at": "2026-10-07T15:56:36.373092",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-3",
+          "content": "Release notes are written in English.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.373092",
+          "updated_at": "2026-10-07T15:56:36.373092",
+          "accessed_at": "2026-10-07T15:56:36.373092",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-4",
+          "content": "The project icon uses a green background.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.374192",
+          "updated_at": "2026-10-07T15:56:36.374192",
+          "accessed_at": "2026-10-07T15:56:36.374192",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "noise-5",
+          "content": "Source files use four spaces for indentation.",
+          "type": "fact",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.374192",
+          "updated_at": "2026-10-07T15:56:36.374192",
+          "accessed_at": "2026-10-07T15:56:36.374192",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [],
+          "symbols": [],
+          "commit_sha": null,
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        },
+        {
+          "id": "original",
+          "content": "The default interface language is English.",
+          "type": "decision",
+          "tags": [],
+          "source": "manual",
+          "salience": 0.5,
+          "created_at": "2026-10-07T15:56:36.249706",
+          "updated_at": "2026-10-07T15:56:36.249706",
+          "accessed_at": "2026-10-07T15:56:36.249706",
+          "session_id": null,
+          "related_to": [],
+          "status": "active",
+          "file_paths": [
+            "localization.py"
+          ],
+          "symbols": [],
+          "commit_sha": "8854c118275470f6359ad41e795e8fc7f9d5d85e",
+          "confidence": null,
+          "supersedes": null,
+          "superseded_by": null,
+          "verification_note": null,
+          "stale_at_commit": null,
+          "revisions": []
+        }
+      ]
+    }
+  ]
+}

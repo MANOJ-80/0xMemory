@@ -18,6 +18,8 @@ VS Code Copilot / Antigravity / Cursor setup, and the entire memory lifecycle.
 | [Original demo results](DEMO_RESULTS.md) | Copilot run, IDs, commits, and limits |
 | [Integration status](INTEGRATION_STATUS.md) | Verified checks and remaining checks |
 | [Project plan](PROJECT_PLAN.md) | Implementation map and research work |
+| [Controlled evaluation](evaluation/README.md) | 30 Git-backed synthetic scenarios, reproducible runs, and metrics |
+| [Evaluation findings](evaluation/FINDINGS.md) | Measured stale-filtering benefit, review delay, and no-answer failures |
 
 The JSON baseline is in `examples/dodo-starter`. Copy it into a separate Git
 repository following START_HERE; do not modify the template for your experiment.
@@ -105,6 +107,7 @@ automatically depends on the connected agent's behavior and instructions.
 python -m oxmemory.demo --output demo-result.json
 python -m oxmemory.dashboard --project /path/to/project --keyword-only
 python -m oxmemory.evaluation --output evaluation-smoke.json
+python -m oxmemory.benchmark --semantic --output evaluation/my-run
 ```
 
 Open the dashboard at `http://127.0.0.1:8765`. The demo creates a temporary Git
@@ -114,6 +117,13 @@ The default evaluation uses four synthetic scenarios and keyword-only retrieval.
 It checks the pipeline; it is not a research benchmark. Add `--semantic` to run
 real embeddings. The bounded context uses UTF-8 bytes as a conservative token-budget
 proxy; actual model tokens and coding-task success are not yet measured.
+
+The separate `benchmark` command adds 30 fixed synthetic scenarios with real Git
+transitions and a controlled lifecycle-filtering ablation. Use a new output folder
+for each run. See [methodology](evaluation/README.md) and [findings](evaluation/FINDINGS.md).
+Its reserved partition showed no outdated retrieval after filtering, but lost
+still-valid context pending review and did not solve no-answer relevance. This is
+not a measurement of autonomous coding performance.
 
 ## Storage
 

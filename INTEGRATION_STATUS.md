@@ -70,6 +70,13 @@ For a fresh machine follow START_HERE: cache the model before enabling offline m
 
 ## Result limits
 
+The new controlled evaluator (`python -m oxmemory.benchmark`) completed five
+development and 25 reserved scenarios with real embeddings and Git transitions.
+Four new regression tests passed. It changes no production retrieval parameters.
+See [evaluation/FINDINGS.md](evaluation/FINDINGS.md) for metric denominators and
+the separate pending-review and no-answer failures. The previous 79-test full-run
+record predates these four added tests; a current full collection has 83 tests.
+
 The semantic smoke report filters stale memories successfully in its fixtures,
 but its no-answer scenario still retrieves unrelated active content. Relevance
 thresholds and abstention need further evaluation. These results do not establish

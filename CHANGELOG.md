@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Controlled 30-scenario Git-backed lifecycle evaluation with fixed development
+  and reserved partitions, shared real semantic candidates, audited transitions,
+  metric denominators, CSV/JSON results, SVG charts, and documented limitations.
+- Regression tests for evaluation labels, metrics, real lifecycle transitions,
+  retained experiment outputs, and failure instead of silent semantic fallback.
+
 - Clone-to-demo handoff with virtual environment setup, model preparation,
   verification, and sequential fresh-chat lifecycle prompts.
 - VS Code Copilot, Antigravity, and Cursor configuration instructions.

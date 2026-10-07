@@ -1,0 +1,559 @@
+{
+  "version": 1,
+  "authorship": "Assistant-authored synthetic fixtures; human label review pending",
+  "split": "First fixture per category is development; 25 remaining fixtures reserved before execution",
+  "distractors": [
+    "Documentation uses Markdown headings.",
+    "The development server listens on port 8090.",
+    "Unit tests run through the unittest runner.",
+    "Release notes are written in English.",
+    "The project icon uses a green background.",
+    "Source files use four spaces for indentation."
+  ],
+  "scenarios": [
+    {
+      "id": "s01-storage",
+      "category": "changed",
+      "partition": "development",
+      "file": "storage.py",
+      "setting": "BACKEND",
+      "before": "json",
+      "after": "sqlite",
+      "original": "Tasks persist in JSON files.",
+      "replacement": "Tasks persist in SQLite.",
+      "query": "How are tasks persisted?",
+      "file_hint": "storage.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s02-cache",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "cache.py",
+      "setting": "TTL_SECONDS",
+      "before": 60,
+      "after": 300,
+      "original": "Cache entries expire after 60 seconds.",
+      "replacement": "Cache entries expire after 300 seconds.",
+      "query": "What is the cache expiration interval?",
+      "file_hint": "cache.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s03-auth",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "auth.py",
+      "setting": "METHOD",
+      "before": "jwt",
+      "after": "cookie",
+      "original": "Authentication uses JWT tokens.",
+      "replacement": "Authentication uses cookie sessions.",
+      "query": "Which authentication mechanism is used?",
+      "file_hint": "auth.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s04-uploads",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "uploads.py",
+      "setting": "MAX_MB",
+      "before": 10,
+      "after": 25,
+      "original": "Uploads have a maximum size of 10 MB.",
+      "replacement": "Uploads have a maximum size of 25 MB.",
+      "query": "What is the upload size limit?",
+      "file_hint": "uploads.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s05-retry",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "retry.py",
+      "setting": "ATTEMPTS",
+      "before": 3,
+      "after": 5,
+      "original": "Failed requests are retried three times.",
+      "replacement": "Failed requests are retried five times.",
+      "query": "How many request retries are allowed?",
+      "file_hint": "retry.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s06-dates",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "dates.py",
+      "setting": "ZONE",
+      "before": "local",
+      "after": "UTC",
+      "original": "Timestamps use the local timezone.",
+      "replacement": "Timestamps use UTC.",
+      "query": "Which timezone is used for timestamps?",
+      "file_hint": "dates.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s07-queue",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "queue.py",
+      "setting": "ORDER",
+      "before": "lifo",
+      "after": "fifo",
+      "original": "Jobs use last-in first-out processing.",
+      "replacement": "Jobs use first-in first-out processing.",
+      "query": "In what order are queued jobs processed?",
+      "file_hint": "queue.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s08-search",
+      "category": "changed",
+      "partition": "held_out",
+      "file": "search.py",
+      "setting": "PAGE_SIZE",
+      "before": 20,
+      "after": 50,
+      "original": "Search pages contain twenty results.",
+      "replacement": "Search pages contain fifty results.",
+      "query": "How many results fit on a search page?",
+      "file_hint": "search.py",
+      "relevant_roles": [],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Original claim contradicts the changed setting; replacement not yet recorded."
+    },
+    {
+      "id": "s09-billing",
+      "category": "unrelated",
+      "partition": "development",
+      "file": "billing.py",
+      "setting": "CURRENCY",
+      "before": "USD",
+      "after": "USD",
+      "original": "Billing amounts use US dollars.",
+      "replacement": "Billing amounts use US dollars.",
+      "query": "Which currency does billing use?",
+      "file_hint": "billing.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s10-passwords",
+      "category": "unrelated",
+      "partition": "held_out",
+      "file": "passwords.py",
+      "setting": "ALGORITHM",
+      "before": "argon2",
+      "after": "argon2",
+      "original": "Passwords are hashed with Argon2.",
+      "replacement": "Passwords are hashed with Argon2.",
+      "query": "How are passwords hashed?",
+      "file_hint": "passwords.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s11-exports",
+      "category": "unrelated",
+      "partition": "held_out",
+      "file": "exports.py",
+      "setting": "FORMAT",
+      "before": "csv",
+      "after": "csv",
+      "original": "Exports use CSV format.",
+      "replacement": "Exports use CSV format.",
+      "query": "What file format is used for exports?",
+      "file_hint": "exports.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s12-images",
+      "category": "unrelated",
+      "partition": "held_out",
+      "file": "images.py",
+      "setting": "FORMAT",
+      "before": "webp",
+      "after": "webp",
+      "original": "Thumbnails use WebP images.",
+      "replacement": "Thumbnails use WebP images.",
+      "query": "What image format do thumbnails use?",
+      "file_hint": "images.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s13-sessions",
+      "category": "unrelated",
+      "partition": "held_out",
+      "file": "sessions.py",
+      "setting": "TIMEOUT_MIN",
+      "before": 30,
+      "after": 30,
+      "original": "Sessions expire after thirty minutes.",
+      "replacement": "Sessions expire after thirty minutes.",
+      "query": "When does an idle session expire?",
+      "file_hint": "sessions.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s14-reports",
+      "category": "unrelated",
+      "partition": "held_out",
+      "file": "reports.py",
+      "setting": "WEEK_START",
+      "before": "Monday",
+      "after": "Monday",
+      "original": "Reporting weeks start on Monday.",
+      "replacement": "Reporting weeks start on Monday.",
+      "query": "Which day begins a reporting week?",
+      "file_hint": "reports.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s15-database",
+      "category": "valid",
+      "partition": "development",
+      "file": "database.py",
+      "setting": "ENGINE",
+      "before": "sqlite",
+      "after": "sqlite",
+      "original": "The database engine is SQLite.",
+      "replacement": "The database engine is SQLite.",
+      "query": "Which database engine is configured?",
+      "file_hint": "database.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s16-transport",
+      "category": "valid",
+      "partition": "held_out",
+      "file": "transport.py",
+      "setting": "TIMEOUT_SECONDS",
+      "before": 15,
+      "after": 15,
+      "original": "Network requests time out after fifteen seconds.",
+      "replacement": "Network requests time out after fifteen seconds.",
+      "query": "What is the network request timeout?",
+      "file_hint": "transport.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s17-audit",
+      "category": "valid",
+      "partition": "held_out",
+      "file": "audit.py",
+      "setting": "RETENTION_DAYS",
+      "before": 90,
+      "after": 90,
+      "original": "Audit events are retained for ninety days.",
+      "replacement": "Audit events are retained for ninety days.",
+      "query": "How long are audit events retained?",
+      "file_hint": "audit.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s18-inventory",
+      "category": "valid",
+      "partition": "held_out",
+      "file": "inventory.py",
+      "setting": "ALLOW_NEGATIVE",
+      "before": false,
+      "after": false,
+      "original": "Inventory counts cannot become negative.",
+      "replacement": "Inventory counts cannot become negative.",
+      "query": "Can inventory counts be negative?",
+      "file_hint": "inventory.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s19-email",
+      "category": "valid",
+      "partition": "held_out",
+      "file": "email.py",
+      "setting": "ENCODING",
+      "before": "utf-8",
+      "after": "utf-8",
+      "original": "Email bodies use UTF-8 encoding.",
+      "replacement": "Email bodies use UTF-8 encoding.",
+      "query": "What encoding is used for email bodies?",
+      "file_hint": "email.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s20-money",
+      "category": "valid",
+      "partition": "held_out",
+      "file": "money.py",
+      "setting": "ROUNDING",
+      "before": "half_even",
+      "after": "half_even",
+      "original": "Money is rounded with half-even rounding.",
+      "replacement": "Money is rounded with half-even rounding.",
+      "query": "Which monetary rounding rule applies?",
+      "file_hint": "money.py",
+      "relevant_roles": [
+        "original"
+      ],
+      "outdated_roles": [],
+      "label_reason": "The setting remains unchanged, so the original statement is still true."
+    },
+    {
+      "id": "s21-payments",
+      "category": "superseded",
+      "partition": "development",
+      "file": "payments.py",
+      "setting": "PROVIDER",
+      "before": "stripe",
+      "after": "adyen",
+      "original": "Payments use Stripe as the provider.",
+      "replacement": "Payments use Adyen as the provider.",
+      "query": "Which provider processes payments?",
+      "file_hint": "payments.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s22-logs",
+      "category": "superseded",
+      "partition": "held_out",
+      "file": "logs.py",
+      "setting": "FORMAT",
+      "before": "text",
+      "after": "json",
+      "original": "Application logs use plain text.",
+      "replacement": "Application logs use structured JSON.",
+      "query": "What format do application logs use?",
+      "file_hint": "logs.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s23-pagination",
+      "category": "superseded",
+      "partition": "held_out",
+      "file": "pagination.py",
+      "setting": "MODE",
+      "before": "offset",
+      "after": "cursor",
+      "original": "API pagination uses offsets.",
+      "replacement": "API pagination uses cursors.",
+      "query": "How does API pagination work?",
+      "file_hint": "pagination.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s24-notifications",
+      "category": "superseded",
+      "partition": "held_out",
+      "file": "notifications.py",
+      "setting": "DELIVERY",
+      "before": "poll",
+      "after": "websocket",
+      "original": "Notifications are delivered by polling.",
+      "replacement": "Notifications are delivered over WebSockets.",
+      "query": "How are notifications delivered?",
+      "file_hint": "notifications.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s25-backups",
+      "category": "superseded",
+      "partition": "held_out",
+      "file": "backups.py",
+      "setting": "INTERVAL_HOURS",
+      "before": 24,
+      "after": 6,
+      "original": "Database backups run every twenty-four hours.",
+      "replacement": "Database backups run every six hours.",
+      "query": "How often do database backups run?",
+      "file_hint": "backups.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s26-compression",
+      "category": "superseded",
+      "partition": "held_out",
+      "file": "compression.py",
+      "setting": "CODEC",
+      "before": "gzip",
+      "after": "zstd",
+      "original": "Archive compression uses gzip.",
+      "replacement": "Archive compression uses Zstandard.",
+      "query": "Which archive compression codec is used?",
+      "file_hint": "compression.py",
+      "relevant_roles": [
+        "replacement"
+      ],
+      "outdated_roles": [
+        "original"
+      ],
+      "label_reason": "Only the reviewed replacement describes the changed setting."
+    },
+    {
+      "id": "s27-localization",
+      "category": "no_answer",
+      "partition": "development",
+      "file": "localization.py",
+      "setting": "DEFAULT",
+      "before": "en",
+      "after": "en",
+      "original": "The default interface language is English.",
+      "replacement": "The default interface language is English.",
+      "query": "Who approves production deployment requests?",
+      "file_hint": null,
+      "relevant_roles": [],
+      "outdated_roles": [],
+      "label_reason": "No stored statement answers this question."
+    },
+    {
+      "id": "s28-theme",
+      "category": "no_answer",
+      "partition": "held_out",
+      "file": "theme.py",
+      "setting": "DEFAULT",
+      "before": "light",
+      "after": "light",
+      "original": "The default interface theme is light.",
+      "replacement": "The default interface theme is light.",
+      "query": "What is the contractual uptime guarantee?",
+      "file_hint": null,
+      "relevant_roles": [],
+      "outdated_roles": [],
+      "label_reason": "No stored statement answers this question."
+    },
+    {
+      "id": "s29-sorting",
+      "category": "no_answer",
+      "partition": "held_out",
+      "file": "sorting.py",
+      "setting": "DIRECTION",
+      "before": "ascending",
+      "after": "ascending",
+      "original": "The default list sorting direction is ascending.",
+      "replacement": "The default list sorting direction is ascending.",
+      "query": "Where is the disaster recovery facility located?",
+      "file_hint": null,
+      "relevant_roles": [],
+      "outdated_roles": [],
+      "label_reason": "No stored statement answers this question."
+    },
+    {
+      "id": "s30-avatars",
+      "category": "no_answer",
+      "partition": "held_out",
+      "file": "avatars.py",
+      "setting": "SIZE",
+      "before": 64,
+      "after": 64,
+      "original": "Avatar images are sixty-four pixels wide.",
+      "replacement": "Avatar images are sixty-four pixels wide.",
+      "query": "Who owns the third-party software license renewal?",
+      "file_hint": null,
+      "relevant_roles": [],
+      "outdated_roles": [],
+      "label_reason": "No stored statement answers this question."
+    }
+  ]
+}

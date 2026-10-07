@@ -1,0 +1,13 @@
+partition,category,variant,checkpoints,recall_at_k,recall_at_k_n,reciprocal_rank,reciprocal_rank_n,outdated_hit,outdated_hit_n,outdated_fraction,outdated_fraction_n,ineligible_hit,ineligible_hit_n,no_answer_false_positive,no_answer_false_positive_n,update_correct,update_correct_n
+development,all,basic,6,1.0,4,1.0,4,1.0,2,0.06666666666666667,6,1.0,3,1.0,2,0.0,1
+development,all,lifecycle,6,0.75,4,0.75,4,0.0,2,0.0,6,0.0,3,1.0,2,1.0,1
+development,changed,basic,1,,0,,0,1.0,1,0.2,1,1.0,1,1.0,1,,0
+development,changed,lifecycle,1,,0,,0,0.0,1,0.0,1,0.0,1,1.0,1,,0
+development,no_answer,basic,1,,0,,0,,0,0.0,1,,0,1.0,1,,0
+development,no_answer,lifecycle,1,,0,,0,,0,0.0,1,,0,1.0,1,,0
+development,superseded,basic,1,1.0,1,1.0,1,1.0,1,0.2,1,1.0,1,,0,0.0,1
+development,superseded,lifecycle,1,1.0,1,1.0,1,0.0,1,0.0,1,0.0,1,,0,1.0,1
+development,unrelated,basic,1,1.0,1,1.0,1,,0,0.0,1,,0,,0,,0
+development,unrelated,lifecycle,1,1.0,1,1.0,1,,0,0.0,1,,0,,0,,0
+development,valid,basic,2,1.0,2,1.0,2,,0,0.0,2,1.0,1,,0,,0
+development,valid,lifecycle,2,0.5,2,0.5,2,,0,0.0,2,0.0,1,,0,,0

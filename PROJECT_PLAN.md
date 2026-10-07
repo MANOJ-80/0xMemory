@@ -140,6 +140,13 @@ python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
 
 ## Remaining project phases
 
+The first controlled synthetic evaluation is now implemented and executed:
+30 Git-backed scenarios, five development and 25 reserved, using identical hybrid
+retrieval with lifecycle filtering enabled/disabled. Results include raw evidence,
+CSV summaries, reports, and charts. See [evaluation/FINDINGS.md](evaluation/FINDINGS.md).
+This is an initial synthetic study; human label review and a real-repository dataset
+remain open. The no-answer and pending-review limitations are explicitly measured.
+
 1. **Independent reproduction:** publish the reviewed engine/starter revision and
    have a teammate follow START_HERE on a fresh environment. Record browser checks
    and Cursor/Antigravity handoffs. Consider an opt-in observer hook after the
@@ -149,7 +156,8 @@ python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
 3. **Memory management:** generate near-duplicate/conflict review candidates;
    consolidate only supported claims while retaining provenance. Add extraction
    quality tests before allowing unattended updates.
-4. **Research dataset:** assemble 30–50 labelled multi-session scenarios across
+4. **Research dataset:** extend beyond the initial 30 synthetic fixtures to
+   human-reviewed multi-session scenarios across
    two or three small repositories. Include changed facts, unrelated changes,
    reverts, renames, conflicting sources, and no-answer cases. Label synthetic
    examples and keep development/tuning scenarios separate from evaluation.
