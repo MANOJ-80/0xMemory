@@ -14,6 +14,12 @@ Rebuild the HTML after editing slides.json:
 .\.venv\Scripts\python.exe scripts/build-review-materials.py
 ```
 
+On Ubuntu/Bash, from the engine repository root:
+
+```bash
+.venv/bin/python scripts/build-review-materials.py
+```
+
 The deck is HTML, not a native PowerPoint file. It works without internet or an
 installed presentation library. Add actual team names, institution, supervisor,
 and required submission formatting to the report/title before academic submission.

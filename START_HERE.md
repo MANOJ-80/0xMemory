@@ -1,6 +1,8 @@
 # From a fresh clone to a complete MCP memory demonstration
 
-Audience: a teammate who has never installed this project. Follow the numbered steps in order. The main instructions use **Windows PowerShell and Python 3.12**, matching the completed team test. A macOS/Linux appendix explains the path and shell differences; those platforms have not been validated in this handoff.
+Audience: a teammate who has never installed this project. Follow the numbered steps in order. This guide uses **Windows PowerShell and Python 3.12**, matching the completed team test.
+
+**Using Ubuntu? Follow [UBUNTU_SETUP.md](UBUNTU_SETUP.md) instead.** It contains the complete Bash installation, editor configuration, fresh-app test, and memory lifecycle prompts. Ubuntu runtime validation is pending; Windows results do not establish a Linux pass.
 
 **Terminal blocks go in PowerShell. Agent prompt blocks go in your editor's AI chat. Send one agent prompt at a time and wait for its result.** “New chat” means an empty conversation, not another message in the existing conversation.
 
@@ -532,27 +534,16 @@ Memory persistence alone is not the research novelty. This example demonstrates 
 
 ## 18. macOS and Linux notes
 
-The main guide is intentionally a verified Windows workflow. On another OS, use a shell-appropriate workspace path and `.venv/bin/python`:
+For **Ubuntu**, use [UBUNTU_SETUP.md](UBUNTU_SETUP.md) from the beginning. It
+includes prerequisites, Bash verification, generated Linux editor configs, every
+lifecycle prompt, and troubleshooting. Do not mix its Bash commands with this
+Windows guide.
 
-```bash
-mkdir -p "$HOME/MemoryLayerDemo"
-cd "$HOME/MemoryLayerDemo"
-git clone https://github.com/MANOJ-80/0xMemory.git
-cd 0xMemory
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
-export PYTHONUTF8=1
-.venv/bin/python -m pip check
-.venv/bin/python -m oxmemory --help
-.venv/bin/python -c "from sentence_transformers import SentenceTransformer; print(SentenceTransformer('all-MiniLM-L6-v2').encode(['check']).shape)"
-.venv/bin/python -m pytest tests/ -v
-.venv/bin/python -m oxmemory.demo --output demo-result.json
-.venv/bin/python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
-```
-
-After those pass, copy `examples/dodo-starter/.` to a new sibling directory with `cp -R`, including dotfiles. Initialize its Git repository and brain there with `../0xMemory/.venv/bin/python -m oxmemory init --name testDodoapp --local`. Commit the starter using the explicit file list from section 5, and run `../0xMemory/.venv/bin/python -m unittest -v`.
-
-Use the manual JSON templates in [EDITOR_SETUP.md](EDITOR_SETUP.md), replacing `command` with the absolute `.venv/bin/python` path and the final argument with the absolute app path. Replace the Windows Python command in the migration prompt too. Launch uvicorn with `../0xMemory/.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8090`. The agent prompts and pass conditions otherwise remain the same. Record any platform-specific failures rather than assuming Windows results transfer.
+For **macOS**, the Unix interpreter path is also `.venv/bin/python`, but Ubuntu's
+`apt` commands do not apply. Install Git and Python 3.11/3.12 using your macOS
+setup, then adapt the Bash workflow and use the portable config generator.
+macOS and Ubuntu runtime results have not been established by the Windows tests;
+record the actual OS, commands, failures, and editor behavior in the test report.
 
 ## 19. Maintainer handoff before a friend clones
 

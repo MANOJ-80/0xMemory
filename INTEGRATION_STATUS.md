@@ -1,7 +1,26 @@
 # Local integration status
 
 Updated 2026-10-07 after normal-terminal verification and the developer-reported
-Copilot Dodo demonstration. Fresh setup: [START_HERE.md](START_HERE.md).
+Copilot Dodo demonstration. Fresh setup: [Windows](START_HERE.md) / [Ubuntu](UBUNTU_SETUP.md).
+
+## Ubuntu documentation and portable setup validation
+
+- Added the complete Ubuntu 24.04 / Python 3.12 walkthrough, with a managed-Python
+  alternative, Bash verifier, editor configs, and separate-chat lifecycle test.
+- `scripts/configure-editors.py`: Ruff passes. Exercised all three generated
+  JSON formats, absolute paths containing spaces, rejection before brain init,
+  and rejection of existing configs without mutation.
+- A generated config launched the real server and returned the initialized
+  project's zero-memory status through the MCP SDK using the existing anonymous
+  pipe test adapter on Windows. This is not a Linux/editor UI test.
+- The Bash verifier has LF bytes and a Git LF rule. It runs the full test suite
+  without deselections, then the demo and semantic evaluation into fresh outputs.
+- **Ubuntu runtime and Bash syntax execution are NOT RUN:** WSL returned access
+  denied, and Git Bash could not create its signal pipe (Win32 error 5) in this
+  restricted session. Do not count these environment failures as verification.
+  Run the guide on Ubuntu and record results in TEST_REPORT_TEMPLATE.md.
+- Local `.env`, `.venv`, brain, editor configs, and cache directories are not
+  tracked Git inputs. A fresh Linux clone recreates them using its own paths.
 
 ## Latest relevance and final-materials validation
 

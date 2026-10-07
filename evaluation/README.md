@@ -1,5 +1,7 @@
 # Commit-aware retrieval experiment
 
+For Ubuntu installation and Bash reproduction commands, follow [Ubuntu setup](../UBUNTU_SETUP.md#14-optional-editor-handoff-dashboard-and-evaluation). Record Linux results separately from the committed Windows artifacts.
+
 This directory contains a reproducible **synthetic functional evaluation**, not
 an independently validated research benchmark. It tests the retrieval consequences
 of real Git observation and explicitly supplied review actions. It does not run

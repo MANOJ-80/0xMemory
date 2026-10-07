@@ -7,9 +7,16 @@ The final-year prototype adds **commit-aware memory lifecycle management**:
 memories link to code evidence, changed files trigger verification, and replacement
 decisions preserve the original history.
 
-**New tester? Start with [START_HERE.md](START_HERE.md)** for the full Windows
-clone-to-demo walkthrough: environment, embeddings, verification, fresh Dodo app,
+**New tester? Choose your operating system:**
+
+| Operating system | Complete clone-to-demo walkthrough |
+| --- | --- |
+| Windows PowerShell | [START_HERE.md](START_HERE.md) |
+| Ubuntu / Bash | [UBUNTU_SETUP.md](UBUNTU_SETUP.md) |
+
+Both guides cover the environment, embeddings, verification, fresh Dodo app,
 VS Code Copilot / Antigravity / Cursor setup, and the entire memory lifecycle.
+Ubuntu runtime validation is still pending; record your independent results.
 
 | Document | Purpose |
 | --- | --- |

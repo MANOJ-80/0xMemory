@@ -1,5 +1,7 @@
 # Experimental relevance gate: calibration and independent reserved cases
 
+For Ubuntu installation and Bash reproduction commands, follow [Ubuntu setup](../../UBUNTU_SETUP.md#14-optional-editor-handoff-dashboard-and-evaluation). Record Linux results separately from the committed Windows artifacts.
+
 ## Outcome and release decision
 
 The cosine gate is implemented but **disabled by default**. It did not improve

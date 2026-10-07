@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Complete Ubuntu/Bash fresh-clone and editor lifecycle guide in `UBUNTU_SETUP.md`.
+- Linux verifier `scripts/verify-local.sh` and portable, non-overwriting MCP
+  config generator `scripts/configure-editors.py`; shell scripts use LF in Git.
+- Ubuntu entry points, starter commands, and independent platform-report fields.
+
 - Experimental configurable cosine relevance gate, conservative keyword fallback,
   explicit empty-context reasons, and actual cosine scores from stored embeddings.
   Disabled by default after no improvement on new reserved no-answer cases.

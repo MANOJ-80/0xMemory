@@ -1,2 +1,3 @@
 # Keep frozen datasets and source fingerprints stable across fresh Windows clones.
 evaluation/** text eol=lf
+*.sh text eol=lf

@@ -8,6 +8,9 @@ Copy this file outside the Dodo agent workspace before filling it in. Use PASS, 
 | --- | --- |
 | Tester and date | |
 | OS and version | |
+| Linux distribution / architecture (if applicable) | |
+| Execution context (native Windows / native Ubuntu / WSL / other) | |
+| Setup guide followed | |
 | Engine clone URL / branch | |
 | Full engine commit SHA | |
 | Any uncommitted engine changes (`git status --short`) | |
