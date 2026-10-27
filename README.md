@@ -1,5 +1,7 @@
 # 0xMemory
 
+**Recommended: [one-command To-do setup](QUICKSTART_DEMO.md)** for Windows/Ubuntu, VS Code Copilot, and Codex CLI/Desktop. The detailed manual steps below remain available for troubleshooting.
+
 A project-scoped persistent memory layer for AI coding agents, with human-editable
 Markdown, a ChromaDB search index, and MCP integration.
 
@@ -14,7 +16,7 @@ decisions preserve the original history.
 | Windows PowerShell | [START_HERE.md](START_HERE.md) |
 | Ubuntu / Bash | [UBUNTU_SETUP.md](UBUNTU_SETUP.md) |
 
-Both guides cover the environment, embeddings, verification, fresh Dodo app,
+Both guides cover the environment, embeddings, verification, fresh To-do app,
 VS Code Copilot / Antigravity / Cursor setup, and the entire memory lifecycle.
 Ubuntu runtime validation is still pending; record your independent results.
 
@@ -30,7 +32,7 @@ Ubuntu runtime validation is still pending; record your independent results.
 | [Relevance experiment](evaluation/relevance/README.md) | Development-only calibration and the negative reserved result |
 | [Final review materials](review-materials/README.md) | Technical report, offline slides, speaker notes, and demo/viva script |
 
-The JSON baseline is in `examples/dodo-starter`. Copy it into a separate Git
+The JSON baseline is in `examples/todo-starter`. Copy it into a separate Git
 repository following START_HERE; do not modify the template for your experiment.
 
 ## What works

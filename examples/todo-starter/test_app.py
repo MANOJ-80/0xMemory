@@ -40,7 +40,7 @@ class TodoTests(unittest.TestCase):
     def test_homepage(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Dodo", response.text)
+        self.assertIn("To-do", response.text)
 
 
 if __name__ == "__main__":

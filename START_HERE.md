@@ -1,5 +1,7 @@
 # From a fresh clone to a complete MCP memory demonstration
 
+**Recommended: [one-command To-do setup](QUICKSTART_DEMO.md)** for Windows/Ubuntu, VS Code Copilot, and Codex CLI/Desktop. The detailed manual steps below remain available for troubleshooting.
+
 Audience: a teammate who has never installed this project. Follow the numbered steps in order. This guide uses **Windows PowerShell and Python 3.12**, matching the completed team test.
 
 **Using Ubuntu? Follow [UBUNTU_SETUP.md](UBUNTU_SETUP.md) instead.** It contains the complete Bash installation, editor configuration, fresh-app test, and memory lifecycle prompts. Ubuntu runtime validation is pending; Windows results do not establish a Linux pass.
@@ -12,7 +14,7 @@ Audience: a teammate who has never installed this project. Follow the numbered s
 2. [Prerequisites and clone](#2-prerequisites-and-clone)
 3. [Create the Python environment](#3-create-the-python-environment)
 4. [Download embeddings and verify the engine](#4-download-embeddings-and-verify-the-engine)
-5. [Create a separate fresh Dodo project](#5-create-a-separate-fresh-dodo-project)
+5. [Create a separate fresh To-do project](#5-create-a-separate-fresh-to-do-project)
 6. [Generate local editor configurations](#6-generate-local-editor-configurations)
 7. [Connect your editor](#7-connect-your-editor)
 8. [Run and check the application](#8-run-and-check-the-application)
@@ -37,11 +39,11 @@ VS Code Copilot / Antigravity / Cursor (one at a time)
                          |
           0xMemory/.venv/Scripts/python.exe
                          |
-          testDodoapp/.0xmemory/   <-- decisions and history
+          testTodoapp/.0xmemory/   <-- decisions and history
                          |
-          testDodoapp Git commits <-- supporting code evidence
+          testTodoapp Git commits <-- supporting code evidence
 
-Browser --> http://127.0.0.1:8090 --> Dodo app --> data/tasks.json
+Browser --> http://127.0.0.1:8090 --> To-do app --> data/tasks.json
                                                  later tasks.db
 ```
 
@@ -82,7 +84,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Clone failed; stop here.' }
 $engineRoot = Join-Path $demoRoot '0xMemory'
 Set-Location $engineRoot
 git rev-parse HEAD
-Test-Path .\examples\dodo-starter\storage.py
+Test-Path .\examples\todo-starter\storage.py
 Test-Path .\scripts\verify-local.ps1
 ```
 
@@ -143,39 +145,39 @@ if ($LASTEXITCODE -ne 0) { throw 'Verification failed; inspect the first error.'
 
 This execution-policy setting applies to the launched PowerShell process; no permanent policy change is needed. `-SkipInstall` is appropriate because step 3 installed dependencies. `-OfflineModels` is appropriate only after the model was cached successfully. If package installation is incomplete, omit `-SkipInstall`; if model downloads are still required, omit `-OfflineModels` and ensure offline flags are not set to `1`.
 
-Expected current collection: **89 tests**, then a PASS line covering dependencies,
+Expected: **all collected tests pass**, then a PASS line covering dependencies,
 CLI, tests, the real MCP client, embeddings, and semantic evaluation. The original
 team run passed 79 before the evaluation/relevance tests were added. A later
 revision may have more tests. Do not continue after failures merely because some
 tests passed. See INTEGRATION_STATUS for the current restricted-session checks.
 
-The script creates `demo-result.json` and `evaluation-semantic.json` in the engine directory. The built-in temporary Git demo is separate from Dodo. The evaluation contains four synthetic scenarios; successful execution is not a research accuracy claim.
+The script creates `demo-result.json` and `evaluation-semantic.json` in the engine directory. The built-in temporary Git demo is separate from To-do. The evaluation contains four synthetic scenarios; successful execution is not a research accuracy claim.
 
-## 5. Create a separate fresh Dodo project
+## 5. Create a separate fresh To-do project
 
-The clone includes an original **JSON-backed** starter at `examples/dodo-starter`. Copy it outside the engine repository. Do not copy the already-migrated Dodo app from another person's machine.
+The clone includes an original **JSON-backed** starter at `examples/todo-starter`. Copy it outside the engine repository. Do not copy the already-migrated To-do app from another person's machine.
 
 **Terminal — same PowerShell session:**
 
 ```powershell
-$appRoot = Join-Path $demoRoot 'testDodoapp'
-if (Test-Path -LiteralPath $appRoot) { throw 'testDodoapp already exists. Choose a fresh app folder instead of overwriting it.' }
+$appRoot = Join-Path $demoRoot 'testTodoapp'
+if (Test-Path -LiteralPath $appRoot) { throw 'testTodoapp already exists. Choose a fresh app folder instead of overwriting it.' }
 New-Item -ItemType Directory -Path $appRoot | Out-Null
-Get-ChildItem -LiteralPath (Join-Path $engineRoot 'examples\dodo-starter') -Force |
+Get-ChildItem -LiteralPath (Join-Path $engineRoot 'examples\todo-starter') -Force |
     Copy-Item -Destination $appRoot -Recurse
 Set-Location $appRoot
 git init
-git add app.py storage.py index.html test_app.py README.md requirements.txt .gitignore .github/copilot-instructions.md
-git -c user.name='Dodo Demo' -c user.email='demo@example.invalid' -c commit.gpgsign=false commit -m 'Create JSON-backed Dodo task app'
+git add app.py storage.py index.html test_app.py README.md requirements.txt .gitignore .github/copilot-instructions.md AGENTS.md
+git -c user.name='To-do Demo' -c user.email='demo@example.invalid' -c commit.gpgsign=false commit -m 'Create JSON-backed To-do task app'
 if ($LASTEXITCODE -ne 0) { throw 'Initial commit failed.' }
 git rev-parse HEAD
-& $enginePython -m oxmemory init --name testDodoapp --local
+& $enginePython -m oxmemory init --name testTodoapp --local
 if ($LASTEXITCODE -ne 0) { throw 'Memory initialization failed.' }
 & $enginePython -m oxmemory status
 & $enginePython -m unittest -v
 ```
 
-Expected: an initial Git commit, project name `testDodoapp`, zero memories, and **five passing app tests**. The per-command Git identity applies only to this demo commit. `--local` configures local extraction defaults; this walkthrough does not call extraction and does not require an extraction server. The init command prints generic next steps mentioning API keys: those keys are not required for this remember/recall flow.
+Expected: an initial Git commit, project name `testTodoapp`, zero memories, and **five passing app tests**. The per-command Git identity applies only to this demo commit. `--local` configures local extraction defaults; this walkthrough does not call extraction and does not require an extraction server. The init command prints generic next steps mentioning API keys: those keys are not required for this remember/recall flow.
 
 Check your layout:
 
@@ -185,8 +187,8 @@ MemoryLayerDemo/
   0xMemory/                  engine Git repository
     .venv/                   installed Python dependencies
     START_HERE.md            keep the walkthrough here
-    examples/dodo-starter/   untouched JSON baseline
-  testDodoapp/               separate application Git repository
+    examples/todo-starter/   untouched JSON baseline
+  testTodoapp/               separate application Git repository
     .git/
     app.py
     storage.py
@@ -200,63 +202,16 @@ The starter excludes `.0xmemory`, `data`, editor configs, and `.env` from Git. A
 
 ## 6. Generate local editor configurations
 
-This block creates all three configurations with **your actual absolute paths**. It is for the newly copied demo and refuses to overwrite an existing config. No user/global editor settings are changed.
+Run from the engine folder after initializing the app and caching the model:
 
 ```powershell
-$serverEntry = [ordered]@{
-    command = $enginePython.Replace('\', '/')
-    args = @('-m', 'oxmemory', 'serve', $appRoot.Replace('\', '/'))
-    env = [ordered]@{
-        PYTHONUTF8 = '1'
-        HF_HUB_OFFLINE = '1'
-        TRANSFORMERS_OFFLINE = '1'
-    }
-}
-$vsEntry = [ordered]@{ type = 'stdio' }
-foreach ($entryKey in $serverEntry.Keys) { $vsEntry[$entryKey] = $serverEntry[$entryKey] }
-$configFiles = [ordered]@{
-    '.vscode/mcp.json' = @{ servers = @{ '0xmemory-dodo' = $vsEntry } }
-    '.cursor/mcp.json' = @{ mcpServers = @{ '0xmemory-dodo' = $serverEntry } }
-    '.agents/mcp_config.json' = @{ mcpServers = @{ '0xmemory-dodo' = $serverEntry } }
-}
-foreach ($relativeConfig in $configFiles.Keys) {
-    $configPath = Join-Path $appRoot $relativeConfig
-    if (Test-Path -LiteralPath $configPath) { throw "Config already exists: $configPath. Inspect and merge it manually." }
-}
-foreach ($relativeConfig in $configFiles.Keys) {
-    $configPath = Join-Path $appRoot $relativeConfig
-    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $configPath) | Out-Null
-    $configJson = $configFiles[$relativeConfig] | ConvertTo-Json -Depth 10
-    [System.IO.File]::WriteAllText($configPath, $configJson, [System.Text.UTF8Encoding]::new($false))
-}
-Get-Content (Join-Path $appRoot '.vscode/mcp.json')
+& $enginePython "$engineRoot/scripts/configure-editors.py" --project $appRoot --offline-models --clients vscode codex cursor antigravity
 ```
 
-Why these fields matter:
-
-| Field | Meaning |
-| --- | --- |
-| `command` | Absolute engine-venv Python executable; avoids editor PATH/activation differences. |
-| `args` | Runs `python -m oxmemory serve APP_ROOT`; APP_ROOT must be Dodo, not the engine. |
-| `PYTHONUTF8` | Avoids Windows encoding failures with CLI/protocol subprocess output. |
-| Offline flags | Use the model cached in step 4; remove or set to `0` when intentionally downloading models. |
-| `servers` | VS Code configuration wrapper. |
-| `mcpServers` | Cursor and Antigravity configuration wrapper. |
-
-Each editor launches its own process. **Use one editor's memory server at a time against this app**, because the prototype does not coordinate concurrent Markdown writers. Generated configs are machine-specific and Git-ignored.
-
-If you reopen PowerShell later, restore the variables rather than guessing the current directory:
-
-```powershell
-$demoRoot = Join-Path $env:USERPROFILE 'Desktop\MemoryLayerDemo'
-$engineRoot = Join-Path $demoRoot '0xMemory'
-$enginePython = Join-Path $engineRoot '.venv\Scripts\python.exe'
-$appRoot = Join-Path $demoRoot 'testDodoapp'
-$env:PYTHONUTF8 = '1'
-Set-Location $appRoot
-```
-
-If you chose a different folder, adjust these assignments accordingly.
+The helper merges selected project-local configs and backs up existing files.
+Conflicting server entries are refused. Matching entries are left unchanged.
+See [editor setup](EDITOR_SETUP.md) and [Codex connection instructions](QUICKSTART_DEMO.md#3-open-the-app-in-your-client).
+Keep the app path and engine interpreter separate; never copy Windows configs to Linux.
 
 ## 7. Connect your editor
 
@@ -264,27 +219,27 @@ Choose **one** editor now. All subsequent prompts use the same tool names. [EDIT
 
 ### VS Code with GitHub Copilot
 
-Open **testDodoapp itself** using File > Open Folder. Sign in to Copilot, select Agent mode, and run **MCP: List Servers** from Ctrl+Shift+P. Start `0xmemory-dodo`, respond to any local-server trust prompt, then enable its tools through Chat's **Configure Tools**. This uses `.vscode/mcp.json`; other chat extensions can have different configuration systems. [Microsoft setup reference](https://code.visualstudio.com/docs/agent-customization/mcp-servers).
+Open **testTodoapp itself** using File > Open Folder. Sign in to Copilot, select Agent mode, and run **MCP: List Servers** from Ctrl+Shift+P. Start `0xmemory-todo`, respond to any local-server trust prompt, then enable its tools through Chat's **Configure Tools**. This uses `.vscode/mcp.json`; other chat extensions can have different configuration systems. [Microsoft setup reference](https://code.visualstudio.com/docs/agent-customization/mcp-servers).
 
 ### Antigravity
 
-Open **testDodoapp**. Its workspace configuration is `.agents/mcp_config.json`. In Antigravity IDE, use the agent panel's **... > MCP Servers > Manage MCP Servers > View raw config** if you need to inspect or merge configuration, then refresh. Preserve other server entries when merging. Antigravity 2.0 also exposes server management under **Settings > Customizations > Installed MCP Servers**. Use the UI for your installed version; do not assume an old global file path. [Google configuration reference](https://www.antigravity.google/docs/mcp).
+Open **testTodoapp**. Its workspace configuration is `.agents/mcp_config.json`. In Antigravity IDE, use the agent panel's **... > MCP Servers > Manage MCP Servers > View raw config** if you need to inspect or merge configuration, then refresh. Preserve other server entries when merging. Antigravity 2.0 also exposes server management under **Settings > Customizations > Installed MCP Servers**. Use the UI for your installed version; do not assume an old global file path. [Google configuration reference](https://www.antigravity.google/docs/mcp).
 
 ### Cursor
 
-Open **testDodoapp**. The project configuration is `.cursor/mcp.json`. Restart Cursor after saving it. Inspect `0xmemory-dodo` in the MCP management UI (current documentation calls this **Customize > MCPs**) and enable its tools in Agent chat. Older UI layouts may place MCP under settings. [Cursor configuration reference](https://prod.cursor.com/help/customization/mcp).
+Open **testTodoapp**. The project configuration is `.cursor/mcp.json`. Restart Cursor after saving it. Inspect `0xmemory-todo` in the MCP management UI (current documentation calls this **Customize > MCPs**) and enable its tools in Agent chat. Older UI layouts may place MCP under settings. [Cursor configuration reference](https://prod.cursor.com/help/customization/mcp).
 
 ### Connection checkpoint — agent prompt
 
 Paste into the editor's agent chat, not PowerShell:
 
 ```text
-Call the status tool from 0xmemory-dodo. Show the project name,
+Call the status tool from 0xmemory-todo. Show the project name,
 brain path, and memory counts. Do not infer the answer from files.
-Stop if the project is not testDodoapp.
+Stop if the project is not testTodoapp.
 ```
 
-Expected: project `testDodoapp`, brain `.0xmemory` under this application, zero memories. Expand the tool invocation. An agent saying “connected” without a tool result is not a connection test.
+Expected: project `testTodoapp`, brain `.0xmemory` under this application, zero memories. Expand the tool invocation. An agent saying “connected” without a tool result is not a connection test.
 
 There should be ten tools: `remember`, `recall`, `list`, `forget`, `update`, `status`, `extract`, `observe_commit`, `verify_memory`, `supersede_memory`. Do not call `extract` for this flow; it requires separate LLM provider setup. Tool-use approvals depend on your editor; approve the specific operations you are testing when requested.
 
@@ -308,7 +263,7 @@ Use a second terminal for other commands, restoring the variables from section 6
 ```text
 Inspect storage.py and get the full current Git HEAD SHA.
 
-Remember this developer-provided decision using 0xmemory-dodo remember:
+Remember this developer-provided decision using 0xmemory-todo remember:
 "We chose JSON file storage for tasks because the assessment lab has no
 database service and we want an inspectable prototype."
 
@@ -317,7 +272,7 @@ set to the full HEAD SHA. Show the saved memory ID and evidence commit.
 Do not write the rationale into source files, README, or agent instructions.
 ```
 
-Wait for the actual remember tool response. Record its ID as **OLD_ID** and the full commit as **INITIAL_SHA** in your test report outside the Dodo workspace. The lab rationale is a supplied demo scenario, not an inference from code. Keep this guide outside the agent's opened workspace so recall cannot simply quote it.
+Wait for the actual remember tool response. Record its ID as **OLD_ID** and the full commit as **INITIAL_SHA** in your test report outside the To-do workspace. The lab rationale is a supplied demo scenario, not an inference from code. Keep this guide outside the agent's opened workspace so recall cannot simply quote it.
 
 If remember fails, do not proceed. File paths must be repository-relative and exist at the evidence commit. Do not manually manufacture memory IDs.
 
@@ -328,7 +283,7 @@ Click **New Chat** in your editor. Do not attach Chat A, its transcript, or this
 **Agent prompt — Chat B:**
 
 ```text
-Use only the 0xmemory-dodo recall tool to tell me:
+Use only the 0xmemory-todo recall tool to tell me:
 What task storage did we choose, and why?
 
 Use file_paths ["storage.py"] and include_history false.
@@ -345,9 +300,9 @@ This demonstrates persistence across agent conversations, not a controlled compa
 Stop uvicorn with Ctrl+C. Start another agent conversation, **Chat C**.
 
 ```text
-First use 0xmemory-dodo recall to retrieve our task storage decision.
+First use 0xmemory-todo recall to retrieve our task storage decision.
 
-Then migrate testDodoapp from JSON storage to SQLite using Python's
+Then migrate testTodoapp from JSON storage to SQLite using Python's
 built-in sqlite3. Our new decision is SQLite for atomic task updates
 and queryable task data without an external database service.
 
@@ -379,18 +334,18 @@ If tests or the browser check fail, have the agent fix the migration before comm
 Review the migration diff and commit only the relevant migration source,
 tests, and README locally with message "Migrate task storage from JSON to SQLite".
 Do not push or commit data files, memory files, or local configuration.
-If Git identity is absent, use per-command user.name "Dodo Demo" and
+If Git identity is absent, use per-command user.name "To-do Demo" and
 user.email "demo@example.invalid" without changing global settings.
 Show the full new commit SHA.
 Do not change memories yet.
 ```
 
-Record the full SHA as **NEW_SHA**. Verify the commit includes `storage.py`. If Git asks for signing in your personal setup, resolve that local Git configuration or use a per-command unsigned demo commit. No remote push is needed for the Dodo experiment.
+Record the full SHA as **NEW_SHA**. Verify the commit includes `storage.py`. If Git asks for signing in your personal setup, resolve that local Git configuration or use a per-command unsigned demo commit. No remote push is needed for the To-do experiment.
 
 Now replace `NEW_SHA` and `OLD_ID` in the following prompt with your real values. Send it separately so the stale state can be captured before replacement.
 
 ```text
-Call 0xmemory-dodo observe_commit with commit NEW_SHA.
+Call 0xmemory-todo observe_commit with commit NEW_SHA.
 Use the MCP list tool to inspect OLD_ID and show its status and observation result.
 Then call recall for the task storage decision with file_paths ["storage.py"]
 and include_history false. Show whether OLD_ID was returned.
@@ -411,10 +366,10 @@ Replace both placeholders with your real values before sending.
 Inspect storage.py and the tests at commit NEW_SHA.
 
 If the implementation supports the statement below, call
-0xmemory-dodo supersede_memory with:
+0xmemory-todo supersede_memory with:
 
 id: OLD_ID
-content: "testDodoapp now stores tasks in data/tasks.db using SQLite.
+content: "testTodoapp now stores tasks in data/tasks.db using SQLite.
 We chose SQLite for atomic task updates and queryable task data without
 an external database service. Existing JSON tasks are imported once,
 preserving IDs and completion state."
@@ -439,7 +394,7 @@ Open **New Chat** again. Do not attach the migration conversation.
 **Agent prompt — Chat D:**
 
 ```text
-Use only the 0xmemory-dodo recall tool to answer:
+Use only the 0xmemory-todo recall tool to answer:
 What is our current task storage decision, and why?
 
 Use file_paths ["storage.py"] and include_history false.
@@ -453,8 +408,8 @@ Pass condition: SQLite, its supplied rationale, NEW_ID, and NEW_SHA. OLD_ID must
 
 This is an optional **additional test**, not required to establish the single-editor lifecycle flow. It checks a second MCP client using the same persisted memory.
 
-1. Stop/disable `0xmemory-dodo` in the first editor, or close that editor and verify its server has stopped.
-2. Open the **same testDodoapp folder** in the second editor. Do not initialize a new brain or copy memories elsewhere.
+1. Stop/disable `0xmemory-todo` in the first editor, or close that editor and verify its server has stopped.
+2. Open the **same testTodoapp folder** in the second editor. Do not initialize a new brain or copy memories elsewhere.
 3. Use the generated configuration for that editor and enable its tools.
 4. Call `status` to verify the application and brain path.
 5. In a new chat, send the Chat D prompt. Expect the same NEW_ID and NEW_SHA.
@@ -463,7 +418,7 @@ This is an optional **additional test**, not required to establish the single-ed
 To inspect history, send:
 
 ```text
-Use 0xmemory-dodo recall with include_history true for task storage.
+Use 0xmemory-todo recall with include_history true for task storage.
 Use list if necessary to show both the original JSON decision and its
 SQLite replacement, including IDs, statuses, evidence, and replacement links.
 Clearly distinguish historical decisions from the current recommendation.
@@ -485,7 +440,7 @@ For raw metadata inspection, with the memory server stopped:
 
 ## 16. Record results and repeat safely
 
-Copy [TEST_REPORT_TEMPLATE.md](TEST_REPORT_TEMPLATE.md) into your handoff folder outside the Dodo workspace. Fill in your versions, engine SHA, IDs, SHAs, expected/actual results, and screenshots. Do not copy the team's existing results and present them as your own run.
+Copy [TEST_REPORT_TEMPLATE.md](TEST_REPORT_TEMPLATE.md) into your handoff folder outside the To-do workspace. Fill in your versions, engine SHA, IDs, SHAs, expected/actual results, and screenshots. Do not copy the team's existing results and present them as your own run.
 
 Suggested evidence filenames:
 
@@ -504,7 +459,7 @@ Suggested evidence filenames:
 
 The team run is documented in [DEMO_RESULTS.md](DEMO_RESULTS.md), with the distinction between user-reported observations and directly executed checks. It does not establish that your environment works.
 
-For another clean run, stop the app/MCP/dashboard processes and create a **new sibling folder**, for example `testDodoapp-run2`, from the JSON starter. Repeat initialization and configuration with `$appRoot` set to that new path. You can keep the logical brain name `testDodoapp`; always record its absolute path. Each run needs its own Git repository, empty brain, configs, and IDs. Keep the completed run intact as evidence; no recursive deletion or Git reset is needed.
+For another clean run, stop the app/MCP/dashboard processes and create a **new sibling folder**, for example `testTodoapp-run2`, from the JSON starter. Repeat initialization and configuration with `$appRoot` set to that new path. You can keep the logical brain name `testTodoapp`; always record its absolute path. Each run needs its own Git repository, empty brain, configs, and IDs. Keep the completed run intact as evidence; no recursive deletion or Git reset is needed.
 
 ## 17. Troubleshooting
 
@@ -556,10 +511,10 @@ gate is off by default and is not necessary for the lifecycle demonstration.
 This documentation was prepared against local working-tree changes. It does not itself publish them. Before distributing a clone URL:
 
 1. Review the engine source, dependency, test, script, documentation, and starter changes together.
-2. Include this guide, editor guide, report template, results record, and `examples/dodo-starter` in the chosen branch. Include the MCP/lifecycle implementation they depend on.
+2. Include this guide, editor guide, report template, results record, and `examples/todo-starter` in the chosen branch. Include the MCP/lifecycle implementation they depend on.
 3. Exclude local `.venv`, `.0xmemory`, `.env`, generated personal configs, and task data.
 4. Commit and publish the reviewed branch through your normal repository workflow.
 5. Give the tester the clone URL, branch name, and full engine SHA. Have them verify that SHA after checkout.
 6. Ask the tester to return their completed report and logs, including failed checks.
 
-No push is performed merely by following the app-demo steps. The starter is distributable through the engine repository; your separate local Dodo Git history and memory directory are not required.
+No push is performed merely by following the app-demo steps. The starter is distributable through the engine repository; your separate local To-do Git history and memory directory are not required.

@@ -1,5 +1,33 @@
 # Local integration status
 
+## 2026-10-27: one-command To-do setup
+
+- Added Windows `setup-demo.ps1` and Ubuntu `setup-demo.sh`, sharing a Python
+  orchestrator. VS Code Copilot and Codex project configs are the defaults.
+- Renamed the reusable starter to `examples/todo-starter` and new demo/server
+  names to `testTodoapp` / `0xmemory-todo`. Original recorded results and the
+  existing sibling testDodoapp are preserved.
+- Six setup tests passed, covering config preservation/backups/idempotence,
+  conflict preflight, invalid input, existing-project protection, external prompt
+  generation, and a real read-only MCP call through the explicit anonymous pipe
+  adapter. The integration test also ran all five starter tests successfully.
+- Targeted Ruff checks and PowerShell syntax passed. The Windows entry script
+  was executed with installed dependencies and cached-model mode. Dependency
+  checks passed, but embedding loading failed with Windows Application Control
+  WinError 4551 on torch_python.dll. Setup correctly returned failure, saved its
+  log/result, and did not create the requested testTodoapp folder.
+- No full end-to-end setup PASS is claimed in this session. The first-install
+  package download/venv path and the full engine suite were not rerun here.
+- Git Bash syntax execution is blocked by its signal-pipe Win32 error 5; Ubuntu
+  runtime remains unverified. No operating-system policy was bypassed.
+- Installed Codex CLI 0.160.1 was inspected. TOML parses and follows the official
+  project configuration schema, but `codex mcp get` did not discover the test
+  project's server before an interactive trusted-project session. CLI/Desktop
+  tool invocation and VS Code UI validation remain NOT RUN. Follow QUICKSTART_DEMO
+  to open/trust the actual app and invoke status; configuration files alone are
+  not client integration evidence.
+
+
 Updated 2026-10-07 after normal-terminal verification and the developer-reported
 Copilot Dodo demonstration. Fresh setup: [Windows](START_HERE.md) / [Ubuntu](UBUNTU_SETUP.md).
 
@@ -166,7 +194,7 @@ Handoff checks performed on 2026-10-07:
   whitespace. Existing engine tests were not rerun for documentation-only edits;
   their 79-pass result above comes from the developer's earlier full verification.
 
-The engine includes `examples/dodo-starter`, an untouched JSON baseline to copy
+The engine includes `examples/todo-starter`, an untouched JSON baseline to copy
 into a separate Git repository. It contains no saved memories, personal configs,
 virtual environment, or SQLite migration. Follow [START_HERE.md](START_HERE.md)
 and record new results in [TEST_REPORT_TEMPLATE.md](TEST_REPORT_TEMPLATE.md).

@@ -1,10 +1,10 @@
-# testDodoapp
+# testTodoapp
 
 This is the reusable JSON baseline. Copy this directory, including dotfiles, into
-a separate sibling `testDodoapp` directory before running the experiment. See
+a separate sibling `testTodoapp` directory before running the experiment. See
 `START_HERE.md` (Windows) or `UBUNTU_SETUP.md` (Ubuntu) in the 0xMemory engine
 repository for initialization and MCP setup.
-The commands below assume `0xMemory` and `testDodoapp` are sibling directories.
+The commands below assume `0xMemory` and `testTodoapp` are sibling directories.
 
 A small local todo application: add tasks, mark them complete, and delete them.
 Tasks survive application restarts. Initial storage is `data/tasks.json`.
@@ -40,5 +40,5 @@ This is a local demonstration application; use one application process.
 
 After following START_HERE, its separate memory store lives in `.0xmemory/`.
 VS Code Copilot configuration is generated in `.vscode/mcp.json` under the name
-`0xmemory-dodo`; Cursor and Antigravity configurations are generated too. These
+`0xmemory-todo`; Codex uses `.codex/config.toml`. Cursor and Antigravity are optional clients. These
 local files and the brain are intentionally not included in the starter template.

@@ -1,6 +1,6 @@
 # Independent tester report
 
-Copy this file outside the Dodo agent workspace before filling it in. Use PASS, FAIL, or NOT RUN for every check; do not treat an unanswered check as success.
+Copy this file outside the To-do agent workspace before filling it in. Use PASS, FAIL, or NOT RUN for every check; do not treat an unanswered check as success.
 
 ## Environment
 
@@ -11,6 +11,8 @@ Copy this file outside the Dodo agent workspace before filling it in. Use PASS, 
 | Linux distribution / architecture (if applicable) | |
 | Execution context (native Windows / native Ubuntu / WSL / other) | |
 | Setup guide followed | |
+| Setup evidence folder / setup-result.json | |
+| MCP smoke transport (native / anonymous) | |
 | Engine clone URL / branch | |
 | Full engine commit SHA | |
 | Any uncommitted engine changes (`git status --short`) | |
@@ -40,6 +42,7 @@ Copy this file outside the Dodo agent workspace before filling it in. Use PASS, 
 | Full engine verification | All tests + demo + semantic evaluation succeed | | |
 | Starter app | Five tests pass | | |
 | MCP discovery | Ten tools; correct project/path | | |
+| Codex trusted-project connection (if selected) | Actual status tool result from CLI/Desktop | | |
 | Initial status | Zero memories | | |
 | Browser JSON app | Add/complete/delete; restart persistence | | |
 | Remember | OLD_ID active; linked storage.py and INITIAL_SHA | | |

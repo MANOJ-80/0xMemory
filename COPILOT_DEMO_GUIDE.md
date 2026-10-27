@@ -1,5 +1,7 @@
 # Demonstrate 0xMemory with VS Code Copilot and testDodoapp
 
+This document preserves the original `testDodoapp` run and paths. For new To-do demos, use [one-command setup](QUICKSTART_DEMO.md) and its generated prompts.
+
 > This is the original machine-specific walkthrough. For a friend starting from
 > a clone, use [START_HERE.md](START_HERE.md) to create a fresh JSON starter and
 > generate their paths. The original Dodo app has now completed its SQLite

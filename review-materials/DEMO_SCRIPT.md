@@ -1,6 +1,6 @@
 # Ten-minute review demonstration
 
-Use a fresh Dodo copy prepared with START_HERE. Keep the completed original run as
+Use a fresh To-do copy prepared with START_HERE. Keep the completed original run as
 backup evidence; do not reset its history. Test your editor login and cached model
 before the presentation. Keep the relevance gate disabled for the lifecycle demo.
 

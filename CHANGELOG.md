@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- One-command Windows/Ubuntu To-do setup with environment preparation, fresh Git
+  app/brain, real MCP smoke check, external evidence folder, and exact chat prompts.
+- VS Code and Codex CLI/Desktop project configurations by default, with safe
+  config merging/backups and conflict rejection; optional Cursor/Antigravity.
+- Fresh demo naming corrected to testTodoapp / 0xmemory-todo and todo-starter;
+  historical testDodoapp evidence is preserved.
+
+
 - Complete Ubuntu/Bash fresh-clone and editor lifecycle guide in `UBUNTU_SETUP.md`.
 - Linux verifier `scripts/verify-local.sh` and portable, non-overwriting MCP
   config generator `scripts/configure-editors.py`; shell scripts use LF in Git.

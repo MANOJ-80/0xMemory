@@ -1,6 +1,6 @@
 # Working with this project's memory
 
-- Use the `0xmemory-dodo` MCP tools for project memory. Before coding, recall
+- Use the `0xmemory-todo` MCP tools for project memory. Before coding, recall
   relevant decisions and their evidence. If the tools are unavailable, say so;
   do not claim that a memory operation succeeded.
 - Save important developer-approved decisions with `remember`, linking relevant

@@ -27,7 +27,7 @@ class TaskUpdate(BaseModel):
 
 
 def create_app(data_dir: Path | None = None):
-    application = FastAPI(title="testDodoapp")
+    application = FastAPI(title="testTodoapp")
     store = TaskStore(data_dir if data_dir is not None else ROOT / "data")
 
     @application.get("/")
