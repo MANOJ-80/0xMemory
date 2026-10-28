@@ -1,5 +1,25 @@
 # Local integration status
 
+## 2026-10-28: proactive tool guidance and memory receipts
+
+- Added MCP initialization instructions and explicit tool descriptions for ordinary
+  development requests. Added concise `Memory:` receipt guidance using actual
+  outcomes and IDs, including empty/irrelevant matches and failures.
+- Updated starter agent instructions and the existing demo's local Copilot file.
+- Real SDK discovery through the explicit anonymous-pipe diagnostic adapter
+  confirmed delivery of initialization guidance and receipt guidance for all ten
+  tools. Eight targeted tests passed (six setup tests and two server-creation
+  tests), including the starter's five application tests and read-only MCP smoke
+  check. The rerun used a fresh workspace-local pytest temp directory and
+  `PYTHONUTF8=1` after default temp permissions and console encoding blocked
+  initial attempts. No new full-suite or Ubuntu run claimed.
+- The developer supplied VS Code screenshots showing automatic storage recall
+  invocation and preference save/recall receipts. Both preference entries were
+  confirmed on disk. See [evidence and limitations](review-materials/evidence/2026-10-28/README.md).
+- Instructions influence agent behavior; they do not enforce calls or control the
+  client's UI. Receipts are not independently authenticated tool logs.
+
+
 ## 2026-10-27: one-command To-do setup
 
 - Added Windows `setup-demo.ps1` and Ubuntu `setup-demo.sh`, sharing a Python

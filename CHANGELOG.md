@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Proactive memory workflow guidance in MCP initialization and tool descriptions,
+  with compact, outcome-based memory receipts and matching starter instructions.
+- Guide-review Markdown slide content and preserved October 27–28 Copilot demo
+  screenshots, with explicit evidence provenance and verification limits.
+
 - One-command Windows/Ubuntu To-do setup with environment preparation, fresh Git
   app/brain, real MCP smoke check, external evidence folder, and exact chat prompts.
 - VS Code and Codex CLI/Desktop project configurations by default, with safe

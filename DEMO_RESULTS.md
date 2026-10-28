@@ -1,5 +1,21 @@
 # Recorded testDodoapp demonstration
 
+## October 27–28 follow-up: proactive memory and visible receipts
+
+The developer tested ordinary requests without naming memory tools. A supplied
+screenshot directly shows Copilot invoking `recall` for a storage question.
+Later responses report recalling the framework preference `mem-d1ffaf70`, saving
+the naming convention as `mem-59c2d441`, and recalling that convention in a
+developer-reported fresh chat. Read-only inspection confirmed both preferences
+on disk. The latter screenshots show assistant-generated receipts rather than
+expanded MCP results; they do not independently prove every reported tool call.
+
+See the [preserved screenshots and evidence notes](review-materials/evidence/2026-10-28/README.md).
+The earlier framework search also returned unrelated SQLite content, so relevance
+filtering remains a limitation. No measured invocation reliability is claimed.
+
+## Original October 7 lifecycle demonstration
+
 Recorded on 2026-10-07. This is the original team's result record, not a substitute
 for the independent test procedure in [START_HERE.md](START_HERE.md).
 

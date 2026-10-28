@@ -1,5 +1,10 @@
 # Final review materials
 
+- [GUIDE_REVIEW_PPT_CONTENT.md](GUIDE_REVIEW_PPT_CONTENT.md): 12-slide working-demo
+  content with speaker notes, ordinary-request demonstration, and viva questions.
+- [October 28 evidence](evidence/2026-10-28/README.md): supplied screenshots of
+  proactive tool invocation, preference saving, and fresh-chat memory receipts.
+
 - [FINAL_REPORT.md](FINAL_REPORT.md): technical report with architecture, methods,
   both experiments, measured failures, limitations, and references.
 - [PRESENTATION.html](PRESENTATION.html): standalone offline slide deck. Open in a

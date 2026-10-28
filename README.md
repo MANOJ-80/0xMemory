@@ -115,6 +115,23 @@ Tools include `remember`, `recall`, `list`, `update`, `forget`, `extract`, `stat
 `observe_commit`, `verify_memory`, and `supersede_memory`. Whether tools are called
 automatically depends on the connected agent's behavior and instructions.
 
+The server sends proactive memory-workflow guidance during MCP initialization,
+and tool descriptions explain when to recall, remember, and observe commits.
+The starter's agent instruction files reinforce this for ordinary requests such
+as "Why did we choose this storage design?" Users need not name tools in every
+prompt. These are model-facing instructions, not enforced hooks: verify actual
+tool activity before claiming automatic invocation. After updating the engine,
+restart its MCP connection and start a fresh chat so the client can reload the
+guidance. Memory writes should capture durable approved decisions or verified
+learnings, not every conversation message.
+
+The guidance also asks the assistant to append one compact receipt to its answer,
+such as `Memory: recalled mem-abc123; saved mem-def456`. It must use actual tool
+outcomes and IDs, distinguish existing entries from new saves, and report failures
+or no relevant match honestly. No receipt is requested when no memory tool ran in
+the turn. This is assistant-rendered guidance, not a server-controlled UI element
+or an independent audit log; clients may not always follow it.
+
 ## Demo, dashboard, evaluation
 
 ```sh
