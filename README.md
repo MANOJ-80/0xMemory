@@ -49,6 +49,8 @@ repository following START_HERE; do not modify the template for your experiment.
 - Integrate through MCP tools, CLI commands, or a local inspection dashboard.
 - Extract knowledge through configured local or cloud LLM providers.
 - Store project facts, decisions, learnings, preferences, task state, and environment/workflow notes as typed records; task-state entries require a task scope and expire after seven days unless given another expiry.
+- Checkpoint long coding tasks with structured progress, blockers, decisions, next steps, validation, and file hints; refreshes preserve earlier snapshots in revision history, and a fresh session can resume with relevant project memories.
+- Discover unexpired task checkpoints by matching their objective and open work, so a new session can find a task ID it was not given.
 - Stage extracted or uncertain knowledge as review candidates; accepted candidates remain unverified, while rejected candidates are quarantined.
 - Keep provenance, trust basis, answer slots, sensitivity, scope, expiry/review dates, and evidence references in each record.
 - Capture Python AST symbol anchors alongside file/commit evidence when symbols are supplied; recall checks current branch, committed changes, staged/unstaged edits, renames, and symbol semantic hashes.
@@ -213,7 +215,14 @@ just in time, but no continuous observer is installed. Use one writer process pe
 For uncertain knowledge, use `0xmemory memory propose ...`, then
 `0xmemory memory review ID --accept --note "..."` after review. Task-scoped records
 need a task ID; task-state records expire after seven days by default. Supply that
-task ID during recall and run `0xmemory memory complete-task TASK_ID` when finished.
+task ID during recall and call the MCP `complete_task` tool when finished.
+For cross-session work, call the MCP `checkpoint_task` tool at a useful milestone
+or before ending a session. In a fresh session, use `list_tasks` with a phrase
+from the objective or open work, then call `resume_task` with the returned task
+ID. Checkpoints capture the objective, completed work, decisions,
+blockers, next steps, validation, and relevant files. They are agent-reported
+progress, not proof that code or tests are correct. Refreshing a checkpoint
+preserves its previous snapshot in the record's revision history.
 Use `0xmemory memory activity` to inspect recent memory events, `0xmemory memory find-conflicts`
 to generate review candidates, and `0xmemory import --input backup.json` to restore
 JSON exports. Import skips sensitive records unless `--include-sensitive` is passed;
@@ -240,8 +249,9 @@ On Windows use `.venv/Scripts/python.exe`. This wrapper is for Cursor/Antigravit
 VS Code uses `servers` and `type: "stdio"`. See [EDITOR_SETUP.md](EDITOR_SETUP.md).
 The client launches stdio; no browser URL or separate server terminal is required.
 
-Tools include `remember`, `recall`, `list`, `update`, `forget`, `extract`, `status`,
-`observe_commit`, `review_queue`, `verify_memory`, and `supersede_memory`. Whether tools are called
+Tools include `remember`, `recall`, `checkpoint_task`, `list_tasks`, `resume_task`, `complete_task`,
+`list`, `update`, `forget`, `extract`, `status`, `observe_commit`, `review_queue`,
+`verify_memory`, and `supersede_memory`. Whether tools are called
 automatically depends on the connected agent's behavior and instructions.
 
 The server sends proactive memory-workflow guidance during MCP initialization,

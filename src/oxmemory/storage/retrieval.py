@@ -83,25 +83,39 @@ def rank_memories(
                 scores[memory_id] = scores.get(memory_id, 0) + weight / (60 + rank)
                 reasons.setdefault(memory_id, []).append(label)
 
-    retrieval_query = " ".join(part for part in (query, task_context or "") if part.strip())
-    words = set(re.findall(r"\w+", retrieval_query.lower()))
-    keyword = []
-    for memory in memories.values():
-        text = " ".join([memory.content, *memory.tags, *memory.symbols]).lower()
-        overlap = len(words & set(re.findall(r"\w+", text)))
-        if overlap:
-            keyword.append((memory.id, overlap / max(len(words), 1)))
-    keyword.sort(key=lambda item: (-item[1], item[0]))
-    contribute([item[0] for item in keyword], "keyword match")
+    # Keep the user's question distinct from background task context. Combining
+    # them into one long query lets task vocabulary swamp the immediate intent
+    # and can make unrelated memories look answerable.
+    def keyword_rank(text: str) -> list[str]:
+        words = query_tokens(text)
+        ranked = []
+        for memory in memories.values():
+            searchable = " ".join([memory.content, *memory.tags, *memory.symbols])
+            overlap = len(words & query_tokens(searchable))
+            if overlap:
+                ranked.append((memory.id, overlap / max(len(words), 1)))
+        ranked.sort(key=lambda item: (-item[1], item[0]))
+        return [memory_id for memory_id, _ in ranked]
+
+    contribute(keyword_rank(query), "query keyword match")
+    if task_context and task_context.strip():
+        contribute(keyword_rank(task_context), "task-context keyword match", 0.5)
     if semantic and memories:
         try:
             if store.vector_store:
                 results = store.vector_store.search(
-                    retrieval_query, limit=max(1, len(store.markdown.get_all_memories())),
+                    query, limit=max(1, len(store.markdown.get_all_memories())),
                     memory_types=memory_types,
                 )
-                contribute([r["id"] for r in results if r["id"] in memories], "semantic match")
+                contribute([r["id"] for r in results if r["id"] in memories], "query semantic match")
                 similarities = {r["id"]: r.get("similarity") for r in results}
+                if task_context and task_context.strip() and task_context.strip() != query.strip():
+                    task_results = store.vector_store.search(
+                        task_context, limit=max(1, len(store.markdown.get_all_memories())),
+                        memory_types=memory_types,
+                    )
+                    contribute([r["id"] for r in task_results if r["id"] in memories],
+                               "task-context semantic match", 0.5)
         except Exception as exc:
             logger.warning("Semantic search unavailable; using keyword/file matches: %s", exc)
     for memory in memories.values():
@@ -125,9 +139,11 @@ def rank_memories(
     for mid in ordered:
         memory = memories[mid]
         missing = sorted(requested - set(memory.answer_slots))
-        lexical = query_tokens(retrieval_query) & query_tokens(memory.content)
+        # Only the user's question can establish answerability. The task context
+        # helps find candidate memories but cannot by itself make one an answer.
+        lexical = query_tokens(query) & query_tokens(memory.content)
         slot_text = " ".join(memory.answer_slots.get(slot, "") for slot in requested)
-        lexical.update(query_tokens(retrieval_query) & query_tokens(slot_text))
+        lexical.update(query_tokens(query) & query_tokens(slot_text))
         if missing:
             continue
         if not lexical:
@@ -165,6 +181,18 @@ def requested_slots(query):
         slots.add("date")
     if words & {"where", "location"}:
         slots.add("location")
+    if words & {"next", "remaining", "todo", "continue", "continuation"}:
+        slots.add("next_steps")
+    if words & {"blocker", "blockers", "blocked"}:
+        slots.add("blockers")
+    if words & {"progress", "completed", "accomplished", "done"}:
+        slots.add("completed")
+    if words & {"objective", "goal"}:
+        slots.add("objective")
+    if words & {"validation", "test", "tests", "tested", "passed"}:
+        slots.add("validation")
+    if words & {"file", "files", "path", "paths", "module", "modules"}:
+        slots.add("files")
     return slots
 
 

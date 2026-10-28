@@ -7,6 +7,12 @@ an independently validated research benchmark. It tests the retrieval consequenc
 of real Git observation and explicitly supplied review actions. It does not run
 Copilot or measure generated code quality.
 
+The checked-in results are a frozen evaluation of the earlier retrieval
+implementation. They do not measure the newer separate query/task-context
+ranking channels or `checkpoint_task`/`resume_task`. Treat those as a new system
+revision and collect a fresh dataset run before making claims about their effect;
+do not rewrite the historical result artifacts to resemble a rerun.
+
 ## Read these artifacts
 
 - [Development report](development/REPORT.md): five scenarios used for checking

@@ -2,8 +2,16 @@
 
 ## Research question
 
-Does commit-aware memory validation and task-aware retrieval reduce outdated context
-and improve multi-session coding performance compared with basic semantic memory?
+Does repository-evidence-grounded, task-aware memory reduce stale or irrelevant
+context and improve multi-session coding performance compared with no-memory,
+basic semantic-memory, and temporal-graph baselines?
+
+Mem0 and Zep/Graphiti already provide capable general-purpose memory, hybrid
+retrieval, graph/temporal features, and source provenance. The coding-specific
+hypothesis is narrower: making Git revisions and code anchors first-class evidence,
+separating task checkpoints from durable project knowledge, and validating claims
+against the current checkout may better support evolving repositories. That advantage
+is not established until tested with matched tasks, models, context budgets, and data.
 
 Keep Markdown and ChromaDB for the prototype. Update the review's technology slide
 to match this implementation rather than introducing PostgreSQL solely to match a slide.
@@ -23,6 +31,11 @@ to match this implementation rather than introducing PostgreSQL solely to match 
   the review commit; that commit must include the latest known evidence change.
 - Hybrid reciprocal-rank fusion of semantic and lexical candidates, with file and
   symbol boosts; stale/history entries are excluded by default.
+- Separate query and task-context retrieval channels, with a lower task-context
+  contribution and answerability support based on the current question.
+- Structured task checkpoints with revision history, expiry, and fresh-session
+  discovery and resume retrieval.
+- Python syntax-aware evidence hashes for caller-supplied symbol anchors.
 - A bounded context string with evidence and retrieval explanations.
 - CLI and MCP lifecycle operations, local inspection dashboard, synthetic evaluation.
 
@@ -120,8 +133,10 @@ python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
 ## Limits of this milestone
 
 - Commit observation is explicit. There is no automatic post-commit hook or
-  continuous watcher. Working-tree edits are not examined.
-- Code links and symbols are supplied by the caller; no Tree-sitter/AST indexing yet.
+  continuous watcher; recall checks repository state just in time.
+- Code links and symbols are supplied by the caller; Python AST hashes check
+  supplied anchors, but the system does not automatically index every repository
+  symbol or support equivalent anchors across languages.
 - Review notes are human/agent assertions after inspection, not semantic proofs.
 - Exact duplicate suppression is implemented; near-duplicate consolidation and
   automatic contradiction classification remain future work. Confidence and
@@ -135,8 +150,9 @@ python -m oxmemory.evaluation --semantic --output evaluation-semantic.json
   outside that context-string budget. Add a model tokenizer before token claims.
 - Existing unlinked memories cannot be invalidated using file changes.
 - Old Markdown cannot recover metadata that previous versions never saved.
-- Four synthetic retrieval scenarios are smoke tests, not evidence of improved
-  real coding performance. No model-generated answers or task success are measured.
+- The 30-case synthetic retrieval experiment measures lifecycle behavior, not
+  model-generated answers or coding-task success. New retrieval and checkpoint
+  algorithms require a fresh evaluation run.
 
 ## Remaining project phases
 
@@ -170,11 +186,13 @@ remain open. The no-answer and pending-review limitations are explicitly measure
    two or three small repositories. Include changed facts, unrelated changes,
    reverts, renames, conflicting sources, and no-answer cases. Label synthetic
    examples and keep development/tuning scenarios separate from evaluation.
-5. **Controlled experiment:** compare no memory, basic 0xMemory, and enhanced
-   0xMemory using the same model, tasks, context budget, and repository revisions.
-   Add an ablation without commit invalidation and another without file boosts.
-   Measure Recall@k, MRR, stale retrieval, update correctness, coding tests passed,
-   model tokens, and repeated-run latency including extraction/update costs.
+5. **Controlled experiment:** compare no memory, a basic semantic baseline,
+   evidence-grounded 0xMemory, and direct Mem0/Zep or faithful documented baselines
+   where their setup permits, using the same model, tasks, context budget, and
+   repository revisions. Add ablations for evidence validation, task-context fusion,
+   task checkpoints, and file/symbol boosts. Measure Recall@k, MRR, stale retrieval,
+   answerability, checkpoint resumption, coding tests passed, model tokens, user
+   review burden, and repeated-run latency including extraction/update costs.
 6. **Report:** record raw results and failures; do not claim novelty for persistence
    alone or universal superiority. Present the specific algorithm, constraints,
    ablations, and observed results.

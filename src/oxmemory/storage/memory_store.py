@@ -6,7 +6,7 @@ with dual storage: Markdown files (source of truth) + Vector DB (search).
 
 import logging
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from oxmemory.core.config import brain_exists, get_brain_path, load_config
@@ -166,7 +166,10 @@ class MemoryStore(LifecycleMixin):
                 and existing.file_paths == memory.file_paths
                 and existing.symbols == memory.symbols
                 and existing.commit_sha == memory.commit_sha
-                and existing.tags == memory.tags):
+                and existing.tags == memory.tags
+                and existing.scope_type == memory.scope_type
+                and existing.scope_id == memory.scope_id
+                and existing.sensitivity == memory.sensitivity):
                 return existing
 
         # Store in Markdown (source of truth)
@@ -334,6 +337,205 @@ class MemoryStore(LifecycleMixin):
                                revision=len(memory.revisions))
             archived.append(memory.id)
         return {"task_id": task_id, "archived_ids": archived}
+
+    def checkpoint_task(
+        self,
+        task_id: str,
+        objective: str,
+        completed: list[str] | None = None,
+        decisions: list[str] | None = None,
+        blockers: list[str] | None = None,
+        next_steps: list[str] | None = None,
+        validation: list[str] | None = None,
+        files: list[str] | None = None,
+        sensitivity: str | None = None,
+    ) -> Memory:
+        """Save or refresh a compact resumable checkpoint for an active coding task.
+
+        Checkpoints are task-scoped and expire after seven days. Repeated
+        checkpoints revise the same task-state record, preserving the previous
+        snapshot in its revision history rather than creating retrieval clutter.
+        """
+        task_id = task_id.strip()
+        objective = objective.strip()
+        if not task_id or not objective:
+            raise ValueError("task_id and objective are required")
+        if sensitivity is not None and sensitivity not in {"normal", "sensitive"}:
+            raise ValueError("Task checkpoint sensitivity must be normal or sensitive")
+
+        def clean(items: list[str] | None) -> list[str]:
+            if items is None:
+                return []
+            if not isinstance(items, list) or any(not isinstance(item, str) for item in items):
+                raise ValueError("Checkpoint sections must be arrays of strings")
+            return [item.strip() for item in items if item.strip()]
+
+        sections = {
+            "objective": [objective],
+            "completed": clean(completed),
+            "decisions": clean(decisions),
+            "blockers": clean(blockers),
+            "next_steps": clean(next_steps),
+            "validation": clean(validation),
+            "files": clean(files),
+        }
+        content = "\n".join(
+            f"{name.replace('_', ' ').title()}: " + "; ".join(values)
+            for name, values in sections.items() if values
+        )
+        slots = {name: "; ".join(values) for name, values in sections.items() if values}
+        if contains_obvious_secret(content, *slots.values()):
+            raise ValueError("Credential-like content cannot be saved in a task checkpoint")
+        now = datetime.now()
+        active = [
+            memory for memory in self.markdown.read_memories(MemoryType.TASK_STATE)
+            if memory.scope_type == "task" and memory.scope_id == task_id
+            and memory.is_recallable
+        ]
+        active.sort(key=lambda memory: (memory.updated_at, memory.created_at), reverse=True)
+        if active:
+            memory = active[0]
+            if memory.sensitivity == "sensitive" and sensitivity == "normal":
+                raise ValueError("A sensitive task checkpoint cannot be downgraded to normal implicitly")
+            for duplicate in active[1:]:
+                duplicate.revisions.append(duplicate.model_dump(mode="json", exclude={"revisions"}))
+                duplicate.status = MemoryStatus.ARCHIVED
+                duplicate.updated_at = now
+                self._persist(duplicate)
+                self.events.append(duplicate.id, "task_checkpoint_archived", actor="agent",
+                                   reason="replaced_by_latest_checkpoint",
+                                   memory_type=duplicate.type.value,
+                                   status=duplicate.status.value,
+                                   revision=len(duplicate.revisions))
+            sensitivity = sensitivity or memory.sensitivity
+            if memory.content == content and memory.answer_slots == slots:
+                if sensitivity != memory.sensitivity:
+                    memory.revisions.append(memory.model_dump(mode="json", exclude={"revisions"}))
+                    memory.sensitivity = sensitivity
+                memory.valid_until = now + timedelta(days=7)
+                memory.updated_at = now
+                self._persist(memory)
+                self.events.append(memory.id, "task_checkpoint_refreshed", actor="agent",
+                                   memory_type=memory.type.value, status=memory.status.value,
+                                   revision=len(memory.revisions))
+                return memory
+            memory.revisions.append(memory.model_dump(mode="json", exclude={"revisions"}))
+            memory.content = content
+            memory.answer_slots = slots
+            memory.status = MemoryStatus.ACTIVE_UNVERIFIED
+            memory.trust_basis = "agent_reported"
+            memory.sensitivity = sensitivity
+            memory.provenance = {
+                **memory.provenance,
+                "checkpoint": {"source": "coding_agent", "updated_at": now.isoformat()},
+            }
+            memory.updated_at = now
+            memory.valid_until = now + timedelta(days=7)
+            self._persist(memory)
+            self.events.append(memory.id, "task_checkpoint_updated", actor="agent",
+                               memory_type=memory.type.value, status=memory.status.value,
+                               revision=len(memory.revisions))
+            return memory
+
+        return self.add(
+            content=content,
+            memory_type=MemoryType.TASK_STATE,
+            source="task_checkpoint",
+            scope_type="task",
+            scope_id=task_id,
+            provenance={"source": "coding_agent_task_checkpoint", "capture": "explicit_checkpoint"},
+            trust_basis="agent_reported",
+            answer_slots=slots,
+            sensitivity=sensitivity or "normal",
+            status=MemoryStatus.ACTIVE_UNVERIFIED,
+        )
+
+    def resume_task(
+        self, task_id: str, query: str | None = None, limit: int = 5,
+        token_budget: int = 1500, include_sensitive: bool = False,
+    ) -> dict:
+        """Return the latest task checkpoint plus relevant project memories."""
+        task_id = task_id.strip()
+        if not task_id:
+            raise ValueError("task_id is required")
+        checkpoints = [
+            memory for memory in self.markdown.read_memories(MemoryType.TASK_STATE)
+            if memory.scope_type == "task" and memory.scope_id == task_id
+            and memory.is_recallable and not memory.is_expired
+            and (memory.sensitivity == "normal" or include_sensitive)
+        ]
+        checkpoints.sort(key=lambda memory: (memory.updated_at, memory.created_at), reverse=True)
+        if not checkpoints:
+            return {"task_id": task_id, "found": False, "checkpoint": None,
+                    "related_context": {"context": "", "results": [], "abstained": True,
+                                        "abstention_reason": "no_active_task_checkpoint"}}
+
+        checkpoint = checkpoints[0]
+        slots = checkpoint.answer_slots
+        task_context = " ".join(
+            slots.get(key, "") for key in ("objective", "completed", "blockers", "next_steps")
+        ).strip()
+        # Use the objective as the synthetic query when the caller did not ask
+        # a fresh question. The rest of the checkpoint remains a separate
+        # retrieval signal and must not activate answer slots by accident.
+        retrieval_query = (query or "").strip() or slots.get("objective", task_context)
+        files = [item.strip() for item in slots.get("files", "").split(";") if item.strip()]
+        ranked = self.search_ranked(
+            retrieval_query,
+            limit=limit,
+            file_paths=files,
+            task_context=task_context,
+            scope_context={"task": task_id},
+            include_sensitive=include_sensitive,
+        )
+        ranked = [item for item in ranked if item["memory"].id != checkpoint.id]
+        from oxmemory.storage.retrieval import build_context
+
+        context = build_context(ranked, token_budget, query=retrieval_query)
+        return {"task_id": task_id, "found": True,
+                "checkpoint": checkpoint.model_dump(mode="json", exclude={"revisions"}),
+                "related_context": context}
+
+    def list_tasks(self, query: str | None = None, limit: int = 20,
+                   include_sensitive: bool = False) -> list[dict]:
+        """Discover resumable task IDs without exposing checkpoint revision history."""
+        if not 1 <= limit <= 100:
+            raise ValueError("limit must be between 1 and 100")
+        latest: dict[str, Memory] = {}
+        for memory in self.markdown.read_memories(MemoryType.TASK_STATE):
+            if (memory.scope_type != "task" or not memory.scope_id or not memory.is_recallable
+                    or memory.is_expired or (memory.sensitivity == "sensitive" and not include_sensitive)):
+                continue
+            previous = latest.get(memory.scope_id)
+            if previous is None or memory.updated_at.timestamp() > previous.updated_at.timestamp():
+                latest[memory.scope_id] = memory
+
+        from oxmemory.storage.retrieval import query_tokens
+
+        words = query_tokens(query or "")
+        tasks = []
+        for task_id, memory in latest.items():
+            slots = memory.answer_slots
+            objective = slots.get("objective", memory.content)
+            text = " ".join([task_id, objective, slots.get("blockers", ""),
+                              slots.get("next_steps", "")])
+            overlap = len(words & query_tokens(text))
+            tasks.append({
+                "task_id": task_id,
+                "objective": objective,
+                "blockers": slots.get("blockers", ""),
+                "next_steps": slots.get("next_steps", ""),
+                "updated_at": memory.updated_at.isoformat(),
+                "expires_at": memory.valid_until.isoformat() if memory.valid_until else None,
+                "sensitivity": memory.sensitivity,
+                "query_overlap": overlap,
+                "_sort_time": memory.updated_at.timestamp(),
+            })
+        tasks.sort(key=lambda task: (task["query_overlap"], task["_sort_time"], task["task_id"]),
+                   reverse=True)
+        for task in tasks:
+            task.pop("_sort_time")
+        return tasks[:limit]
 
     def list_memories(
         self,

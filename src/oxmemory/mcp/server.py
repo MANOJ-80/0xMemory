@@ -65,8 +65,12 @@ MEMORY_WORKFLOW = (
     "Remember durable developer-approved decisions and verified learnings when established, "
     "with rationale and reviewed evidence; use propose_memory for inferred or uncertain captures "
     "and review_memory before making them recallable. Do not store guesses, secrets, or every message. "
-    "Task-state memories must use a task ID, should contain only resumable progress, and should be "
-    "completed with complete_task when the work ends. Supply task context and IDs during recall. "
+    "For long coding tasks, checkpoint objective, completed work, decisions, blockers, next steps, "
+    "validation, and relevant files with checkpoint_task at useful milestones or before ending a session. "
+    "At a fresh session, call list_tasks with an objective clue to discover the task ID, then call "
+    "resume_task before continuing. Task checkpoints expire "
+    "after seven days by default and should be completed with complete_task when the work ends. "
+    "Supply task context and IDs during recall. "
     "After an authorized code change is committed, observe_commit to flag affected memories. "
     "Read the evidence before verify_memory or supersede_memory. Never commit code solely "
     "to populate memory. Respect user instructions to avoid memory reads or writes, and "
@@ -318,6 +322,25 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
              {"memory_ids": array, "helpful": {"type": "boolean"}}, ["memory_ids", "helpful"]),
             ("complete_task", "Archive task-scoped memory when the task is finished.",
              {"task_id": {"type": "string"}}, ["task_id"]),
+            ("checkpoint_task", "Save or refresh a resumable coding-task checkpoint. Record concise observed progress, decisions, blockers, next steps, validation, and relevant files; do not claim unrun checks passed. Checkpoints are task-scoped and expire after seven days.",
+             {"task_id": {"type": "string"}, "objective": {"type": "string"},
+              "completed": array, "decisions": array, "blockers": array,
+              "next_steps": array, "validation": array, "files": array,
+              "sensitivity": {"type": "string", "enum": ["normal", "sensitive"]}},
+             ["task_id", "objective"]),
+            ("resume_task", "Resume a coding task by returning its latest checkpoint and relevant project memories. Use at the start of a fresh session; provide the same task ID used for checkpoint_task.",
+             {"task_id": {"type": "string"}, "query": {"type": "string"},
+              "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 5},
+              "token_budget": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 1500},
+              "include_sensitive": {"type": "boolean", "default": False,
+                                    "description": "Include sensitive task state only when the user has authorized it."}},
+             ["task_id"]),
+            ("list_tasks", "Find unexpired resumable task checkpoints by objective, blocker, or next-step keywords. Use when starting a fresh session and the task ID is unknown. Sensitive task checkpoints are hidden unless explicitly authorized.",
+             {"query": {"type": "string"},
+              "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20},
+              "include_sensitive": {"type": "boolean", "default": False,
+                                    "description": "Include sensitive task state only when the user has authorized it."}},
+             []),
         ]:
             definitions.append(Tool(name=name, description=description, input_schema={
                 "type": "object", "properties": properties, "required": required,
@@ -349,6 +372,32 @@ def create_server(project_dir: Path | None = None) -> tuple[Server, MemoryStore]
                 result = store.record_usage(arguments["memory_ids"], arguments["helpful"])
             elif name == "complete_task":
                 result = store.complete_task(arguments["task_id"], actor="agent")
+            elif name == "checkpoint_task":
+                memory = store.checkpoint_task(
+                    task_id=arguments["task_id"],
+                    objective=arguments["objective"],
+                    completed=arguments.get("completed"),
+                    decisions=arguments.get("decisions"),
+                    blockers=arguments.get("blockers"),
+                    next_steps=arguments.get("next_steps"),
+                    validation=arguments.get("validation"),
+                    files=arguments.get("files"),
+                    sensitivity=arguments.get("sensitivity"),
+                )
+                result = {"success": True, "id": memory.id, "status": memory.status.value,
+                          "task_id": memory.scope_id, "updated_at": memory.updated_at.isoformat()}
+            elif name == "resume_task":
+                result = store.resume_task(
+                    task_id=arguments["task_id"], query=arguments.get("query"),
+                    limit=arguments.get("limit", 5),
+                    token_budget=arguments.get("token_budget", 1500),
+                    include_sensitive=arguments.get("include_sensitive", False),
+                )
+            elif name == "list_tasks":
+                result = {"tasks": store.list_tasks(
+                    query=arguments.get("query"), limit=arguments.get("limit", 20),
+                    include_sensitive=arguments.get("include_sensitive", False),
+                )}
             elif name == "remember":
                 result = await handle_remember(
                     store=store,

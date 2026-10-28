@@ -56,7 +56,7 @@ raw query text.
 | Decision | Chosen design and rationale | Preserve prior versions when superseded |
 | Learning | Reusable gotcha or debugging result | Candidate review is available for uncertain extraction |
 | Preference | Developer workflow preference | May be scoped to a user ID, but storage remains project-local today |
-| Task state | Resumable progress, blocker, next step | Requires a task ID; expires after seven days by default |
+| Task state | Resumable progress, blocker, next step | A task ID scopes one current checkpoint; each refresh preserves the prior snapshot in revision history; expires after seven days by default |
 | Environment | Toolchain, test command, setup workflow | Should be reviewed when environment evidence changes |
 
 Records carry provenance, trust basis, evidence references, answer slots,
@@ -95,18 +95,23 @@ Recall follows these stages:
    expired records, candidates, quarantined or superseded records, secrets,
    and sensitive records unless explicitly included. These filters happen
    before ranking, so a semantic match cannot cross a scope or privacy boundary.
-2. **Candidate ranking.** Combine lexical and optional vector ranking with
-   file/symbol matches and task context. Reciprocal-rank fusion contributes
-   `weight / (60 + rank)` per source. A linked file or symbol is given an
-   additional ranking contribution. Past helpful/not-helpful feedback adjusts
-   utility slightly; utility does not change trust or evidence state.
+2. **Candidate ranking.** Keep the user's query and background task context as
+   separate retrieval channels. Query lexical/vector matches receive the full
+   rank contribution; task-context lexical/vector matches contribute at half
+   weight. Reciprocal-rank fusion contributes `weight / (60 + rank)` per source.
+   File/symbol matches add a separate ranking contribution. This lets task state
+   surface relevant project knowledge without letting a long task description
+   swamp the immediate question. Helpful/not-helpful feedback adjusts utility
+   slightly; utility does not change trust or evidence state.
 3. **Evidence qualification.** Check the repository anchors. Contradicted
    evidence is removed; unknown evidence remains qualified with a warning.
 4. **Answerability gate.** Detect a small set of requested slots from question
    wording (currently rationale, approver, date, and location). A record must
-   contain each requested slot and have lexical support in its claim or slot
-   values. If no record passes, return an abstention instead of dressing up a
-   merely related memory as an answer.
+   contain each requested slot and have lexical support from the user's query
+   in its claim or requested slot values. Task context helps candidate
+   generation but cannot alone establish that a result answers the current
+   question. If no record passes, return an abstention instead of dressing up
+   a merely related memory as an answer.
 5. **Context packing.** Pack claims, provenance, evidence status, retrieval
    reasons, and only the relevant requested answer slots within a bounded
    budget. The current budget is measured in UTF-8 bytes as a conservative
@@ -116,6 +121,26 @@ Recall follows these stages:
 The relevance gate based on a minimum semantic similarity remains opt-in and is
 disabled by default; the repository's reserved evaluation did not show it
 solving no-answer retrieval.
+
+## Cross-session task continuity
+
+`checkpoint_task` records a compact task state with objective, completed work,
+decisions, blockers, next steps, validation, and relevant file hints. It is
+explicitly an agent report: listing a test command under validation does not
+prove that the test passed. Repeated checkpoints update one task-state record
+and append the previous snapshot to its revision history, avoiding a pile of
+near-identical active memories. The record is scoped to a task ID and receives
+the seven-day task-state expiry.
+
+`list_tasks` lets a fresh session discover unexpired checkpoints from an objective
+or open-work phrase when the task ID is unknown. `resume_task` then selects the
+latest unexpired checkpoint for that exact task ID. It uses the checkpoint's
+objective, blockers, next steps, and file hints as retrieval context for project
+memories. Scope and privacy filters still run before ranking; sensitive
+checkpoints are excluded by default. The response
+returns the checkpoint separately from bounded related context, so a coding
+agent can distinguish its previous progress report from repository-grounded
+project knowledge. `complete_task` archives the task's active state at finish.
 
 ## Conflict, privacy, and maintenance
 
@@ -151,16 +176,50 @@ cannot store metadata or that 0xMemory is better for every workload.
 | Approach/system | Primary memory model | 0xMemory's relationship and trade-off |
 | --- | --- | --- |
 | Basic vector RAG | Embed text chunks, retrieve by semantic similarity, and place matches in context | 0xMemory also uses semantic retrieval, but adds typed lifecycle states, hard scope/sensitivity filters, Git evidence checks, answer slots, and abstention. Its extra checks add complexity and do not prove arbitrary prose true. |
-| [Mem0](https://docs.mem0.ai/open-source/overview) | A memory engine exposed as a library or self-hosted server, with configurable LLM, embedder, vector store, and reranker; its platform documentation describes entity-graph links that boost hybrid retrieval | Both extract/store/retrieve durable memories. Mem0 emphasizes flexible user/app memory and entity connections; 0xMemory emphasizes local project records and code evidence across Git changes. 0xMemory currently lacks Mem0's entity graph and managed/self-hosted product surface. |
-| [Zep / Graphiti](https://help.getzep.com/v4/graphiti/getting-started/overview) | Temporal knowledge graphs with entities, relationships, episodes, historical validity, and hybrid time/full-text/semantic/graph retrieval | Both model evolving facts and trace source context. Zep/Graphiti focuses on graph relationships and multi-source subject context; 0xMemory uses explicit code anchors and a review lifecycle for repository claims. 0xMemory has no temporal graph, graph traversal, or managed governance plane. |
+| [Mem0](https://docs.mem0.ai/open-source/overview) | Open-source library or self-hosted server with configurable components; Mem0 Platform documents entity extraction/linking and semantic, keyword, and graph-boosted retrieval ([graph docs](https://docs.mem0.ai/platform/features/graph-memory)) | Mem0 already provides flexible memory storage, entity connections, metadata filtering, and configurable retrieval. 0xMemory targets a different coding-specific question: whether commit/file/symbol evidence checks, explicit review state, answerability, and task checkpoints help an agent keep repository knowledge current across coding sessions. This is specialization, not a claim that Mem0 could not be extended to support similar mechanisms. |
+| [Zep / Graphiti](https://help.getzep.com/v4/graphiti/getting-started/overview) | Temporal knowledge graphs with entities, relationships, source episodes, historical validity, and hybrid time/full-text/semantic/graph retrieval ([episodes](https://help.getzep.com/episodes)) | Zep/Graphiti already models changing facts and traces them to source episodes. 0xMemory targets repository-native validation against branch/commit/file/symbol state and explicit coding-task resume. The docs emphasize general temporal context graphs; our inference is that repository revision checking is a useful specialized comparison axis, not that Zep cannot model code or that 0xMemory outperforms its graph reasoning or managed governance. |
 | [Cursor Memories](https://docs.cursor.com/en/context/memories) and [Rules](https://docs.cursor.com/context/rules-for-ai) | Conversation-derived project memories and reusable rules, with background extraction and user approval for generated memories | Both carry project knowledge across sessions. Cursor emphasizes injecting memories/rules into its own agent context; 0xMemory emphasizes portable records, evidence qualification against Git changes, and retrieval through MCP/CLI. Cursor's automatic capture is more passive; 0xMemory's capture and commit observation are explicit in this prototype. |
 | [Letta Code memory](https://docs.letta.com/configuration/memory) | Agent-managed, Git-backed memory files and background memory maintenance | Both support durable, inspectable memory. Letta focuses on the stateful agent and how it manages its context and memory files; 0xMemory is a project-local memory service that can be called by separate MCP clients. 0xMemory does not manage the model's active context window or run background “dreaming.” |
 | [MemGPT paper](https://arxiv.org/abs/2310.08560) | Research model for agent-controlled movement between context and external memory as virtual context management | MemGPT is a related antecedent in virtual context management, not the same product or architecture as current Letta Code. 0xMemory does not page information into and out of the model's active context window. |
 
 These systems solve adjacent problems, and the comparison is not a benchmark.
-The links above describe their current documented approaches as checked on
-2026-10-28; product capabilities can change. A fair empirical comparison would
-use the same repositories, tasks, models, context budget, and evaluation set.
+The research gap is not that Mem0 lacks graph memory or Zep lacks temporal
+provenance. It is whether a coding agent benefits from making repository
+revisions first-class evidence, resuming task state separately from durable
+project knowledge, and qualifying recalled claims against the current checkout.
+Those are testable hypotheses, not established advantages. The linked pages
+describe current documented approaches as checked on 2026-10-28; product
+capabilities can change. A fair empirical comparison would use the same
+repositories, tasks, models, context budget, and evaluation set.
+
+## Algorithms and techniques in this prototype
+
+- **Hard scope and policy filtering:** project, branch, task, user, lifecycle,
+  expiry, and sensitivity checks run before search ranking.
+- **Hybrid reciprocal-rank fusion:** lexical and vector candidate lists are
+  fused with `weight / (60 + rank)`; query and task-context channels stay
+  separate, with task context at half weight; explicit file/symbol matches add
+  a separate signal. Helpful-use feedback adjusts utility, never trust or validity.
+- **Evidence freshness checks:** commit ancestry, changed paths, working-tree
+  state, renames, and Python AST symbol hashes qualify a claim as supported,
+  unknown/review-required, or contradicted where the available structural check
+  is decisive.
+- **Answer-slot coverage:** lightweight question parsing identifies known
+  requested attributes and excludes records that lack those values or lexical
+  support; output abstains when no result answers the request.
+- **Task checkpoint refresh:** one task-scoped current snapshot is revised with
+  prior states preserved, bounded by expiry, discoverable by task description,
+  and loaded separately at resume.
+- **Conflict candidate generation:** shared evidence/tags plus token Jaccard
+  similarity surfaces pairs for review without auto-merging or choosing truth.
+- **Append-only event integrity:** a SHA-256-linked event ledger records lifecycle
+  and retrieval receipts while hashing query text instead of storing it.
+
+Several algorithms are deliberately conservative and heuristic. In particular,
+answer-slot parsing and lexical relevance are not a general semantic entailment
+solver, AST similarity is not proof that prose follows from code, and task
+checkpoints depend on the agent accurately reporting progress. These limits
+belong in any paper's method and threat-to-validity sections.
 
 ## Current boundaries and next steps
 

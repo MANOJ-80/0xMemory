@@ -46,6 +46,9 @@ async def check(project, transport):
                     "find_conflicts",
                     "rate_memories",
                     "complete_task",
+                    "checkpoint_task",
+                    "resume_task",
+                    "list_tasks",
                 }
                 assert expected <= names, names
                 response = await session.call_tool("status", {})
