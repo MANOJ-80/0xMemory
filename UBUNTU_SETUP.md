@@ -92,6 +92,7 @@ git clone https://github.com/MANOJ-80/0xMemory.git
 engine_root="$demo_root/0xMemory"
 app_root="$demo_root/testTodoapp"
 cd "$engine_root"
+git switch architecture/evidence-grounded-memory
 git rev-parse HEAD
 test -f UBUNTU_SETUP.md
 test -f scripts/verify-local.sh
@@ -143,8 +144,8 @@ set -o pipefail
 bash scripts/verify-local.sh --skip-install --offline-models 2>&1 | tee "$demo_root/verification.log"
 ```
 
-The script runs dependency checks, CLI help, **all tests without the Windows
-sandbox exclusion**, the temporary Git demo, and real semantic evaluation. The
+The script runs dependency checks, the architecture-memory smoke check, CLI help,
+**all tests without the Windows sandbox exclusion**, the temporary Git demo, and real semantic evaluation. The
 test collection grows as revisions add tests. Record your actual
 count and final PASS line rather than copying the Windows result. Verification
 stops at a failed command and saves fresh outputs under `.venv/verification.*`;
@@ -353,7 +354,9 @@ include_history false. Show whether OLD_ID was returned.
 Do not verify, supersede, or create memories yet.
 ```
 
-Pass: OLD_ID is stale through storage.py and excluded from normal recall.
+Pass: OLD_ID is `review_required` and the observation reports storage.py.
+It can still appear in recall with an `unknown` evidence check; disclose that
+warning before relying on it. Changed evidence alone does not prove a claim false.
 Observation is explicit. Merely saving or committing a file does not run it.
 
 ## 12. Review and supersede
@@ -375,7 +378,7 @@ note: Explain the actual implementation and test evidence reviewed.
 
 If the evidence does not support the statement, report the mismatch instead.
 Show the new memory ID. Use list to confirm the old memory is superseded
-and its replacement is active. Do not delete the old memory.
+and its replacement is active_verified. Do not delete the old memory.
 ```
 
 Record NEW_ID. The history must preserve OLD_ID and the replacement links. For a
@@ -469,7 +472,7 @@ Keep the completed run; no destructive reset or recursive delete is necessary.
 | Editor cannot see the server | Open the app folder itself; check wrapper/path, enable tools, restart/refresh, inspect MCP logs. |
 | Copilot answers without MCP | Expand the tool call; model prose alone is not proof of retrieval. |
 | Old memory stays active | Check evidence file link, committed change, and explicit observe_commit result. |
-| Empty context after observation | Expected until stale evidence is reviewed; unrelated active memories may still be returned with the default retriever. |
+| Review-required memory appears after observation | Expected with an evidence warning. Inspect and then verify or supersede it; changed evidence alone is not a contradiction. |
 | Browser does not open on 8090 | uvicorn must be running; MCP startup does not launch the app. |
 | `git push` authentication | Unnecessary for the local To-do experiment. Clone public engine source and keep To-do commits local. |
 

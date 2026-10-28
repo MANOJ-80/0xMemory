@@ -162,6 +162,11 @@ def main():
         runner.run("Check dependencies", [python, "-m", "pip", "check"])
         runner.run("Record installed packages", [python, "-m", "pip", "freeze"], show_output=False)
         runner.run(
+            "Architecture memory-system smoke check",
+            [python, ROOT / "scripts/smoke_memory_system.py", "--output",
+             directory / "memory-system-smoke.json"],
+        )
+        runner.run(
             "Check/download embeddings",
             [
                 python,

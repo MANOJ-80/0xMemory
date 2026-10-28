@@ -1,11 +1,11 @@
 """Core data models for 0xMemory."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import PurePosixPath
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class MemoryType(str, Enum):
@@ -15,12 +15,21 @@ class MemoryType(str, Enum):
     DECISION = "decision"
     LEARNING = "learning"
     PREFERENCE = "preference"
+    TASK_STATE = "task_state"
+    ENVIRONMENT = "environment"
 
 
 class MemoryStatus(str, Enum):
+    CANDIDATE = "candidate"
     ACTIVE = "active"
+    ACTIVE_UNVERIFIED = "active_unverified"
+    ACTIVE_VERIFIED = "active_verified"
     STALE = "stale"
+    REVIEW_REQUIRED = "review_required"
+    LIKELY_FALSE = "likely_false"
     SUPERSEDED = "superseded"
+    ARCHIVED = "archived"
+    QUARANTINED = "quarantined"
 
 
 class Memory(BaseModel):
@@ -31,6 +40,7 @@ class Memory(BaseModel):
     """
 
     id: str = Field(default_factory=lambda: f"mem-{uuid4().hex[:8]}")
+    schema_version: int = 2
     content: str = Field(..., description="The memory content")
     type: MemoryType = Field(default=MemoryType.FACT, description="Type of memory")
     tags: list[str] = Field(default_factory=list, description="Categorization tags")
@@ -47,12 +57,26 @@ class Memory(BaseModel):
     file_paths: list[str] = Field(default_factory=list)
     symbols: list[str] = Field(default_factory=list)
     commit_sha: str | None = None
+    evidence_branch: str | None = Field(
+        default=None, description="Branch on which linked evidence was reviewed"
+    )
     confidence: float | None = Field(default=None, ge=0, le=1)
     supersedes: str | None = None
     superseded_by: str | None = None
     verification_note: str | None = None
     stale_at_commit: str | None = None
     revisions: list[dict] = Field(default_factory=list)
+    scope_type: str = Field(default="project", description="project, branch, task, or user")
+    scope_id: str | None = None
+    provenance: dict = Field(default_factory=dict)
+    trust_basis: str = Field(default="user_asserted")
+    answer_slots: dict[str, str] = Field(default_factory=dict)
+    sensitivity: str = Field(default="normal")
+    valid_until: datetime | None = None
+    review_after: datetime | None = None
+    utility: float = Field(default=0.0, ge=0.0, le=1.0)
+    utility_observations: int = Field(default=0, ge=0)
+    evidence_refs: list[dict] = Field(default_factory=list)
 
     @field_validator("content")
     @classmethod
@@ -75,6 +99,21 @@ class Memory(BaseModel):
             paths.append(str(path))
         return list(dict.fromkeys(paths))
 
+    @model_validator(mode="after")
+    def validate_scope_and_sensitivity(self):
+        if self.scope_type not in {"project", "branch", "task", "user"}:
+            raise ValueError("scope_type must be project, branch, task, or user")
+        if self.scope_type in {"branch", "task", "user"} and not self.scope_id:
+            raise ValueError(f"scope_id is required for {self.scope_type}-scoped memories")
+        if self.sensitivity not in {"normal", "sensitive", "secret"}:
+            raise ValueError("sensitivity must be normal, sensitive, or secret")
+        if self.type == MemoryType.TASK_STATE:
+            if self.scope_type != "task" or not self.scope_id:
+                raise ValueError("task_state memories require task scope and a task scope_id")
+            if self.valid_until is None:
+                self.valid_until = datetime.now() + timedelta(days=7)
+        return self
+
     def touch(self) -> None:
         """Mark memory as accessed (updates accessed_at)."""
         self.accessed_at = datetime.now()
@@ -83,6 +122,21 @@ class Memory(BaseModel):
         """Update memory content and timestamp."""
         self.content = content
         self.updated_at = datetime.now()
+
+    @property
+    def is_recallable(self) -> bool:
+        """Whether lifecycle policy permits ordinary recall of this record."""
+        return self.status in {
+            MemoryStatus.ACTIVE, MemoryStatus.ACTIVE_UNVERIFIED,
+            MemoryStatus.ACTIVE_VERIFIED, MemoryStatus.REVIEW_REQUIRED,
+        }
+
+    @property
+    def is_expired(self) -> bool:
+        if self.valid_until is None:
+            return False
+        now = datetime.now(self.valid_until.tzinfo) if self.valid_until.tzinfo else datetime.now()
+        return self.valid_until <= now
 
 
 class ProjectConfig(BaseModel):
@@ -161,6 +215,8 @@ class BrainInfo(BaseModel):
     decisions_count: int = 0
     learnings_count: int = 0
     preferences_count: int = 0
+    task_states_count: int = 0
+    environment_count: int = 0
     sessions_count: int = 0
     last_updated: datetime | None = None
     brain_path: str = ""
@@ -170,6 +226,7 @@ class BrainInfo(BaseModel):
         """Total number of memories stored."""
         return (
             self.facts_count + self.decisions_count + self.learnings_count + self.preferences_count
+            + self.task_states_count + self.environment_count
         )
 
 

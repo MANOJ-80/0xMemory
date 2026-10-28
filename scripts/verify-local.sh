@@ -45,8 +45,9 @@ fi
 "$python_path" -m pip check
 "$python_path" -m oxmemory --help
 run_dir="$(mktemp -d "$engine_root/.venv/verification.XXXXXX")"
+"$python_path" scripts/smoke_memory_system.py --output "$run_dir/memory-system-smoke.json"
 "$python_path" -m pytest tests/ -v --basetemp "$run_dir/pytest"
 "$python_path" -m oxmemory.demo --output "$run_dir/demo-result.json"
 "$python_path" -m oxmemory.evaluation --semantic --output "$run_dir/evaluation-semantic.json"
-printf 'PASS: dependencies, CLI, all tests, MCP, embeddings, and semantic evaluation.\n'
+printf 'PASS: dependencies, architecture smoke, CLI, all tests, MCP, embeddings, and semantic evaluation.\n'
 printf 'Verification artifacts: %s\n' "$run_dir"

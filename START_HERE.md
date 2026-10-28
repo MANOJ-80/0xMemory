@@ -83,6 +83,7 @@ git clone https://github.com/MANOJ-80/0xMemory.git
 if ($LASTEXITCODE -ne 0) { throw 'Clone failed; stop here.' }
 $engineRoot = Join-Path $demoRoot '0xMemory'
 Set-Location $engineRoot
+git switch architecture/evidence-grounded-memory
 git rev-parse HEAD
 Test-Path .\examples\todo-starter\storage.py
 Test-Path .\scripts\verify-local.ps1
@@ -145,7 +146,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Verification failed; inspect the first error.'
 
 This execution-policy setting applies to the launched PowerShell process; no permanent policy change is needed. `-SkipInstall` is appropriate because step 3 installed dependencies. `-OfflineModels` is appropriate only after the model was cached successfully. If package installation is incomplete, omit `-SkipInstall`; if model downloads are still required, omit `-OfflineModels` and ensure offline flags are not set to `1`.
 
-Expected: **all collected tests pass**, then a PASS line covering dependencies,
+Expected: architecture smoke and **all collected tests pass**, then a PASS line covering dependencies,
 CLI, tests, the real MCP client, embeddings, and semantic evaluation. The original
 team run passed 79 before the evaluation/relevance tests were added. A later
 revision may have more tests. Do not continue after failures merely because some
@@ -342,7 +343,7 @@ Do not change memories yet.
 
 Record the full SHA as **NEW_SHA**. Verify the commit includes `storage.py`. If Git asks for signing in your personal setup, resolve that local Git configuration or use a per-command unsigned demo commit. No remote push is needed for the To-do experiment.
 
-Now replace `NEW_SHA` and `OLD_ID` in the following prompt with your real values. Send it separately so the stale state can be captured before replacement.
+Now replace `NEW_SHA` and `OLD_ID` in the following prompt with your real values. Send it separately so the review-required state can be observed before replacement.
 
 ```text
 Call 0xmemory-todo observe_commit with commit NEW_SHA.
@@ -352,7 +353,7 @@ and include_history false. Show whether OLD_ID was returned.
 Do not verify, supersede, or create memories yet.
 ```
 
-Pass condition: OLD_ID is **stale**, affected through `storage.py`, and excluded from ordinary recall. If it is your only memory, there may be no eligible current decision. Other active memories can still be retrieved if you created any.
+Pass condition: OLD_ID is **review_required**, affected through `storage.py`. It may still appear in ordinary recall with an `unknown` evidence warning; the assistant must disclose that status. A changed file is a review signal, not proof the claim is false.
 
 Observation is an explicit tool call. A Git commit alone does not trigger a watcher. A file change means “needs review,” not “the entire old statement has been proven false.” If observation is skipped, outdated active context can still be returned.
 
@@ -380,7 +381,7 @@ note: Explain the actual code and test evidence you reviewed.
 If the evidence does not support this statement, report the mismatch
 instead of saving it. Show the replacement memory ID.
 Use the list tool to confirm the old memory is superseded and the
-replacement is active. Do not delete the old memory.
+replacement is active_verified. Do not delete the old memory.
 ```
 
 Record the replacement as **NEW_ID**. Pass condition: OLD_ID is superseded, NEW_ID is active, and the old/new entries retain the supersession relationship and evidence. Use `supersede_memory`, not plain `update`, for this replacement demonstration.
@@ -477,7 +478,7 @@ For another clean run, stop the app/MCP/dashboard processes and create a **new s
 | Server absent in editor | Open the app folder itself; check config location and wrapper (`servers` versus `mcpServers`); use editor logs. |
 | Server started but wrong project | Correct the final serve argument, stop/restart the server, and recheck status. |
 | Agent answers without a tool call | Enable Agent/tools and explicitly request MCP. Capture expanded invocation; prose alone is not proof. |
-| No current result after observation | Expected if the only relevant memory is stale. Review and verify/supersede it. |
+| Review-required memory appears after observation | Expected: inspect its evidence and disclose the unknown status before relying on it; verify or supersede after review. |
 | Old entry remains active | Was storage.py linked initially? Was the change committed? Was the new commit observed? Inspect returned evidence and SHA. |
 | Supersession rejected | Use the actual ID and a commit that contains the latest observed change and evidence file. Read the reported error before retrying. |
 | No browser connection | uvicorn must be running on 8090. MCP start does not launch the app. |

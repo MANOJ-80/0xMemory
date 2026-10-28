@@ -36,6 +36,9 @@ def export(
         "-d",
         help="Project directory (defaults to current)",
     ),
+    include_sensitive: bool = typer.Option(
+        False, "--include-sensitive", help="Include records labelled sensitive in the output."
+    ),
 ) -> None:
     """Export memories to JSON or CSV.
 
@@ -54,6 +57,8 @@ def export(
         memories = store.markdown.read_memories(type)
     else:
         memories = store.markdown.get_all_memories()
+    memories = [m for m in memories if m.sensitivity != "secret"
+                and (include_sensitive or m.sensitivity != "sensitive")]
 
     if not memories:
         console.print("[yellow]No memories found to export.[/yellow]")

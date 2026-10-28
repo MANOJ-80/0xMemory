@@ -32,10 +32,27 @@ def store_at(project: Path) -> MemoryStore:
 @app.command("remember")
 def remember(content: str, file: list[str] = typer.Option([], "--file"),
              symbol: list[str] = typer.Option([], "--symbol"), commit: str = "HEAD",
-             type: MemoryType = MemoryType.DECISION, project: Path = Path(".")):
+             type: MemoryType = MemoryType.DECISION, project: Path = Path("."),
+             scope: str = "project", scope_id: str | None = None):
     """Save a decision with evidence at a Git commit."""
     invoke(lambda: store_at(project).add(content, type, file_paths=file, symbols=symbol,
-                                         commit_sha=commit))
+                                         commit_sha=commit, scope_type=scope, scope_id=scope_id))
+
+
+@app.command("propose")
+def propose(content: str, type: MemoryType = MemoryType.LEARNING,
+            source: str = "manual-candidate", scope: str = "project",
+            scope_id: str | None = None, project: Path = Path(".")):
+    """Create a candidate that requires review before ordinary recall."""
+    invoke(lambda: store_at(project).propose(content, memory_type=type, source=source,
+                                             scope_type=scope, scope_id=scope_id))
+
+
+@app.command("review")
+def review(id: str, accept: bool = typer.Option(..., "--accept/--reject"),
+           note: str = typer.Option(..., "--note"), project: Path = Path(".")):
+    """Accept or reject a capture candidate with a recorded review note."""
+    invoke(lambda: store_at(project).review_candidate(id, accept, note, actor="cli-user"))
 
 
 @app.command("observe")
@@ -61,10 +78,16 @@ def supersede(id: str, content: str, note: str = typer.Option(..., "--note"),
 
 @app.command("recall")
 def recall(query: str, file: list[str] = typer.Option([], "--file"),
+           symbol: list[str] = typer.Option([], "--symbol"),
+           task_id: str | None = None, task_context: str | None = None,
+           user_scope_id: str | None = None,
            history: bool = False, token_budget: int = 1500, project: Path = Path(".")):
     """Retrieve current decisions, with evidence and ranking explanations."""
     invoke(lambda: store_at(project).recall_context(
-        query, file_paths=file, include_history=history, token_budget=token_budget,
+        query, file_paths=file, symbols=symbol, include_history=history, token_budget=token_budget,
+        scope_context={key: value for key, value in {
+            "task": task_id, "user": user_scope_id,
+        }.items() if value}, task_context=task_context,
     ))
 
 
@@ -74,3 +97,29 @@ def inspect(project: Path = Path(".")):
     invoke(lambda: [
         m.model_dump(mode="json") for m in store_at(project).list_memories(limit=10000)
     ])
+
+
+@app.command("activity")
+def activity(limit: int = 100, project: Path = Path(".")):
+    """Inspect recent lifecycle and privacy-minimizing recall events."""
+    invoke(lambda: {"events": store_at(project).activity(limit),
+                    "ledger": store_at(project).events.status()})
+
+
+@app.command("review-queue")
+def review_queue(include_sensitive: bool = False, limit: int = 100,
+                 project: Path = Path(".")):
+    """List candidate captures, changed claims, and expired or overdue memories."""
+    invoke(lambda: store_at(project).review_queue(include_sensitive, limit))
+
+
+@app.command("complete-task")
+def complete_task(task_id: str, project: Path = Path(".")):
+    """Archive task-scoped memory after work is complete."""
+    invoke(lambda: store_at(project).complete_task(task_id, actor="cli-user"))
+
+
+@app.command("find-conflicts")
+def find_conflicts(limit: int = 100, project: Path = Path(".")):
+    """Generate possible overlap/conflict candidates for review."""
+    invoke(lambda: store_at(project).conflict_candidates(limit))

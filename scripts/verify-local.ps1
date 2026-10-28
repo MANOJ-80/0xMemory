@@ -29,6 +29,8 @@ try {
     }
     Invoke-CheckedPython -PythonArguments @('-m', 'pip', 'check')
     Invoke-CheckedPython -PythonArguments @('-m', 'oxmemory', '--help')
+    $smokeReport = Join-Path $projectRoot ('.venv/memory-system-smoke-' + [guid]::NewGuid().ToString('N') + '.json')
+    Invoke-CheckedPython -PythonArguments @('scripts/smoke_memory_system.py', '--output', $smokeReport)
     # A fresh path avoids unrelated Windows pytest temp-directory permissions.
     $testDirectory = Join-Path $projectRoot ('.venv/pytest-' + [guid]::NewGuid().ToString('N'))
     Invoke-CheckedPython -PythonArguments @(
@@ -38,7 +40,7 @@ try {
     Invoke-CheckedPython -PythonArguments @(
         '-m', 'oxmemory.evaluation', '--semantic', '--output', 'evaluation-semantic.json'
     )
-    Write-Host 'PASS: dependencies, CLI, tests, real MCP client, embeddings, and semantic evaluation.'
+    Write-Host 'PASS: dependencies, architecture smoke, CLI, tests, real MCP client, embeddings, and semantic evaluation.'
 }
 finally {
     $env:HF_HUB_OFFLINE = $previousHubOffline

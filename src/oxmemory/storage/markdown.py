@@ -20,6 +20,8 @@ FACTS_FILE = "memory/facts.md"
 DECISIONS_FILE = "memory/decisions.md"
 LEARNINGS_FILE = "memory/learnings.md"
 PREFERENCES_FILE = "memory/preferences.md"
+TASK_STATE_FILE = "memory/task-state.md"
+ENVIRONMENT_FILE = "memory/environment.md"
 
 # Memory entry pattern for parsing
 # Matches: ## [YYYY-MM-DD HH:MM] `tag1` `tag2`
@@ -90,6 +92,22 @@ LEARNINGS_TEMPLATE = """# 💡 Learnings & Insights
 PREFERENCES_TEMPLATE = """# ⚙️ Preferences
 
 > User and project preferences for AI assistance.
+
+---
+
+"""
+
+TASK_STATE_TEMPLATE = """# 🧭 Task State
+
+> Short-lived notes about active work. Add an expiry or review date where possible.
+
+---
+
+"""
+
+ENVIRONMENT_TEMPLATE = """# 🛠️ Environment & Workflow
+
+> Repository setup, toolchain, and workflow facts with their sources.
 
 ---
 
@@ -299,6 +317,8 @@ class MarkdownManager:
             MemoryType.DECISION: DECISIONS_FILE,
             MemoryType.LEARNING: LEARNINGS_FILE,
             MemoryType.PREFERENCE: PREFERENCES_FILE,
+            MemoryType.TASK_STATE: TASK_STATE_FILE,
+            MemoryType.ENVIRONMENT: ENVIRONMENT_FILE,
         }
         return self.brain_path / file_map[memory_type]
 
@@ -309,6 +329,8 @@ class MarkdownManager:
             MemoryType.DECISION: DECISIONS_TEMPLATE,
             MemoryType.LEARNING: LEARNINGS_TEMPLATE,
             MemoryType.PREFERENCE: PREFERENCES_TEMPLATE,
+            MemoryType.TASK_STATE: TASK_STATE_TEMPLATE,
+            MemoryType.ENVIRONMENT: ENVIRONMENT_TEMPLATE,
         }
         return template_map[memory_type]
 

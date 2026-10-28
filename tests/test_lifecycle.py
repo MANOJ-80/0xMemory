@@ -68,6 +68,7 @@ class MemoryLifecycleTests(unittest.TestCase):
         vector.upsert.assert_called_once()
         self.assertEqual(vector.upsert.call_args.args[0].content, "Cookie login")
         vector.delete.assert_not_called()
+        self.assertEqual(updated.status, MemoryStatus.REVIEW_REQUIRED)
 
     def test_duplicate_ingestion_is_idempotent(self):
         first = self.store.add("Use cookie sessions")
@@ -83,7 +84,10 @@ class MemoryLifecycleTests(unittest.TestCase):
         second = self.commit('AUTH = "cookie"\n')
         result = self.store.observe_commit(second)
         self.assertEqual(result["affected"][0]["id"], old.id)
-        self.assertEqual(self.store.search("Authentication", semantic=False), [])
+        self.assertEqual(self.store.get(old.id).status, MemoryStatus.REVIEW_REQUIRED)
+        recalled = self.store.search_ranked("Authentication", semantic=False)
+        self.assertIn(old.id, {item["memory"].id for item in recalled})
+        self.assertEqual(recalled[0]["evidence_validation"]["state"], "unknown")
         self.assertEqual(self.store.observe_commit(second)["affected"], [])
         new = self.store.supersede(old.id, "Authentication uses cookie sessions", second,
                                    "Reviewed AUTH in auth.py")
@@ -113,7 +117,7 @@ class MemoryLifecycleTests(unittest.TestCase):
             self.store.verify(memory.id, first, "Outdated evidence")
         with self.assertRaises(ValueError):
             self.store.supersede(memory.id, "Use cookies", first, "Outdated evidence")
-        self.assertEqual(self.store.get(memory.id).status, MemoryStatus.STALE)
+        self.assertEqual(self.store.get(memory.id).status, MemoryStatus.REVIEW_REQUIRED)
         third = self.commit("AUTH = 'sso'")
         self.store.observe_commit(third)
         self.assertEqual(self.store.get(memory.id).stale_at_commit, third)
@@ -127,7 +131,7 @@ class MemoryLifecycleTests(unittest.TestCase):
         second = self.commit("# Refactor comment\nAUTH = 'jwt'")
         self.store.observe_commit(second)
         verified = self.store.verify(memory.id, second, "AUTH still uses JWT")
-        self.assertEqual(verified.status, MemoryStatus.ACTIVE)
+        self.assertEqual(verified.status, MemoryStatus.ACTIVE_VERIFIED)
         self.assertEqual(verified.commit_sha, second)
         self.assertEqual(self.store.observe_commit(second)["affected"], [])
 

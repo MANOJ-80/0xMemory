@@ -40,6 +40,12 @@ async def check(project, transport):
                     "observe_commit",
                     "verify_memory",
                     "supersede_memory",
+                    "propose_memory",
+                    "review_memory",
+                    "review_queue",
+                    "find_conflicts",
+                    "rate_memories",
+                    "complete_task",
                 }
                 assert expected <= names, names
                 response = await session.call_tool("status", {})

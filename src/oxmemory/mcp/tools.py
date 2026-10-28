@@ -21,6 +21,13 @@ async def handle_remember(
     file_paths: list[str] | None = None,
     symbols: list[str] | None = None,
     commit_sha: str | None = None,
+    scope_type: str = "project",
+    scope_id: str | None = None,
+    answer_slots: dict[str, str] | None = None,
+    sensitivity: str = "normal",
+    propose: bool = False,
+    valid_until: str | None = None,
+    review_after: str | None = None,
 ) -> dict:
     """Handle the 'remember' tool call.
 
@@ -43,11 +50,12 @@ async def handle_remember(
         return {
             "success": False,
             "error": f"Invalid memory type: {type}. Must be one of: "
-            "fact, decision, learning, preference",
+            "fact, decision, learning, preference, task_state, environment",
         }
 
     try:
-        memory = store.add(
+        save = store.propose if propose else store.add
+        memory = save(
             content=content,
             memory_type=memory_type,
             tags=tags or [],
@@ -55,12 +63,21 @@ async def handle_remember(
             file_paths=file_paths,
             symbols=symbols,
             commit_sha=commit_sha,
+            scope_type=scope_type,
+            scope_id=scope_id,
+            answer_slots=answer_slots,
+            sensitivity=sensitivity,
+            provenance={"source": source, "capture": "candidate" if propose else "direct"},
+            valid_until=valid_until,
+            review_after=review_after,
         )
 
+        action = ("Proposed" if memory.status.value == "candidate" else "Reused existing") if propose else "Stored"
         return {
             "success": True,
             "id": memory.id,
-            "message": f"Stored {memory_type.value}: "
+            "status": memory.status.value,
+            "message": f"{action} {memory_type.value}: "
             f"{content[:50]}{'...' if len(content) > 50 else ''}",
         }
     except Exception as e:
@@ -79,6 +96,10 @@ async def handle_recall(
     symbols: list[str] | None = None,
     include_history: bool = False,
     token_budget: int = 1500,
+    task_context: str | None = None,
+    task_id: str | None = None,
+    include_sensitive: bool = False,
+    user_scope_id: str | None = None,
 ) -> dict:
     """Handle the 'recall' tool call.
 
@@ -110,6 +131,11 @@ async def handle_recall(
             memory_types=memory_types,
             file_paths=file_paths, symbols=symbols,
             include_history=include_history, token_budget=token_budget,
+            task_context=task_context,
+            scope_context={key: value for key, value in {
+                "task": task_id, "user": user_scope_id,
+            }.items() if value},
+            include_sensitive=include_sensitive,
         )
         memories = [item["memory"] for item in context["results"]]
 
@@ -141,6 +167,7 @@ async def handle_list(
     store: MemoryStore,
     type: str | None = None,
     limit: int = 20,
+    include_sensitive: bool = False,
 ) -> dict:
     """Handle the 'list' tool call.
 
@@ -168,8 +195,10 @@ async def handle_list(
 
         memories = store.list_memories(
             memory_type=memory_type,
-            limit=limit,
+            limit=min(max(limit, 1), 1000),
         )
+        memories = [m for m in memories if m.sensitivity == "normal" or
+                    (include_sensitive and m.sensitivity == "sensitive")]
 
         return {
             "count": len(memories),
@@ -277,13 +306,23 @@ async def handle_status(store: MemoryStore) -> dict:
             "decisions": info.decisions_count,
             "learnings": info.learnings_count,
             "preferences": info.preferences_count,
+            "task_states": info.task_states_count,
+            "environment": info.environment_count,
             "last_updated": info.last_updated.isoformat() if info.last_updated else None,
             "brain_path": info.brain_path,
+            "event_ledger": store.events.status(),
         }
     except Exception as e:
         return {
             "error": str(e),
         }
+
+
+async def handle_activity(store: MemoryStore, limit: int = 100) -> dict:
+    try:
+        return {"events": store.activity(limit), "ledger": store.events.status()}
+    except Exception as e:
+        return {"events": [], "error": str(e)}
 
 
 async def handle_extract(
@@ -323,27 +362,33 @@ async def handle_extract(
             }
 
         saved_count = 0
+        candidate_ids = []
         if auto_save:
             memories = extractor.extraction_to_memories(result)
             for memory in memories:
-                store.add(
+                candidate = store.propose(
                     content=memory.content,
                     memory_type=memory.type,
                     tags=memory.tags,
                     source="extraction",
                     salience=memory.salience,
                     confidence=memory.confidence,
+                    provenance={"source": "conversation_extraction", "trust": "model_inferred"},
                 )
                 saved_count += 1
+                candidate_ids.append(candidate.id)
 
         return {
             "success": True,
             "facts": result.facts,
             "decisions": result.decisions,
             "learnings": result.learnings,
-            "saved": saved_count,
+            "saved_candidates": saved_count,
+            "candidate_ids": candidate_ids,
+            "review_required": bool(candidate_ids),
             "message": f"Extracted {len(result.facts)} facts, "
-            f"{len(result.decisions)} decisions, {len(result.learnings)} learnings",
+            f"{len(result.decisions)} decisions, {len(result.learnings)} learnings; "
+            f"proposed {saved_count} candidate(s) for review",
         }
 
     except ImportError:

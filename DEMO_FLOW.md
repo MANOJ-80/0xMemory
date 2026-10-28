@@ -68,7 +68,7 @@ do not change global Git configuration. Show the full new SHA.
 
 Record NEW_SHA. Replace OLD_ID and NEW_SHA below with the returned values.
 
-## 6. Observe and check stale exclusion
+## 6. Observe and check review-required recall
 
 ```text
 Call 0xmemory-todo observe_commit with commit NEW_SHA.
@@ -77,7 +77,11 @@ with file_paths ["storage.py"] and include_history false.
 Do not verify, supersede, or create memories yet.
 ```
 
-Pass: OLD_ID becomes stale and does not appear in normal recall.
+Pass: OLD_ID becomes `review_required` and the observation reports
+`storage.py` as affected. It may still appear in recall with an `unknown`
+evidence check; the assistant must clearly disclose that review warning. A
+changed file alone does not prove the claim false. Continue to supersession
+only after inspecting the new implementation.
 
 ## 7. Review evidence and supersede
 
@@ -89,7 +93,7 @@ Content: "Tasks now use SQLite at data/tasks.db for atomic updates and queryable
 data without an external database service. JSON tasks are imported once,
 preserving IDs and completion state."
 If unsupported, explain the mismatch instead. Show the replacement memory ID.
-Use list to confirm the old entry is superseded and its replacement is active.
+Use list to confirm the old entry is superseded and its replacement is active_verified.
 Preserve the old entry.
 ```
 

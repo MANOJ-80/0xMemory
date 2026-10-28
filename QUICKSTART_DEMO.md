@@ -25,7 +25,13 @@ Then clone in your chosen parent folder on either OS:
 ```text
 git clone https://github.com/MANOJ-80/0xMemory.git
 cd 0xMemory
+git switch architecture/evidence-grounded-memory
 ```
+
+The architecture branch must be published for a fresh clone to fetch it. If it
+is still local, use the existing checkout already on that branch or wait for
+the maintainer to publish it; do not install `main` and assume it contains the
+architecture changes.
 
 The default layout is `0xMemory/` and `testTodoapp/` side by side. Do not clone or
 run this inside an existing app's repository. Internet is needed for the first
@@ -51,13 +57,14 @@ No venv activation or manual JSON editing is needed. Defaults configure **VS Cod
 Copilot and Codex CLI/Desktop**. Both commands:
 
 1. Check Git and Python; create/reuse the engine venv and install dependencies.
-2. Check packages and download/check the real embedding model.
-3. Copy the JSON To-do starter into a fresh sibling app repository.
-4. Create its first local commit using a per-command demo identity; no push.
-5. Initialize its named memory brain and run the five starter tests.
-6. Generate local VS Code JSON and Codex TOML with absolute engine/app paths.
-7. Use a real MCP SDK client for tool discovery and zero-memory status checks.
-8. Print the app folder and a separate evidence folder containing logs, results,
+2. Run the deterministic, offline architecture memory-system smoke check.
+3. Check packages and download/check the real embedding model.
+4. Copy the JSON To-do starter into a fresh sibling app repository.
+5. Create its first local commit using a per-command demo identity; no push.
+6. Initialize its named memory brain and run the five starter app tests.
+7. Generate local VS Code JSON and Codex TOML with absolute engine/app paths.
+8. Use a real MCP SDK client for tool discovery and zero-memory status checks.
+9. Print the app folder and a separate evidence folder containing logs, results,
    exact prompts, a report template, and an app launcher.
 
 Setup stops on any failure. `setup-result.json` records PASS/FAIL and completed
@@ -132,8 +139,10 @@ Open http://127.0.0.1:8090. Keep the terminal running; Ctrl+C stops it. Then fol
 are already filled in:
 
 Remember JSON rationale → new-chat recall → SQLite migration → local commit →
-observe stale memory → review and supersede → another new-chat recall → optional
-client switch. The shared [prompt template](DEMO_FLOW.md) is also in the repo.
+observe and flag for review → inspect evidence and supersede → another new-chat
+recall → optional client switch. Changed evidence does not automatically prove a
+claim false; review-required memories can still appear with a warning. The shared
+[prompt template](DEMO_FLOW.md) is also in the repo.
 
 Record IDs, SHAs, screenshots, client versions, and actual results in the generated
 `TEST_REPORT.md`. Keep this evidence outside the app so recall tests cannot simply

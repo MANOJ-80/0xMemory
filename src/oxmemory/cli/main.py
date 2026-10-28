@@ -1,6 +1,7 @@
 """Main CLI application for 0xMemory."""
 
 import asyncio
+import json
 from enum import Enum
 from pathlib import Path
 
@@ -41,6 +42,22 @@ app.add_typer(export_app, name="export")
 app.add_typer(lifecycle_app, name="memory")
 
 console = Console()
+
+
+@app.command("import")
+def import_memories(
+    input_file: Path = typer.Option(..., "--input", "-i", exists=True, readable=True),
+    project_dir: Path | None = typer.Option(None, "--dir", "-d"),
+    include_sensitive: bool = typer.Option(False, "--include-sensitive"),
+) -> None:
+    """Restore JSON memory records; existing IDs are never overwritten."""
+    try:
+        records = json.loads(input_file.read_text(encoding="utf-8"))
+        result = MemoryStore(project_dir).import_memories(records, include_sensitive=include_sensitive)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        console.print(f"[red]Import failed:[/red] {exc}")
+        raise typer.Exit(1) from exc
+    console.print(json.dumps(result, indent=2))
 
 
 class TransportMode(str, Enum):
