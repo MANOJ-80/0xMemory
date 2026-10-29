@@ -53,6 +53,7 @@ dev = [
 [project.scripts]
 "0xmemory" = "oxmemory.cli.main:app"
 "oxmemory" = "oxmemory.cli.main:app"
+"0xmemory-coding-eval" = "oxmemory.coding_evaluation:main"
 
 [project.urls]
 Homepage = "https://github.com/MANOJ-80/0xMemory"

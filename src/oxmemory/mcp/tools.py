@@ -26,6 +26,15 @@ async def handle_remember(
     answer_slots: dict[str, str] | None = None,
     sensitivity: str = "normal",
     propose: bool = False,
+    confidence: float | None = None,
+    claim_confidence: float | None = None,
+    valid_from: str | None = None,
+    valid_to: str | None = None,
+    claim_subject: str | None = None,
+    claim_predicate: str | None = None,
+    claim_value: str | None = None,
+    claim_environment: str | None = None,
+    claim_state: str = "asserted",
     valid_until: str | None = None,
     review_after: str | None = None,
 ) -> dict:
@@ -67,7 +76,16 @@ async def handle_remember(
             scope_id=scope_id,
             answer_slots=answer_slots,
             sensitivity=sensitivity,
+            confidence=confidence,
+            claim_confidence=claim_confidence,
             provenance={"source": source, "capture": "candidate" if propose else "direct"},
+            valid_from=valid_from,
+            valid_to=valid_to,
+            claim_subject=claim_subject,
+            claim_predicate=claim_predicate,
+            claim_value=claim_value,
+            claim_environment=claim_environment,
+            claim_state=claim_state,
             valid_until=valid_until,
             review_after=review_after,
         )
@@ -140,11 +158,14 @@ async def handle_recall(
         memories = [item["memory"] for item in context["results"]]
 
         if not memories:
+            code_count = len(context.get("code_evidence", []))
             return {
                 "found": 0,
                 "memories": [],
                 "context": context,
-                "message": ("No memories fit the context budget."
+                "message": (f"Found {code_count} code definitions; no memory record was selected."
+                            if code_count else
+                            "No memories fit the context budget."
                             if context["abstention_reason"] == "context_budget"
                             else "No relevant memory found. Do not infer an answer from unrelated memories."),
             }

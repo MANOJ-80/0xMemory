@@ -42,6 +42,7 @@ def main() -> int:
             "The application uses JSON task storage for portability.",
             memory_type=MemoryType.DECISION,
             file_paths=["storage.py"], symbols=["backend"], commit_sha=initial,
+            answer_slots={"rationale": "Portability."},
         )
         assert decision.evidence_refs, "file and symbol evidence anchors were not captured"
         passed.append("evidence anchors")

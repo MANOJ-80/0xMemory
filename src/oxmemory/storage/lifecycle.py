@@ -36,6 +36,35 @@ class LifecycleMixin:
             raise ValueError(f"Memory not found: {memory_id}")
         return memory
 
+    def set_claim_state(self, memory_id: str, state: str, note: str,
+                        actor: str = "local-user") -> Memory:
+        """Record an explicit proposal/evaluation/adoption decision without inferring it."""
+        allowed = {"asserted", "proposed", "evaluating", "adopted", "rejected", "unknown"}
+        if state not in allowed:
+            raise ValueError(f"claim state must be one of: {', '.join(sorted(allowed))}")
+        if not note.strip():
+            raise ValueError("A note is required to change claim state")
+        memory = self._require(memory_id)
+        if memory.status in {MemoryStatus.CANDIDATE, MemoryStatus.QUARANTINED,
+                             MemoryStatus.SUPERSEDED, MemoryStatus.ARCHIVED}:
+            raise ValueError("Claim state can only be changed on a reviewable, non-archived memory")
+        if memory.claim_state == state:
+            return memory
+        memory.revisions.append(memory.model_dump(mode="json", exclude={"revisions"}))
+        memory.claim_state = state
+        memory.provenance = {
+            **memory.provenance,
+            "claim_state_review": {"actor": actor, "state": state,
+                                   "note": note.strip(), "at": datetime.now().isoformat()},
+        }
+        memory.updated_at = datetime.now()
+        self._persist(memory)
+        self.events.append(memory.id, "claim_state_changed", actor=actor,
+                           reason="claim-state-note-sha256:" + hashlib.sha256(note.strip().encode()).hexdigest(),
+                           memory_type=memory.type.value, status=memory.status.value,
+                           revision=len(memory.revisions))
+        return memory
+
     def _review_commit(self, memory: Memory, commit: str, paths: list[str]) -> str:
         repo = Repository(self.project_dir)
         sha = repo.validate_evidence(commit, paths)
@@ -79,7 +108,10 @@ class LifecycleMixin:
             affected.append({"id": memory.id, "files": overlap})
         return {"commit": target, "changed_files": sorted(changed), "affected": affected}
 
-    def verify(self, memory_id: str, commit: str, note: str) -> Memory:
+    def verify(self, memory_id: str, commit: str, note: str, *,
+               claim_confidence: float | None = None,
+               valid_from: datetime | None = None,
+               valid_to: datetime | None = None) -> Memory:
         memory = self._require(memory_id)
         if memory.status in {MemoryStatus.CANDIDATE, MemoryStatus.QUARANTINED}:
             raise ValueError("Capture candidates must be accepted/reviewed before evidence verification")
@@ -96,6 +128,16 @@ class LifecycleMixin:
         memory.evidence_refs = repo.capture_evidence(sha, memory.file_paths, memory.symbols)
         memory.stale_at_commit = None
         memory.verification_note = note.strip()
+        if claim_confidence is not None:
+            memory.claim_confidence = claim_confidence
+        if valid_from is not None:
+            memory.valid_from = (datetime.fromisoformat(valid_from.replace("Z", "+00:00"))
+                                 if isinstance(valid_from, str) else valid_from)
+        if valid_to is not None:
+            memory.valid_to = (datetime.fromisoformat(valid_to.replace("Z", "+00:00"))
+                               if isinstance(valid_to, str) else valid_to)
+        # Re-validate half-open claim interval and its structured metadata.
+        memory = Memory.model_validate(memory.model_dump())
         memory.updated_at = datetime.now()
         self._persist(memory)
         self.events.append(memory.id, "verified", reason="review-note-sha256:" + hashlib.sha256(note.strip().encode()).hexdigest(),
@@ -104,7 +146,9 @@ class LifecycleMixin:
         return memory
 
     def supersede(self, memory_id: str, content: str, commit: str, note: str,
-                  file_paths: list[str] | None = None) -> Memory:
+                  file_paths: list[str] | None = None, *, claim_value: str | None = None,
+                  valid_from: datetime | None = None, valid_to: datetime | None = None,
+                  claim_confidence: float | None = None) -> Memory:
         from oxmemory.storage.security import contains_obvious_secret
 
         if contains_obvious_secret(content):
@@ -114,8 +158,30 @@ class LifecycleMixin:
             raise ValueError("Capture candidates must be reviewed before supersession")
         if old.status == MemoryStatus.SUPERSEDED:
             raise ValueError("Memory already superseded")
+        if old.claim_subject and claim_value is None:
+            raise ValueError("Superseding a structured claim requires the replacement claim_value")
         if not note.strip():
             raise ValueError("A verification note is required")
+        replacement_start = (
+            datetime.fromisoformat(valid_from.replace("Z", "+00:00"))
+            if isinstance(valid_from, str) else
+            valid_from or (datetime.now() if old.claim_subject else None)
+        )
+        replacement_end = (
+            datetime.fromisoformat(valid_to.replace("Z", "+00:00"))
+            if isinstance(valid_to, str) else valid_to
+        )
+        if replacement_end is not None and replacement_start is not None:
+            Memory.model_validate({
+                "content": "claim interval validation",
+                "valid_from": replacement_start,
+                "valid_to": replacement_end,
+            })
+        if old.claim_subject and old.claim_predicate and old.valid_to is None:
+            proposed_end = replacement_start or datetime.now()
+            old_snapshot = old.model_dump()
+            old_snapshot["valid_to"] = proposed_end
+            Memory.model_validate(old_snapshot)
         replacement = Memory(
             content=content, type=old.type, tags=old.tags, source="verified-replacement",
             file_paths=old.file_paths if file_paths is None else file_paths,
@@ -125,6 +191,16 @@ class LifecycleMixin:
             provenance={"source": "reviewed_replacement", "supersedes": old.id},
             trust_basis="human_reviewed", answer_slots=old.answer_slots.copy(),
             sensitivity=old.sensitivity,
+            confidence=old.confidence,
+            claim_confidence=claim_confidence,
+            claim_subject=old.claim_subject,
+            claim_predicate=old.claim_predicate,
+            claim_value=claim_value,
+            claim_environment=old.claim_environment,
+            claim_state=("adopted" if old.type.value == "decision" or old.claim_subject
+                         else old.claim_state),
+            valid_from=replacement_start,
+            valid_to=replacement_end,
             status=MemoryStatus.ACTIVE_VERIFIED,
         )
         if not replacement.file_paths:
@@ -136,6 +212,8 @@ class LifecycleMixin:
             replacement.commit_sha, replacement.file_paths, replacement.symbols
         )
         old.revisions.append(old.model_dump(mode="json", exclude={"revisions"}))
+        if old.claim_subject and old.claim_predicate and old.valid_to is None:
+            old.valid_to = replacement_start
         old.status = MemoryStatus.SUPERSEDED
         old.superseded_by = replacement.id
         old.updated_at = datetime.now()

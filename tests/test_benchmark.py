@@ -14,16 +14,19 @@ from oxmemory.storage.memory_store import MemoryStore
 
 def test_dataset_is_partitioned_before_execution():
     cases = scenarios()["scenarios"]
-    assert len(cases) == len({c["id"] for c in cases}) == 30
+    assert len(cases) == len({c["id"] for c in cases}) == 34
     assert Counter(c["category"] for c in cases) == {
         "changed": 8,
         "unrelated": 6,
         "valid": 6,
         "superseded": 6,
         "no_answer": 4,
+        "evidence_missing": 2,
+        "ambiguous": 2,
     }
     development = [c for c in cases if c["partition"] == "development"]
-    assert len(development) == len({c["category"] for c in development}) == 5
+    assert len(development) == 7
+    assert len({c["category"] for c in development}) == 7
 
 
 def test_metrics_distinguish_unknown_truth_from_pending_verification():
@@ -48,20 +51,22 @@ def test_real_git_development_workflow_and_artifacts(tmp_path):
     ]
     for name, expected in report["environment"]["source_sha256"].items():
         assert hashlib.sha256((output / "source" / name).read_bytes()).hexdigest() == expected
-    assert len(report["audits"]) == 5
+    assert len(report["audits"]) == 7
     rows = {(r["category"], r["checkpoint"], r["variant"]): r for r in report["results"]}
     assert rows["changed", "after_observation", "basic"]["metrics"]["outdated_hit"] is True
-    assert rows["changed", "after_observation", "lifecycle"]["metrics"]["outdated_hit"] is False
-    assert rows["valid", "pending_review", "lifecycle"]["metrics"]["recall_at_k"] == 0
-    assert rows["valid", "after_review", "lifecycle"]["metrics"]["recall_at_k"] == 1
-    assert rows["superseded", "after_review", "lifecycle"]["metrics"]["update_correct"] is True
+    # Both baseline lifecycle policies preserve review-required memories when
+    # file changes only establish uncertainty; only contradiction can prove false.
+    assert rows["changed", "after_observation", "current"]["metrics"]["outdated_hit"] is True
+    assert rows["valid", "pending_review", "current"]["metrics"]["recall_at_k"] == 1
+    assert rows["valid", "after_review", "current"]["metrics"]["recall_at_k"] == 1
+    assert rows["superseded", "after_review", "current"]["metrics"]["update_correct"] is True
     assert (
         rows["unrelated", "after_observation", "basic"]["retrieved"]
-        == rows["unrelated", "after_observation", "lifecycle"]["retrieved"]
+        == rows["unrelated", "after_observation", "current"]["retrieved"]
     )
     assert (
         rows["no_answer", "after_observation", "basic"]["retrieved"]
-        == rows["no_answer", "after_observation", "lifecycle"]["retrieved"]
+        == rows["no_answer", "after_observation", "current"]["retrieved"]
     )
     for audit in report["audits"]:
         assert len(audit["initial_commit"]) == len(audit["changed_commit"]) == 40

@@ -73,6 +73,22 @@ Use Python 3.11 or 3.12. These instructions target the
 `architecture/evidence-grounded-memory` branch. The branch must be available in
 your clone; it is currently a local working branch until it is published.
 
+The shared Windows/Ubuntu setup entry point installs the engine and prepares a
+fresh demo project. From the repository root:
+
+```bash
+# Ubuntu
+python3 scripts/setup-and-run.py --project ../memory-demo
+```
+
+```powershell
+# Windows PowerShell
+py scripts/setup-and-run.py --project ..\memory-demo
+```
+
+The interactive, client-neutral prompt guide is [demo.md](demo.md). The
+platform-specific setup wrappers below remain available for existing workflows.
+
 ### Ubuntu
 
 Install prerequisites (Ubuntu 24.04):

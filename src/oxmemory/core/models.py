@@ -1,6 +1,6 @@
 """Core data models for 0xMemory."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import PurePosixPath
 from uuid import uuid4
@@ -40,7 +40,7 @@ class Memory(BaseModel):
     """
 
     id: str = Field(default_factory=lambda: f"mem-{uuid4().hex[:8]}")
-    schema_version: int = 2
+    schema_version: int = 3
     content: str = Field(..., description="The memory content")
     type: MemoryType = Field(default=MemoryType.FACT, description="Type of memory")
     tags: list[str] = Field(default_factory=list, description="Categorization tags")
@@ -60,7 +60,14 @@ class Memory(BaseModel):
     evidence_branch: str | None = Field(
         default=None, description="Branch on which linked evidence was reviewed"
     )
-    confidence: float | None = Field(default=None, ge=0, le=1)
+    confidence: float | None = Field(
+        default=None, ge=0, le=1,
+        description="Capture/extraction confidence; distinct from repository evidence support.",
+    )
+    claim_confidence: float | None = Field(
+        default=None, ge=0, le=1,
+        description="Estimated confidence that the claim is true; separate from extraction confidence.",
+    )
     supersedes: str | None = None
     superseded_by: str | None = None
     verification_note: str | None = None
@@ -72,6 +79,16 @@ class Memory(BaseModel):
     trust_basis: str = Field(default="user_asserted")
     answer_slots: dict[str, str] = Field(default_factory=dict)
     sensitivity: str = Field(default="normal")
+    # Claim validity is separate from record expiry/review scheduling.
+    valid_from: datetime | None = None
+    valid_to: datetime | None = None
+    claim_subject: str | None = None
+    claim_predicate: str | None = None
+    claim_value: str | None = None
+    claim_environment: str | None = None
+    # Distinguishes a proposed/evaluated option from an adopted project decision.
+    # This is orthogonal to lifecycle status (active, review-required, superseded).
+    claim_state: str = Field(default="asserted", description="asserted, proposed, evaluating, adopted, rejected, unknown")
     valid_until: datetime | None = None
     review_after: datetime | None = None
     utility: float = Field(default=0.0, ge=0.0, le=1.0)
@@ -107,6 +124,18 @@ class Memory(BaseModel):
             raise ValueError(f"scope_id is required for {self.scope_type}-scoped memories")
         if self.sensitivity not in {"normal", "sensitive", "secret"}:
             raise ValueError("sensitivity must be normal, sensitive, or secret")
+        if self.claim_state not in {"asserted", "proposed", "evaluating", "adopted", "rejected", "unknown"}:
+            raise ValueError("claim_state must be asserted, proposed, evaluating, adopted, rejected, or unknown")
+        if self.valid_from and self.valid_to:
+            valid_from = (self.valid_from.replace(tzinfo=timezone.utc) if self.valid_from.tzinfo is None
+                          else self.valid_from.astimezone(timezone.utc))
+            valid_to = (self.valid_to.replace(tzinfo=timezone.utc) if self.valid_to.tzinfo is None
+                        else self.valid_to.astimezone(timezone.utc))
+            if valid_to <= valid_from:
+                raise ValueError("valid_to must be later than valid_from (validity uses [from, to))")
+        structured_claim = (self.claim_subject, self.claim_predicate, self.claim_value)
+        if any((*structured_claim, self.claim_environment)) and not all(structured_claim):
+            raise ValueError("Structured claims require claim_subject, claim_predicate, and claim_value")
         if self.type == MemoryType.TASK_STATE:
             if self.scope_type != "task" or not self.scope_id:
                 raise ValueError("task_state memories require task scope and a task scope_id")
@@ -189,10 +218,36 @@ class LLMConfig(BaseModel):
 
 
 class RetrievalConfig(BaseModel):
-    """Experimental abstention is opt-in until independently validated."""
+    """EDAM retrieval policy. Weights are configurable for development-data tuning."""
 
-    relevance_gate: bool = False
+    architecture: str = "edam"
+    relevance_gate: bool = True
     min_similarity: float = Field(default=0.25, ge=-1, le=1, allow_inf_nan=False)
+    min_edam_score: float = Field(default=0.22, ge=0, le=1, allow_inf_nan=False)
+    w_relevance: float = Field(default=0.25, ge=0, le=1, allow_inf_nan=False)
+    w_evidence: float = Field(default=0.20, ge=0, le=1, allow_inf_nan=False)
+    w_temporal: float = Field(default=0.10, ge=0, le=1, allow_inf_nan=False)
+    w_freshness: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
+    w_scope: float = Field(default=0.15, ge=0, le=1, allow_inf_nan=False)
+    w_utility: float = Field(default=0.10, ge=0, le=1, allow_inf_nan=False)
+    w_provenance: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
+    w_confidence: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
+    w_extraction_confidence: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
+    redundancy_threshold: float = Field(default=0.82, ge=0, le=1, allow_inf_nan=False)
+    freshness_half_life_days: int = Field(default=365, ge=1, le=36500)
+    abstain_on_conflict: bool = True
+    baseline_mode: bool = False
+
+    @model_validator(mode="after")
+    def validate_edam_weights(self):
+        weights = (self.w_relevance, self.w_evidence, self.w_temporal, self.w_freshness,
+                   self.w_scope, self.w_utility, self.w_provenance, self.w_confidence,
+                   self.w_extraction_confidence)
+        if sum(weights) <= 0:
+            raise ValueError("At least one EDAM ranking weight must be positive")
+        if self.architecture not in {"edam", "baseline"}:
+            raise ValueError("retrieval.architecture must be 'edam' or 'baseline'")
+        return self
 
 
 class Config(BaseModel):

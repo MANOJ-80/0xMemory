@@ -17,10 +17,19 @@ class Review(BaseModel):
     note: str = Field(min_length=1)
     content: str | None = None
     file_paths: list[str] | None = None
+    claim_value: str | None = None
+    claim_confidence: float | None = Field(default=None, ge=0, le=1)
+    valid_from: str | None = None
+    valid_to: str | None = None
 
 
 class CommitRequest(BaseModel):
     commit: str = "HEAD"
+
+
+class ClaimStateRequest(BaseModel):
+    state: str
+    note: str = Field(min_length=1)
 
 
 def create_dashboard(project: Path, enable_vectors: bool = True) -> FastAPI:
@@ -78,10 +87,24 @@ def create_dashboard(project: Path, enable_vectors: bool = True) -> FastAPI:
             if body.content is not None:
                 result = store.supersede(
                     memory_id, body.content, body.commit, body.note, body.file_paths,
+                    claim_value=body.claim_value,
+                    claim_confidence=body.claim_confidence,
+                    valid_from=body.valid_from,
+                    valid_to=body.valid_to,
                 )
             else:
-                result = store.verify(memory_id, body.commit, body.note)
+                result = store.verify(memory_id, body.commit, body.note,
+                                      claim_confidence=body.claim_confidence,
+                                      valid_from=body.valid_from, valid_to=body.valid_to)
             return result.model_dump(mode="json")
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.post("/api/memories/{memory_id}/claim-state")
+    async def claim_state(memory_id: str, body: ClaimStateRequest):
+        try:
+            return store.set_claim_state(memory_id, body.state, body.note,
+                                         actor="dashboard-user").model_dump(mode="json")
         except (ValueError, OSError) as exc:
             raise HTTPException(400, str(exc)) from exc
 

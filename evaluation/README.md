@@ -1,5 +1,55 @@
 # Commit-aware retrieval experiment
 
+## Controlled coding-task trials
+
+The four-condition coding runner is available as `0xmemory-coding-eval`. It
+uses a fixed repository revision, task, and memory fixture for each of
+`no_memory`, `basic_retrieval`, `current_0xmemory`, and `edam`. Each trial runs
+in its own temporary clone that preserves the repository history. The same agent command and test command
+are used for all conditions; the prompt file contains the retrieved context.
+
+Manifest example:
+
+```json
+{
+  "agent_model": "record the exact model and settings here",
+  "agent_command": ["my-agent", "--repo", "{repo}", "--prompt-file", "{prompt_file}", "--usage-json", "{usage_file}"],
+  "timeout_seconds": 1800,
+  "tasks": [
+    {
+      "id": "repo-auth-migration",
+      "repository": "../repositories/service-a",
+      "revision": "0123456789abcdef",
+      "query": "Why did we adopt cookie sessions?",
+      "objective": "Add session renewal while preserving the documented auth design.",
+      "test_command": ["python", "-m", "pytest", "-q"],
+      "memories": [
+        {
+          "id": "auth-decision",
+          "type": "decision",
+          "content": "Authentication uses cookie sessions because ...",
+          "file_paths": ["src/auth/service.py"],
+          "symbols": ["authenticate_user"],
+          "claim_subject": "authentication",
+          "claim_predicate": "uses",
+          "claim_value": "cookie sessions",
+          "claim_confidence": 0.9
+        }
+      ]
+    }
+  ]
+}
+```
+
+Run with `0xmemory-coding-eval --manifest tasks.json --output run-001`; add
+`--semantic` to use the configured embedding backend. The agent may write a JSON
+usage report to `{usage_file}` with `calls`, `input_tokens`, and
+`output_tokens`. Results include test and task success, estimated context size,
+retrieval latency, agent runtime, diffs, logs, and optional reported model usage.
+Provide multiple repository histories and independently reviewed tasks in the
+manifest for a multi-repository study. The runner is infrastructure; it does not
+create independent labels or establish an EDAM advantage by itself.
+
 For Ubuntu installation and Bash reproduction commands, follow [Ubuntu setup](../UBUNTU_SETUP.md#14-optional-editor-handoff-dashboard-and-evaluation). Record Linux results separately from the committed Windows artifacts.
 
 This directory contains a reproducible **synthetic functional evaluation**, not
@@ -7,11 +57,11 @@ an independently validated research benchmark. It tests the retrieval consequenc
 of real Git observation and explicitly supplied review actions. It does not run
 Copilot or measure generated code quality.
 
-The checked-in results are a frozen evaluation of the earlier retrieval
-implementation. They do not measure the newer separate query/task-context
-ranking channels or `checkpoint_task`/`resume_task`. Treat those as a new system
-revision and collect a fresh dataset run before making claims about their effect;
-do not rewrite the historical result artifacts to resemble a rerun.
+The checked-in results are a frozen two-condition evaluation of an earlier
+retrieval implementation. The current runner has four conditions and records
+budgeted recall; rerun it into a new output directory to evaluate the current
+working tree. Do not rewrite the historical result artifacts to resemble a
+rerun.
 
 ## Read these artifacts
 
@@ -19,8 +69,9 @@ do not rewrite the historical result artifacts to resemble a rerun.
   the harness before running the reserved partition.
 - [Reserved-partition report](held-out/REPORT.md): 25 additional scenarios.
 - [Interpretation](FINDINGS.md): result denominators, tradeoffs, and report wording.
-- `development/scenarios.json` and `held-out/scenarios.json`: the full, identical
-  30-case dataset and labels, including the fixed partition assignment.
+- `development/scenarios.json` and `held-out/scenarios.json`: the historical
+  30-case dataset and labels from the frozen evaluation. A current run snapshots
+  the expanded 34-case dataset in its own output directory.
 - `results.json` in each run: per-query retrieval, lifecycle audit, actual Git
   commits/diffs, package versions, source fingerprints, and metrics.
 - `summary.csv` in each run: aggregates and each metric's sample count.
@@ -39,7 +90,9 @@ do not rewrite the historical result artifacts to resemble a rerun.
 | Linked file changes, claim remains true | 1 | 5 | 6 | Pending review and after verification |
 | Reviewed decision is replaced | 1 | 5 | 6 | After supersession |
 | No stored answer | 1 | 3 | 4 | After an unrelated commit |
-| Total | 5 | 25 | 30 | 36 checkpoints, 72 variant results |
+| Supporting evidence deleted | 1 | 1 | 2 | After deletion is observed |
+| Changed evidence remains ambiguous | 1 | 1 | 2 | After ambiguous change is observed |
+| Total | 7 | 27 | 34 | 40 checkpoints, 160 current variant results |
 
 All scenarios were authored and partitioned before executing the semantic runs.
 The first case in each category is development. The remaining 25 cases were not
@@ -56,25 +109,27 @@ authored fixtures; no-answer queries deliberately have no evidence-file hint.
 
 ## Controlled comparison
 
-Both variants use production `rank_memories`, the same query, corpus, file hints,
-keyword weighting, semantic candidate order, reciprocal-rank fusion, and k=5.
-The sole variant flag is:
+The current runner uses production `rank_memories` with the same query, corpus,
+file hints, hybrid retrieval, semantic candidate order, and k across four
+conditions:
 
-- **basic:** `include_history=True`; status filtering is disabled.
-- **lifecycle:** `include_history=False`; only active memories are eligible.
+- **no_memory:** returns no persistent memories.
+- **basic:** `include_history=True`; lifecycle filtering is disabled.
+- **current:** baseline ranking with lifecycle filtering enabled.
+- **edam:** EDAM relevance gate, evidence-aware scoring, abstention, and adaptive
+  context packing.
 
-This is an ablation of lifecycle filtering, not a historical release comparison
-or a comparison with a different embedding algorithm. Production keyword and
-semantic ranks are computed over eligible candidates, so filtering can also
-change the ranks of remaining memories. That is part of the existing pipeline.
+The basic/current pair isolates lifecycle filtering; EDAM adds its retrieval
+policy. Production ranks are computed over eligible candidates, so filtering
+can change the ranks of remaining memories.
 
-Both variants receive the same actual Chroma semantic query result. The runner
+All memory conditions receive the same actual Chroma semantic query result. The runner
 performs indexing and semantic queries outside the production fallback handler,
 checks corpus coverage, and stops on failure. A semantic run therefore cannot
 silently become a keyword-only run. It loads the real all-MiniLM-L6-v2 model once
 and shares it across isolated repositories.
 
-The runner initializes temporary Git repositories, creates two real commits,
+The runner initializes temporary Git repositories, creates real Git transitions,
 validates evidence files, calls `observe_commit`, then `verify` or `supersede`
 where the fixture requires a reviewed transition. Status is never preassigned to
 stale/superseded to manufacture the outcome. Initial fixture memories use stable

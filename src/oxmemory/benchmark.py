@@ -1,4 +1,4 @@
-"""Controlled lifecycle ablation with real Git transitions and fixed synthetic labels.
+"""Four-condition retrieval and lifecycle evaluation with real Git transitions and fixed synthetic labels.
 
 python -m oxmemory.benchmark --output evaluation/development --partition development
 python -m oxmemory.benchmark --output evaluation/held-out --partition held_out --semantic
@@ -21,16 +21,17 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from oxmemory.benchmark_data import scenarios
-from oxmemory.core.models import Memory, MemoryType
+from oxmemory.core.models import Memory, MemoryType, RetrievalConfig
 from oxmemory.storage.markdown import MarkdownManager
 from oxmemory.storage.memory_store import MemoryStore
 from oxmemory.storage.repository import Repository
-from oxmemory.storage.retrieval import rank_memories
+from oxmemory.storage.retrieval import build_context, rank_memories
 
-VARIANTS = ("basic", "lifecycle")
+VARIANTS = ("no_memory", "basic", "current", "edam")
 
 
-def measure(ids, relevant, outdated, ineligible, replacement=None):
+def measure(ids, relevant, outdated, ineligible, replacement=None, budgeted_ids=None,
+            expected_evidence_state=None, evidence_state=None):
     """Truth labels are independent of stale/superseded lifecycle state."""
     ids, relevant, outdated, ineligible = list(ids), set(relevant), set(outdated), set(ineligible)
     return {
@@ -40,9 +41,17 @@ def measure(ids, relevant, outdated, ineligible, replacement=None):
         else None,
         "outdated_hit": bool(set(ids) & outdated) if outdated else None,
         "outdated_fraction": len(set(ids) & outdated) / len(ids) if ids else 0.0,
+        "outdated_memory_retrieval_rate": len(set(ids) & outdated) / len(outdated)
+        if outdated else None,
+        "valid_memory_suppression_rate": len(relevant - set(ids)) / len(relevant)
+        if relevant else None,
         "ineligible_hit": bool(set(ids) & ineligible) if ineligible else None,
         "no_answer_false_positive": bool(ids) if not relevant else None,
         "update_correct": replacement in ids and not (set(ids) & outdated) if replacement else None,
+        "budgeted_recall": len(set(budgeted_ids or []) & relevant) / len(relevant)
+        if relevant else None,
+        "evidence_state_correct": (evidence_state == expected_evidence_state
+                                    if expected_evidence_state else None),
     }
 
 
@@ -126,27 +135,40 @@ def collect(store, fixture, roles, checkpoint, vector, limit):
         if {r["id"] for r in candidates} != {m.id for m in memories}:
             raise RuntimeError("Semantic query did not return the complete candidate corpus")
 
-    # Both variants receive exactly the same real semantic candidate ranking.
+    # All memory conditions receive the same precomputed semantic candidate ranking.
     proxy = SimpleNamespace(
-        markdown=store.markdown, vector_store=SimpleNamespace(search=lambda *a, **k: candidates)
+        project_dir=store.project_dir,
+        markdown=store.markdown,
+        vector_store=SimpleNamespace(search=lambda *a, **k: candidates),
     )
     relevant = {roles[role] for role in fixture["relevant_roles"]}
     outdated = {roles[role] for role in fixture["outdated_roles"]}
     ineligible = {m.id for m in memories if m.status.value != "active"}
     distance = {r["id"]: r["distance"] for r in candidates}
+    original = next((memory for memory in memories if memory.id == roles.get("original")), None)
+    repository = Repository(store.project_dir)
+    evidence_assessment = repository.assess_evidence(
+        original.commit_sha, original.evidence_branch, original.file_paths,
+        repository.current_context(), original.evidence_refs,
+    ) if original else {"state": "unknown", "reason": "original fixture missing"}
     rows = []
     for variant in VARIANTS:
-        ranked = rank_memories(
-            proxy,
-            fixture["query"],
-            limit,
-            None,
-            vector is not None,
-            [fixture["file_hint"]] if fixture["file_hint"] else [],
-            [],
-            include_history=variant == "basic",
-        )
+        if variant == "no_memory":
+            ranked = []
+        else:
+            edam = variant == "edam"
+            policy = RetrievalConfig(architecture="edam" if edam else "baseline",
+                                     relevance_gate=edam)
+            ranked = rank_memories(
+                proxy, fixture["query"], limit, None, vector is not None,
+                [fixture["file_hint"]] if fixture["file_hint"] else [], [],
+                include_history=variant == "basic", relevance_gate=policy.relevance_gate,
+                min_similarity=policy.min_similarity, policy=policy,
+            )
         ids = [r["memory"].id for r in ranked]
+        packed = build_context(ranked, 1500, query=fixture["query"],
+                               selection_strategy="adaptive" if variant == "edam" else "ranked")
+        budgeted_ids = [r["memory"]["id"] for r in packed["results"]]
         rows.append(
             dict(
                 scenario=fixture["id"],
@@ -168,10 +190,19 @@ def collect(store, fixture, roles, checkpoint, vector, limit):
                         reasons=r["reasons"],
                         semantic_distance=distance.get(r["memory"].id),
                         commit=r["memory"].commit_sha,
+                        evidence_validation=r.get("evidence_validation"),
                     )
                     for r in ranked
                 ],
-                metrics=measure(ids, relevant, outdated, ineligible, roles.get("replacement")),
+                budgeted_ids=budgeted_ids,
+                context_tokens=packed["budget_used"],
+                context_bytes=packed["budget_used_bytes"],
+                retrieval_status=getattr(ranked, "status", "abstained_no_candidates"),
+                evidence_assessment=evidence_assessment,
+                metrics=measure(ids, relevant, outdated, ineligible,
+                                roles.get("replacement"), budgeted_ids,
+                                fixture.get("expected_evidence_state"),
+                                evidence_assessment.get("state")),
             )
         )
     return rows
@@ -218,9 +249,15 @@ def run_scenario(fixture, distractors, model, semantic, limit):
                         initial + "\n# Refactor helper; configured policy is unchanged."
                         "\ndef configured_value():\n    return " + fixture["setting"] + "\n"
                     )
+                elif category == "evidence_missing":
+                    (root / changed_file).unlink()
+                    after = "<supporting file deleted>\n"
+                elif category == "ambiguous":
+                    after = f"{fixture['setting']} = load_runtime_setting()\n"
                 else:
                     after = f"{fixture['setting']} = {fixture['after']!r}\n"
-                (root / changed_file).write_text(after, encoding="utf-8")
+                if category != "evidence_missing":
+                    (root / changed_file).write_text(after, encoding="utf-8")
                 changed_sha = commit(root, [changed_file], "Change implementation")
                 observation = store.observe_commit(changed_sha)
                 events = [dict(operation="observe_commit", result=observation)]
@@ -279,7 +316,9 @@ def charts(summary, target, limit):
     target.mkdir()
     metrics = [
         ("outdated_hit", "Queries returning outdated memory (lower is better)"),
+        ("valid_memory_suppression_rate", "Valid memories omitted from results (lower is better)"),
         ("recall_at_k", f"Recall@{limit} on answerable checkpoints (higher is better)"),
+        ("budgeted_recall", "Recall after context budget selection (higher is better)"),
         ("no_answer_false_positive", "Unanswerable queries returning content (lower is better)"),
         ("update_correct", "Replacement retrieved without outdated decision (higher is better)"),
     ]
@@ -289,23 +328,25 @@ def charts(summary, target, limit):
             for r in summary
             if r["partition"] == partition and r["category"] == "all"
         }
+        height = 700
         elements = [
-            '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" '
-            'viewBox="0 0 960 580">',
-            '<rect width="960" height="580" fill="white"/>',
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="960" height="{height}" '
+            f'viewBox="0 0 960 {height}">',
+            f'<rect width="960" height="{height}" fill="white"/>',
             '<text x="24" y="32" font-family="sans-serif" font-size="22">'
             f"Synthetic lifecycle ablation: {escape(partition)}</text>",
         ]
         for index, (metric, title) in enumerate(metrics):
-            top = 75 + index * 120
+            top = 75 + index * 115
             elements.append(
                 f'<text x="24" y="{top}" font-family="sans-serif" font-size="16">'
                 f"{escape(title)}</text>"
             )
             for offset, variant in enumerate(VARIANTS):
                 value = grouped[variant][metric]
-                y = top + 12 + offset * 30
-                color = "#9467bd" if variant == "basic" else "#16826b"
+                y = top + 12 + offset * 24
+                color = {"no_memory": "#aab2bd", "basic": "#9467bd",
+                         "current": "#16826b", "edam": "#d97706"}[variant]
                 label = (
                     "N/A" if value is None else f"{value:.1%} (n={grouped[variant][metric + '_n']})"
                 )
@@ -321,7 +362,7 @@ def charts(summary, target, limit):
                     ]
                 )
         elements.append(
-            '<text x="24" y="566" font-family="sans-serif" font-size="12">'
+            '<text x="24" y="680" font-family="sans-serif" font-size="12">'
             "Bars span 0–100%. Descriptive synthetic results; "
             "no confidence intervals or coding-success claims.</text></svg>"
         )
@@ -339,14 +380,17 @@ def write_report(report, output):
         "",
         f"Mode: **{report['mode']}**. Dataset SHA-256: `{report['dataset_sha256']}`.",
         "",
-        "Both variants use the same corpus, query, file hints, hybrid ranking, "
-        "and semantic candidates.",
-        "Only `include_history` differs. Basic is a controlled ablation, "
-        "not a reproduction of an older release.",
+        "All four conditions use the same corpus, query, file hints, and task. "
+        + ("They also receive identical precomputed semantic candidates."
+           if report["mode"] == "semantic_hybrid" else
+           "This keyword/file-proxy run uses no vector embeddings."),
+        "`no_memory` returns no memories; `basic` disables lifecycle filtering; "
+        "`current` uses lifecycle-aware baseline ranking; `edam` adds evidence-aware "
+        "scoring, abstention, and adaptive context packing.",
         "",
-        "| Partition/category | Variant | Checkpoints | Recall@k | MRR | "
-        "Outdated hit | No-answer FP | Update correct |",
-        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Partition/category | Variant | Checkpoints | Recall@k | Budgeted recall | MRR | "
+        "Outdated hit | Outdated rate | Valid suppression | No-answer FP | Update correct | Evidence state correct |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
 
     def fmt(value):
@@ -360,10 +404,14 @@ def write_report(report, output):
                 fmt(group[m])
                 for m in [
                     "recall_at_k",
+                    "budgeted_recall",
                     "reciprocal_rank",
                     "outdated_hit",
+                    "outdated_memory_retrieval_rate",
+                    "valid_memory_suppression_rate",
                     "no_answer_false_positive",
                     "update_correct",
+                    "evidence_state_correct",
                 ]
             )
             + " |"
@@ -378,19 +426,19 @@ def write_report(report, output):
         "the cost of withholding a still-true memory; after-review measures recovery.",
         "- Missing-answer cases include changed facts whose replacements have not been "
         "recorded and four unrelated questions. Category rows separate them.",
-        "- The semantic candidate stage returns nearest neighbors without an abstention "
-        "threshold. Lifecycle filtering cannot by itself identify unrelated active memories.",
+        "- The basic/current comparison isolates lifecycle filtering; EDAM additionally "
+        "uses the relevance gate, evidence state, conflict handling, and adaptive budget packing.",
         "- Denominators are stored beside every aggregate in summary.csv; "
         "N/A values are excluded, never counted as zero.",
         "- Labels and review actions are authored fixtures, "
         "not automated truth verification or LLM extraction.",
-        "- Five development scenarios and 25 reserved scenarios were fixed before execution. "
+        "- Seven development scenarios and 27 reserved scenarios were fixed before execution. "
         "This is not an independently authored, blinded, or real-world benchmark.",
         "- Scenarios use small Python configuration files and six shared distractors. "
         "Category samples are small and templated; no significance or generalization "
         "claim is justified.",
-        "- No model answers, agent coding success, tokenizer usage, "
-        "or performance/latency comparison is measured.",
+        "- No model answers or agent coding success is measured here. Use the separate "
+        "four-condition coding-task runner for paired coding tasks and test outcomes.",
         "- Raw results preserve IDs, statuses, relevance labels, ranking reasons/scores, "
         "actual commits, diffs, and lifecycle events.",
         "",
@@ -406,6 +454,7 @@ def write_report(report, output):
             or r["metrics"]["no_answer_false_positive"]
             or r["metrics"]["recall_at_k"] == 0
             or r["metrics"]["update_correct"] is False
+            or r["metrics"]["evidence_state_correct"] is False
         ]
         lines.append(
             f"- {variant}: {len(bad)} checkpoints with at least one measured failure/tradeoff."
@@ -429,8 +478,24 @@ def run(output, partition="all", semantic=False, limit=5):
     output.mkdir(parents=True, exist_ok=False)
     source_snapshot = output / "source"
     source_snapshot.mkdir()
-    for name in ["benchmark.py", "benchmark_data.py"]:
-        (source_snapshot / name).write_bytes(Path(__file__).with_name(name).read_bytes())
+    project_root = Path(__file__).resolve().parents[2]
+    source_paths = [
+        "src/oxmemory/benchmark.py", "src/oxmemory/benchmark_data.py",
+        "src/oxmemory/core/models.py", "src/oxmemory/storage/retrieval.py",
+        "src/oxmemory/storage/query_planner.py", "src/oxmemory/storage/code_index.py",
+        "src/oxmemory/storage/repository.py", "src/oxmemory/storage/lifecycle.py",
+        "src/oxmemory/storage/memory_store.py",
+    ]
+    source_hashes = {}
+    for relative in source_paths:
+        source_file = project_root / relative
+        if not source_file.is_file():
+            continue
+        destination = source_snapshot / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        payload = source_file.read_bytes()
+        destination.write_bytes(payload)
+        source_hashes[relative] = hashlib.sha256(payload).hexdigest()
     dataset = scenarios()
     serialized = json.dumps(dataset, indent=2) + "\n"
     (output / "scenarios.json").write_bytes(serialized.encode("utf-8"))
@@ -451,7 +516,7 @@ def run(output, partition="all", semantic=False, limit=5):
         found, audit = run_scenario(fixture, dataset["distractors"], model, semantic, limit)
         rows.extend(found)
         audits.append(audit)
-    source_root = Path(__file__).resolve().parents[2]
+    source_root = project_root
     try:
         revision = git(source_root, "rev-parse", "HEAD")
         dirty = git(source_root, "status", "--porcelain")
@@ -476,10 +541,7 @@ def run(output, partition="all", semantic=False, limit=5):
             versions=versions,
             engine_commit=revision,
             dirty_status=dirty,
-            source_sha256={
-                name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-                for name in ["benchmark.py", "benchmark_data.py"]
-            },
+            source_sha256=source_hashes,
         ),
         summary=aggregate(rows),
         results=rows,

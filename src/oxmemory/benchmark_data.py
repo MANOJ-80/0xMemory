@@ -307,6 +307,46 @@ CASES = [
         "Avatar images are sixty-four pixels wide.",
         "Who owns the third-party software license renewal?",
     ),
+    (
+        "evidence_missing",
+        "legacy_config",
+        "BACKEND",
+        "sqlite",
+        "sqlite",
+        "The legacy database backend is SQLite.",
+        "The legacy database backend is SQLite.",
+        "What database backend does the legacy config use?",
+    ),
+    (
+        "evidence_missing",
+        "retired_auth",
+        "METHOD",
+        "jwt",
+        "jwt",
+        "The retired auth module used JWT.",
+        "The retired auth module used JWT.",
+        "Which authentication method did the retired module use?",
+    ),
+    (
+        "ambiguous",
+        "runtime_backend",
+        "BACKEND",
+        "sqlite",
+        "sqlite",
+        "The runtime database backend is SQLite.",
+        "The runtime database backend is SQLite.",
+        "Which database backend is configured now?",
+    ),
+    (
+        "ambiguous",
+        "runtime_auth",
+        "METHOD",
+        "jwt",
+        "jwt",
+        "The runtime authentication method is JWT.",
+        "The runtime authentication method is JWT.",
+        "Which authentication method is configured now?",
+    ),
 ]
 
 DISTRACTORS = [
@@ -342,12 +382,14 @@ def scenarios():
                 file_hint=None if category == "no_answer" else f"{module}.py",
                 relevant_roles=(
                     []
-                    if category in {"changed", "no_answer"}
+                    if category in {"changed", "no_answer", "evidence_missing", "ambiguous"}
                     else ["replacement"]
                     if category == "superseded"
                     else ["original"]
                 ),
                 outdated_roles=["original"] if category in {"changed", "superseded"} else [],
+                expected_evidence_state=("evidence_missing" if category == "evidence_missing"
+                                         else "unknown" if category == "ambiguous" else None),
                 label_reason=(
                     "Original claim contradicts the changed setting; replacement not yet recorded."
                     if category == "changed"
@@ -355,6 +397,10 @@ def scenarios():
                     if category == "superseded"
                     else "No stored statement answers this question."
                     if category == "no_answer"
+                    else "The linked file disappeared; the claim is not established as current."
+                    if category == "evidence_missing"
+                    else "The changed implementation is ambiguous and needs review."
+                    if category == "ambiguous"
                     else "The setting remains unchanged, so the original statement is still true."
                 ),
             )
@@ -363,7 +409,7 @@ def scenarios():
         "version": 1,
         "authorship": "Assistant-authored synthetic fixtures; human label review pending",
         "split": "First fixture per category is development; "
-        "25 remaining fixtures reserved before execution",
+        "27 remaining fixtures reserved before execution",
         "distractors": DISTRACTORS,
         "scenarios": items,
     }

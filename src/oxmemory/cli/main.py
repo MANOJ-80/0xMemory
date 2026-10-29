@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
@@ -419,6 +420,17 @@ def add(
         "-d",
         help="Project directory (defaults to current)",
     ),
+    valid_from: datetime | None = typer.Option(None, "--valid-from", help="Claim validity start"),
+    valid_to: datetime | None = typer.Option(None, "--valid-to", help="Claim validity end"),
+    confidence: float | None = typer.Option(None, "--extraction-confidence", min=0.0, max=1.0,
+                                              help="Confidence in capturing/extracting the claim"),
+    claim_confidence: float | None = typer.Option(None, "--claim-confidence", min=0.0, max=1.0,
+                                                   help="Estimated truth confidence from 0 to 1"),
+    claim_subject: str | None = typer.Option(None, "--claim-subject"),
+    claim_predicate: str | None = typer.Option(None, "--claim-predicate"),
+    claim_value: str | None = typer.Option(None, "--claim-value"),
+    claim_environment: str | None = typer.Option(None, "--claim-environment"),
+    claim_state: str = typer.Option("asserted", "--claim-state", help="asserted, proposed, evaluating, adopted, rejected, or unknown"),
 ) -> None:
     """Manually add a memory to the brain.
 
@@ -454,6 +466,15 @@ def add(
         memory_type=memory_type,
         tags=tag_list,
         source="cli",
+        valid_from=valid_from,
+        valid_to=valid_to,
+        confidence=confidence,
+        claim_confidence=claim_confidence,
+        claim_subject=claim_subject,
+        claim_predicate=claim_predicate,
+        claim_value=claim_value,
+        claim_environment=claim_environment,
+        claim_state=claim_state,
     )
 
     # Success message

@@ -3,6 +3,7 @@
 import subprocess
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -43,7 +44,12 @@ class MemoryLifecycleTests(unittest.TestCase):
         memory = Memory(content="Use cookies — session login", file_paths=["src\\auth.py"],
                         confidence=0.8, salience=0.9, related_to=["mem-first"],
                         session_id="session-1", status=MemoryStatus.STALE,
-                        revisions=[{"content": "Use JWT"}], symbols=["login"])
+                        revisions=[{"content": "Use JWT"}], symbols=["login"],
+                        valid_from=datetime(2026, 1, 1), valid_to=datetime(2026, 6, 1),
+                        claim_confidence=0.72,
+                        claim_subject="authentication", claim_predicate="uses",
+                        claim_value="cookies", claim_environment="production",
+                        claim_state="evaluating")
         parsed = parse_memory_entries(serialize_memory_entry(memory), memory.type)[0]
         self.assertEqual(memory.model_dump(), parsed.model_dump())
 
@@ -69,6 +75,19 @@ class MemoryLifecycleTests(unittest.TestCase):
         self.assertEqual(vector.upsert.call_args.args[0].content, "Cookie login")
         vector.delete.assert_not_called()
         self.assertEqual(updated.status, MemoryStatus.REVIEW_REQUIRED)
+
+    def test_text_correction_invalidates_structured_claim_annotations(self):
+        memory = self.store.add(
+            "Production uses PostgreSQL", claim_subject="production database",
+            claim_predicate="uses", claim_value="PostgreSQL",
+            answer_slots={"approval": "approved"},
+        )
+        corrected = self.store.update(memory.id, "Production is evaluating MySQL")
+        self.assertEqual(corrected.revisions[0]["claim_value"], "PostgreSQL")
+        self.assertIsNone(corrected.claim_subject)
+        self.assertIsNone(corrected.claim_value)
+        self.assertEqual(corrected.answer_slots, {})
+        self.assertEqual(corrected.status, MemoryStatus.REVIEW_REQUIRED)
 
     def test_duplicate_ingestion_is_idempotent(self):
         first = self.store.add("Use cookie sessions")
@@ -107,6 +126,68 @@ class MemoryLifecycleTests(unittest.TestCase):
         self.assertEqual(self.store.observe_commit(second)["affected"], [])
         self.assertEqual(self.store.get(memory.id).status, MemoryStatus.ACTIVE)
 
+    def test_deleted_linked_evidence_is_distinguished_from_uncertain_edit(self):
+        self.init_repo()
+        first = self.commit("AUTH = 'jwt'")
+        memory = self.store.add("Authentication uses JWT", file_paths=["auth.py"], commit_sha=first)
+        (self.root / "auth.py").unlink()
+        self.git("add", "-u", "--", "auth.py")
+        self.git("-c", "core.hooksPath=", "commit", "-m", "Remove legacy auth")
+        repository = __import__("oxmemory.storage.repository", fromlist=["Repository"]).Repository(self.root)
+        assessment = repository.assess_evidence(
+            memory.commit_sha, memory.evidence_branch, memory.file_paths,
+            repository.current_context(), memory.evidence_refs,
+        )
+        self.assertEqual(assessment["state"], "evidence_missing")
+
+    def test_claim_validity_end_is_exclusive(self):
+        from datetime import date
+        from oxmemory.storage.query_planner import claim_valid_at
+
+        memory = Memory(content="Database uses PostgreSQL",
+                        valid_from=datetime(2026, 1, 1), valid_to=datetime(2026, 2, 1))
+        self.assertTrue(claim_valid_at(memory, date(2026, 1, 31)))
+        self.assertFalse(claim_valid_at(memory, date(2026, 2, 1)))
+
+    def test_evaluated_claim_is_not_current_adoption_and_is_available_for_approval_query(self):
+        from oxmemory.core.config import get_default_config, save_config
+
+        save_config(get_default_config("Claim state"), self.root)
+        evaluated = self.store.add(
+            "CockroachDB is under evaluation for production",
+            claim_subject="production database", claim_predicate="uses",
+            claim_value="CockroachDB", claim_environment="production",
+            claim_state="evaluating",
+        )
+        current = self.store.search_ranked("Which database is currently used in production?")
+        self.assertNotIn(evaluated.id, {row["memory"].id for row in current})
+        approval = self.store.search_ranked("Did we approve CockroachDB for production?")
+        self.assertIn(evaluated.id, {row["memory"].id for row in approval})
+        self.assertEqual(approval[0]["memory"].claim_state, "evaluating")
+
+    def test_explicit_historical_query_retrieves_labeled_session_evidence(self):
+        from oxmemory.core.config import get_default_config, save_config
+        from oxmemory.core.models import Message
+
+        save_config(get_default_config("Session history"), self.root)
+        session = self.store.sessions.create_session("Database evaluation")
+        self.store.sessions.add_message(
+            session.id, Message(role="assistant", content="We tried SQLite for the local prototype.")
+        )
+        result = self.store.recall_context("What happened when we previously tried SQLite?")
+        self.assertEqual(result["status"], "historical_evidence_available")
+        self.assertEqual(result["historical_evidence"][0]["session_id"], session.id)
+        self.assertIn("Historical conversation evidence", result["context"])
+
+    def test_claim_state_changes_are_explicit_and_audited(self):
+        memory = self.store.add("PostgreSQL is proposed for production", claim_state="proposed")
+        with self.assertRaises(ValueError):
+            self.store.set_claim_state(memory.id, "adopted", "")
+        updated = self.store.set_claim_state(memory.id, "adopted", "Approved in the design review")
+        self.assertEqual(updated.claim_state, "adopted")
+        self.assertEqual(updated.revisions[-1]["claim_state"], "proposed")
+        self.assertEqual(self.store.activity(1)[0]["action"], "claim_state_changed")
+
     def test_review_cannot_use_evidence_before_known_change(self):
         self.init_repo()
         first = self.commit("AUTH = 'jwt'")
@@ -135,6 +216,23 @@ class MemoryLifecycleTests(unittest.TestCase):
         self.assertEqual(verified.commit_sha, second)
         self.assertEqual(self.store.observe_commit(second)["affected"], [])
 
+    def test_structured_claim_supersession_closes_old_validity(self):
+        self.init_repo()
+        first = self.commit('ENGINE = "sqlite"', "db.py")
+        old = self.store.add(
+            "Production database uses SQLite", file_paths=["db.py"], commit_sha=first,
+            claim_subject="production database", claim_predicate="uses",
+            claim_value="SQLite", claim_environment="production",
+        )
+        second = self.commit('ENGINE = "postgresql"', "db.py")
+        replacement = self.store.supersede(
+            old.id, "Production database uses PostgreSQL", second,
+            "Reviewed the migration", claim_value="PostgreSQL",
+        )
+        self.assertEqual(replacement.claim_value, "PostgreSQL")
+        self.assertIsNotNone(replacement.valid_from)
+        self.assertEqual(self.store.get(old.id).valid_to, replacement.valid_from)
+
     def test_bad_evidence_does_not_change_history(self):
         self.init_repo()
         first = self.commit("AUTH = 'jwt'")
@@ -155,7 +253,7 @@ class MemoryLifecycleTests(unittest.TestCase):
         self.assertEqual(results[0]["memory"].id, linked.id)
         self.assertIn("linked file match", results[0]["reasons"])
         context = self.store.recall_context("Login", file_paths=["auth.py"], token_budget=300)
-        self.assertLessEqual(len(context["context"].encode("utf-8")), 300)
+        self.assertLessEqual(context["budget_used"], 300)
         self.assertEqual(self.store.recall_context("Login", token_budget=1)["context"], "")
 
     def test_vector_and_keyword_results_are_fused_and_filtered(self):

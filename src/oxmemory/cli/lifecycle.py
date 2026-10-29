@@ -1,6 +1,7 @@
 """Commit evidence and memory lifecycle CLI, emitting reviewable JSON."""
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 import typer
@@ -33,10 +34,23 @@ def store_at(project: Path) -> MemoryStore:
 def remember(content: str, file: list[str] = typer.Option([], "--file"),
              symbol: list[str] = typer.Option([], "--symbol"), commit: str = "HEAD",
              type: MemoryType = MemoryType.DECISION, project: Path = Path("."),
-             scope: str = "project", scope_id: str | None = None):
+             scope: str = "project", scope_id: str | None = None,
+             valid_from: datetime | None = typer.Option(None, "--valid-from"),
+             valid_to: datetime | None = typer.Option(None, "--valid-to"),
+             confidence: float | None = typer.Option(None, "--extraction-confidence", min=0.0, max=1.0),
+             claim_confidence: float | None = typer.Option(None, "--claim-confidence", min=0.0, max=1.0),
+             claim_subject: str | None = None, claim_predicate: str | None = None,
+             claim_value: str | None = None, claim_environment: str | None = None,
+             claim_state: str = typer.Option("asserted", help="asserted, proposed, evaluating, adopted, rejected, or unknown")):
     """Save a decision with evidence at a Git commit."""
     invoke(lambda: store_at(project).add(content, type, file_paths=file, symbols=symbol,
-                                         commit_sha=commit, scope_type=scope, scope_id=scope_id))
+                                         commit_sha=commit, scope_type=scope, scope_id=scope_id,
+                                         valid_from=valid_from, valid_to=valid_to,
+                                         claim_confidence=claim_confidence,
+                                         confidence=confidence,
+                                         claim_subject=claim_subject, claim_predicate=claim_predicate,
+                                         claim_value=claim_value, claim_environment=claim_environment,
+                                         claim_state=claim_state))
 
 
 @app.command("propose")
@@ -55,6 +69,13 @@ def review(id: str, accept: bool = typer.Option(..., "--accept/--reject"),
     invoke(lambda: store_at(project).review_candidate(id, accept, note, actor="cli-user"))
 
 
+@app.command("claim-state")
+def claim_state(id: str, state: str,
+                note: str = typer.Option(..., "--note"), project: Path = Path(".")):
+    """Explicitly update proposal/evaluation/adoption status with an audit note."""
+    invoke(lambda: store_at(project).set_claim_state(id, state, note, actor="cli-user"))
+
+
 @app.command("observe")
 def observe(commit: str = "HEAD", project: Path = Path(".")):
     """Explicitly inspect committed changes; no Git hook is installed."""
@@ -63,17 +84,27 @@ def observe(commit: str = "HEAD", project: Path = Path(".")):
 
 @app.command("verify")
 def verify(id: str, note: str = typer.Option(..., "--note"), commit: str = "HEAD",
+           claim_confidence: float | None = typer.Option(None, "--claim-confidence", min=0.0, max=1.0),
+           valid_from: datetime | None = typer.Option(None, "--valid-from"),
+           valid_to: datetime | None = typer.Option(None, "--valid-to"),
            project: Path = Path(".")):
     """Confirm an existing memory after reviewing its supporting code."""
-    invoke(lambda: store_at(project).verify(id, commit, note))
+    invoke(lambda: store_at(project).verify(id, commit, note, claim_confidence=claim_confidence,
+                                            valid_from=valid_from, valid_to=valid_to))
 
 
 @app.command("supersede")
 def supersede(id: str, content: str, note: str = typer.Option(..., "--note"),
               commit: str = "HEAD", file: list[str] = typer.Option([], "--file"),
+              claim_value: str | None = None,
+              valid_from: datetime | None = typer.Option(None, "--valid-from"),
+              valid_to: datetime | None = typer.Option(None, "--valid-to"),
+              claim_confidence: float | None = typer.Option(None, "--claim-confidence", min=0.0, max=1.0),
               project: Path = Path(".")):
     """Replace a decision and retain its original evidence."""
-    invoke(lambda: store_at(project).supersede(id, content, commit, note, file or None))
+    invoke(lambda: store_at(project).supersede(id, content, commit, note, file or None,
+                                               claim_value=claim_value, valid_from=valid_from,
+                                               valid_to=valid_to, claim_confidence=claim_confidence))
 
 
 @app.command("recall")

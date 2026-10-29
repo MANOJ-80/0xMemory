@@ -5,6 +5,7 @@ Sessions are stored as JSON files in .0xmemory/sessions/.
 """
 
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -112,6 +113,45 @@ class SessionManager:
 
         # Sort by updated_at desc
         return sorted(sessions, key=lambda s: s.updated_at, reverse=True)
+
+    def search_history(self, query: str, limit: int = 5) -> list[dict]:
+        """Return bounded, lexical conversation evidence for explicit history queries.
+
+        Tool messages/results are excluded because they may contain arbitrary
+        repository or external data. Conversation text remains labeled as
+        untrusted historical evidence by the caller.
+        """
+        if not 1 <= limit <= 20:
+            raise ValueError("limit must be between 1 and 20")
+        stop = {"what", "when", "where", "which", "who", "why", "how", "did", "does",
+                "was", "were", "the", "a", "an", "to", "of", "in", "on", "we", "our",
+                "it", "is", "are", "do", "have", "had", "previously", "historically",
+                "history", "before", "earlier", "tried", "used", "use"}
+        terms = {word for word in re.findall(r"[a-z0-9_]+", query.casefold())
+                 if len(word) > 1 and word not in stop}
+        if not terms:
+            return []
+        matches = []
+        for session in self.list_sessions():
+            for message in session.messages:
+                if message.role not in {"user", "assistant"}:
+                    continue
+                content = " ".join(message.content.split())
+                words = set(re.findall(r"[a-z0-9_]+", content.casefold()))
+                overlap = terms & words
+                if not overlap:
+                    continue
+                matches.append({
+                    "session_id": session.id,
+                    "session_title": session.title,
+                    "role": message.role,
+                    "timestamp": message.timestamp.isoformat(),
+                    "content": content[:1200],
+                    "score": len(overlap) / len(terms),
+                    "source_type": "conversation",
+                })
+        matches.sort(key=lambda item: (-item["score"], item["timestamp"], item["session_id"]))
+        return matches[:limit]
 
     def delete_session(self, session_id: str) -> bool:
         """Delete a session.

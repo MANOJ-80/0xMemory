@@ -174,7 +174,7 @@ CASES = [
 
 
 def dataset():
-    return [
+    cases = [
         dict(
             partition=p,
             id=i,
@@ -185,3 +185,36 @@ def dataset():
         )
         for p, i, q, answer, noise in CASES
     ]
+    cases.extend([
+        dict(
+            partition="development", id="dev-current-conflict",
+            query="What production database is configured now?",
+            memories=[
+                {"content": "Production database uses PostgreSQL.",
+                 "claim_subject": "production database", "claim_predicate": "uses",
+                 "claim_value": "PostgreSQL", "claim_environment": "production",
+                 "valid_from": "2025-01-01T00:00:00"},
+                {"content": "Production database uses MySQL.",
+                 "claim_subject": "production database", "claim_predicate": "uses",
+                 "claim_value": "MySQL", "claim_environment": "production",
+                 "valid_from": "2025-02-01T00:00:00"},
+            ], relevant=[], expected_conflict=True,
+            label_note="Overlapping current structured claims conflict and should cause EDAM abstention.",
+        ),
+        dict(
+            partition="held_out", id="test-as-of-nonconflict",
+            query="Which database was configured on 2024-06-01?",
+            memories=[
+                {"content": "Production database used SQLite before the migration.",
+                 "claim_subject": "production database", "claim_predicate": "uses",
+                 "claim_value": "SQLite", "claim_environment": "production",
+                 "valid_from": "2023-01-01T00:00:00", "valid_to": "2025-01-01T00:00:00"},
+                {"content": "Production database uses PostgreSQL after the migration.",
+                 "claim_subject": "production database", "claim_predicate": "uses",
+                 "claim_value": "PostgreSQL", "claim_environment": "production",
+                 "valid_from": "2025-01-01T00:00:00"},
+            ], relevant=["m0"], expected_conflict=False,
+            label_note="Non-overlapping history: as-of retrieval should return SQLite without treating the records as conflicting.",
+        ),
+    ])
+    return cases

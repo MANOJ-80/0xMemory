@@ -161,6 +161,20 @@ class Repository:
                 active_path = renamed.get(path, path)
                 if path not in changed and active_path not in changed:
                     continue
+                dirty_path = active_path in current["changed_paths"] or path in current["changed_paths"]
+                if dirty_path:
+                    candidate = (self.path / active_path).resolve()
+                    if self.path not in candidate.parents:
+                        return {"state": "unknown", "reason": "Evidence path escaped the repository root."}
+                    if not candidate.is_file():
+                        return {"state": "evidence_missing",
+                                "reason": f"Linked evidence file is missing from the worktree: {active_path}."}
+                else:
+                    try:
+                        self.run("cat-file", "-e", f"{current['head']}:{active_path}")
+                    except ValueError:
+                        return {"state": "evidence_missing",
+                                "reason": f"Linked evidence file no longer exists at HEAD: {active_path}."}
                 anchors = symbol_refs.get(path)
                 if not anchors:
                     unresolved.append(path)
@@ -174,14 +188,14 @@ class Repository:
                     try:
                         source = candidate.read_text(encoding="utf-8")
                     except (OSError, UnicodeDecodeError):
-                        unresolved.append(path)
-                        continue
+                        return {"state": "evidence_missing",
+                                "reason": f"Linked evidence file is missing or unreadable: {active_path}."}
                 else:
                     try:
                         source = self.run("show", f"{current['head']}:{active_path}")
                     except ValueError:
-                        unresolved.append(path)
-                        continue
+                        return {"state": "evidence_missing",
+                                "reason": f"Linked evidence file no longer exists at HEAD: {active_path}."}
                 try:
                     tree = ast.parse(source)
                 except SyntaxError:
@@ -195,7 +209,7 @@ class Repository:
                         and node.name == symbol
                     ]
                     if not definitions:
-                        return {"state": "unknown", "reason": f"Anchored symbol {active_path}:{symbol} could not be resolved after edits/rename."}
+                        return {"state": "evidence_missing", "reason": f"Anchored symbol {active_path}:{symbol} no longer exists after edits/rename."}
                     matches = [_semantic_hash(node) if ref.get("semantic_hash") else
                                hashlib.sha256((ast.get_source_segment(source, node) or "").encode()).hexdigest()
                                for node in definitions]
@@ -228,7 +242,7 @@ class Repository:
                     and node.name == symbol
                 ]
                 if not definitions:
-                    return {"state": "contradicted", "reason": f"Anchored symbol {path}:{symbol} no longer exists."}
+                    return {"state": "evidence_missing", "reason": f"Anchored symbol {path}:{symbol} no longer exists."}
                 actuals = [_semantic_hash(node) if semantic else hashlib.sha256(
                     (ast.get_source_segment(source, node) or "").encode()
                 ).hexdigest() for node in definitions]

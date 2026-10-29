@@ -4,9 +4,12 @@ For Ubuntu installation and Bash reproduction commands, follow [Ubuntu setup](..
 
 ## Outcome and release decision
 
-The cosine gate is implemented but **disabled by default**. It did not improve
-no-answer behavior on the newly reserved test partition. Its development improvement
-must not be presented as a test-set improvement.
+This report records a historical cosine-gate experiment on the earlier
+retrieval configuration; the stored results do not represent the current EDAM
+defaults or the current expanded evaluation runner. In that experiment, cosine
+gating did not improve no-answer behavior on its reserved partition. Keep those
+artifacts as historical evidence and use fresh output directories for the EDAM
+policy and dataset.
 
 | Partition | Answerable / unanswered | Ungated answer recall | Gated answer recall | Ungated no-answer false positives | Gated no-answer false positives |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -68,8 +71,9 @@ the hard-negative failures in the reserved experiment.
 
 ## Experimental configuration
 
-In a test project's `.0xmemory/config.yaml`, merge this section without replacing
-other settings, then restart its MCP server:
+For the earlier cosine-only baseline experiment, a test project's
+`.0xmemory/config.yaml` could merge this section without replacing other
+settings, then restart its MCP server:
 
 ```yaml
 retrieval:
@@ -77,10 +81,10 @@ retrieval:
   min_similarity: 0.25
 ```
 
-The default is `relevance_gate: false`. Existing projects therefore keep their
-previous ranking behavior. To disable the experiment, set the field to `false`
-and restart. A threshold is specific to a model/task distribution; do not assume
-this value transfers to a different embedding model.
+The current `RetrievalConfig` defaults to EDAM with `relevance_gate: true`.
+Select `architecture: baseline` to reproduce RRF-oriented ranking. Thresholds
+are configured per project and must be calibrated on development data for that
+embedding model and task distribution.
 
 Python callers can explicitly use
 `store.recall_context(query, relevance_gate=True, min_similarity=0.25)`.
