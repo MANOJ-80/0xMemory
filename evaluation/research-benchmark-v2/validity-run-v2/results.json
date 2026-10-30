@@ -1,0 +1,1549 @@
+{
+  "benchmark": "GEDAM validity and abstention benchmark v2",
+  "case_count": 26,
+  "arms": [
+    {
+      "arm": "no_memory",
+      "n": 26,
+      "answer_recall": 0.0,
+      "false_abstention": 1.0,
+      "no_answer_fp": 0.0,
+      "correct_abstention": 1.0,
+      "conflict_detection_recall": 0.0
+    },
+    {
+      "arm": "basic",
+      "n": 26,
+      "answer_recall": 0.7692307692307693,
+      "false_abstention": 0.15384615384615385,
+      "no_answer_fp": 0.8461538461538461,
+      "correct_abstention": 0.15384615384615385,
+      "conflict_detection_recall": 0.0
+    },
+    {
+      "arm": "similarity",
+      "n": 26,
+      "answer_recall": 0.7692307692307693,
+      "false_abstention": 0.15384615384615385,
+      "no_answer_fp": 0.8461538461538461,
+      "correct_abstention": 0.15384615384615385,
+      "conflict_detection_recall": 0.0
+    },
+    {
+      "arm": "gedam",
+      "n": 26,
+      "answer_recall": 0.46153846153846156,
+      "false_abstention": 0.46153846153846156,
+      "no_answer_fp": 0.6923076923076923,
+      "correct_abstention": 0.3076923076923077,
+      "conflict_detection_recall": 1.0
+    }
+  ],
+  "rows": [
+    {
+      "id": "dev-connection",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-connection",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-connection",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-connection",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-health",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-health",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-health",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-health",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-dedupe",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-dedupe",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-dedupe",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-dedupe",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-paraphrase",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-paraphrase",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-paraphrase",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-paraphrase",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-owner",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-owner",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-owner",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-owner",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-sla",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-sla",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-sla",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-sla",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-same-topic",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-same-topic",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-same-topic",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-same-topic",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-cost",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-cost",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-cost",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-cost",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-pool",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-pool",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-pool",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-pool",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-health",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-health",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-health",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-health",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-limit",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-limit",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-limit",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-limit",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-paraphrase",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-paraphrase",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-paraphrase",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-paraphrase",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-upload",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-upload",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-upload",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-upload",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-redaction",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-redaction",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m1",
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-redaction",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m1",
+        "m0"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-redaction",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-deletion",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-deletion",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-deletion",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-deletion",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-cors",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-cors",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-cors",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-cors",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-owner",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-owner",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-owner",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-owner",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-budget",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-budget",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-budget",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-budget",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-approval",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-approval",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-approval",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-approval",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-law",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-law",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-law",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-law",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-rpo",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-rpo",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-rpo",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-rpo",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-vendor",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-vendor",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-vendor",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-vendor",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-contact",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-contact",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-contact",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-contact",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-why",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-why",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-why",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-why",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": null,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-current-conflict",
+      "arm": "no_memory",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": true,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-current-conflict",
+      "arm": "similarity",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": true,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-current-conflict",
+      "arm": "basic",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": false,
+      "no_answer_fp": true,
+      "correct_abstention": false,
+      "conflict": true,
+      "conflict_detected": false
+    },
+    {
+      "id": "dev-current-conflict",
+      "arm": "gedam",
+      "answerable": false,
+      "relevant": [],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": true,
+      "conflict": true,
+      "conflict_detected": true
+    },
+    {
+      "id": "test-as-of-nonconflict",
+      "arm": "no_memory",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": false,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-as-of-nonconflict",
+      "arm": "similarity",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": false,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-as-of-nonconflict",
+      "arm": "basic",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [
+        "m0",
+        "m1"
+      ],
+      "hit": true,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": false,
+      "conflict_detected": false
+    },
+    {
+      "id": "test-as-of-nonconflict",
+      "arm": "gedam",
+      "answerable": true,
+      "relevant": [
+        "m0"
+      ],
+      "retrieved": [],
+      "hit": false,
+      "no_answer_fp": false,
+      "correct_abstention": false,
+      "conflict": false,
+      "conflict_detected": false
+    }
+  ],
+  "limitations": [
+    "Synthetic labeled cases measure policy safety, not external factual QA.",
+    "Validity/suppression labels are defined by the case construction."
+  ]
+}

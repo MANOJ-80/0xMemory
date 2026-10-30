@@ -1,0 +1,643 @@
+{
+  "date": "2026-10-30",
+  "benchmark": "GEDAM paired coding pilot",
+  "model": "gpt-6-luna",
+  "cli_version": "codex-cli 0.163.0-alpha.11.1",
+  "seed": 63841,
+  "task_families": 3,
+  "repetitions": 2,
+  "paired_runs": 6,
+  "run_rows": [
+    {
+      "task_id": "toml_config",
+      "repetition": 1,
+      "condition": "gedam",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 16.63,
+      "retrieval_ids": [
+        "mem-0ab3ef74"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 237,
+      "retrieval_bytes": 708,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:41:30.016999+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 63074,
+          "cached_input_tokens": 53760,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 619,
+          "reasoning_output_tokens": 147
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 63074,
+              "cached_input_tokens": 53760,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 619,
+              "reasoning_output_tokens": 147
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    },
+    {
+      "task_id": "toml_config",
+      "repetition": 1,
+      "condition": "no_memory",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 37.48,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:42:07.505334+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 111580,
+          "cached_input_tokens": 85120,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1173,
+          "reasoning_output_tokens": 574
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 111580,
+              "cached_input_tokens": 85120,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1173,
+              "reasoning_output_tokens": 574
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError: {'service': {'port': 7000}}\n"
+    },
+    {
+      "task_id": "toml_config",
+      "repetition": 2,
+      "condition": "no_memory",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 13.68,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:42:21.196687+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 46272,
+          "cached_input_tokens": 42240,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 246,
+          "reasoning_output_tokens": 0
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 46272,
+              "cached_input_tokens": 42240,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 246,
+              "reasoning_output_tokens": 0
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/numaan/Desktop/final_year_project/0xMemory/evaluation/product-benchmark/pilot/toml_config/rep_2/no_memory/repo/config.py\", line 2, in load_config\n    raise NotImplementedError\nNotImplementedError\n"
+    },
+    {
+      "task_id": "toml_config",
+      "repetition": 2,
+      "condition": "gedam",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 20.3,
+      "retrieval_ids": [
+        "mem-0ab3ef74"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 237,
+      "retrieval_bytes": 708,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:42:41.488438+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 93258,
+          "cached_input_tokens": 88064,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 673,
+          "reasoning_output_tokens": 224
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 93258,
+              "cached_input_tokens": 88064,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 673,
+              "reasoning_output_tokens": 224
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    },
+    {
+      "task_id": "pagination_contract",
+      "repetition": 1,
+      "condition": "gedam",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 31.01,
+      "retrieval_ids": [
+        "mem-6360c088"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 267,
+      "retrieval_bytes": 799,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:43:12.850050+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 96494,
+          "cached_input_tokens": 90112,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1646,
+          "reasoning_output_tokens": 540
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 96494,
+              "cached_input_tokens": 90112,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1646,
+              "reasoning_output_tokens": 540
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    },
+    {
+      "task_id": "pagination_contract",
+      "repetition": 1,
+      "condition": "no_memory",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 24.59,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:43:37.462622+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 94049,
+          "cached_input_tokens": 76416,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1197,
+          "reasoning_output_tokens": 329
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 94049,
+              "cached_input_tokens": 76416,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1197,
+              "reasoning_output_tokens": 329
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError: 250\n"
+    },
+    {
+      "task_id": "pagination_contract",
+      "repetition": 2,
+      "condition": "no_memory",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 30.75,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:44:08.201555+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 76522,
+          "cached_input_tokens": 68608,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1119,
+          "reasoning_output_tokens": 550
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 76522,
+              "cached_input_tokens": 68608,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1119,
+              "reasoning_output_tokens": 550
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError: 250\n"
+    },
+    {
+      "task_id": "pagination_contract",
+      "repetition": 2,
+      "condition": "gedam",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 50.16,
+      "retrieval_ids": [
+        "mem-6360c088"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 267,
+      "retrieval_bytes": 799,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:44:58.342763+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 98324,
+          "cached_input_tokens": 91520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1355,
+          "reasoning_output_tokens": 348
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 98324,
+              "cached_input_tokens": 91520,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1355,
+              "reasoning_output_tokens": 348
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    },
+    {
+      "task_id": "cache_policy",
+      "repetition": 1,
+      "condition": "no_memory",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 27.3,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:45:26.182434+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 78485,
+          "cached_input_tokens": 65280,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 677,
+          "reasoning_output_tokens": 204
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 78485,
+              "cached_input_tokens": 65280,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 677,
+              "reasoning_output_tokens": 204
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+    },
+    {
+      "task_id": "cache_policy",
+      "repetition": 1,
+      "condition": "gedam",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 20.49,
+      "retrieval_ids": [
+        "mem-e07a236a"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 466,
+      "retrieval_bytes": 1395,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:45:46.671139+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 63758,
+          "cached_input_tokens": 58752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 563,
+          "reasoning_output_tokens": 46
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 63758,
+              "cached_input_tokens": 58752,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 563,
+              "reasoning_output_tokens": 46
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    },
+    {
+      "task_id": "cache_policy",
+      "repetition": 2,
+      "condition": "no_memory",
+      "order": 1,
+      "agent_returncode": 0,
+      "test_passed": false,
+      "test_returncode": 1,
+      "runtime_seconds": 28.62,
+      "retrieval_ids": [],
+      "retrieval_status": "no_memory",
+      "retrieval_tokens_estimated": 0,
+      "retrieval_bytes": 0,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:46:15.292484+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 108798,
+          "cached_input_tokens": 98688,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1171,
+          "reasoning_output_tokens": 430
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 108798,
+              "cached_input_tokens": 98688,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1171,
+              "reasoning_output_tokens": 430
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+    },
+    {
+      "task_id": "cache_policy",
+      "repetition": 2,
+      "condition": "gedam",
+      "order": 2,
+      "agent_returncode": 0,
+      "test_passed": true,
+      "test_returncode": 0,
+      "runtime_seconds": 17.0,
+      "retrieval_ids": [
+        "mem-e07a236a"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "retrieval_tokens_estimated": 466,
+      "retrieval_bytes": 1395,
+      "usage": {
+        "source": "codex_cli_turn_completed_usage",
+        "granularity": "agent_turn",
+        "model_requested": "gpt-6-luna",
+        "codex_version": "codex-cli 0.163.0-alpha.11.1",
+        "created_utc": "2026-10-30T07:46:32.298297+00:00",
+        "returncode": 0,
+        "turns_completed": 1,
+        "turns_with_usage": 1,
+        "usage_coverage": 1.0,
+        "totals": {
+          "input_tokens": 63765,
+          "cached_input_tokens": 58752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 577,
+          "reasoning_output_tokens": 56
+        },
+        "turn_usage": [
+          {
+            "turn_index": 1,
+            "usage": {
+              "input_tokens": 63765,
+              "cached_input_tokens": 58752,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 577,
+              "reasoning_output_tokens": 56
+            }
+          }
+        ],
+        "limitations": [
+          "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+          "A null field was not exposed; null does not mean zero.",
+          "Monetary cost is not inferred from token counts."
+        ]
+      },
+      "test_stderr": ""
+    }
+  ],
+  "limitations": [
+    "Synthetic small task set: 3 task families with two paired runs per family.",
+    "Memory facts were manually seeded from synthetic setup transcripts; capture/extraction quality was not evaluated.",
+    "No-memory receives no persistent fact; tasks intentionally depend on prior-session decisions.",
+    "Single model snapshot and single machine; results are exploratory and not generalizable.",
+    "Codex-reported agent-turn tokens include harness/runtime overhead, not API request billing.",
+    "Task pass/fail is based on local deterministic assertions; grading is not blind."
+  ],
+  "source_commit": "d368c38705b71c5ecacac13f73a74a4d8f47951a",
+  "source_sha256": {
+    "evaluation/product-benchmark/run_pilot.py": "0360f0ee54127bf125f7c08245eddb7acef8e9acd483a0eb12803165dd4f49c3",
+    "evaluation/product-benchmark/run_retrieval_pilot.py": "1f67e679f78ceceed23381149198fa544ff2fe330efd698627032e9b34a80e59",
+    "evaluation/product-benchmark/codex_usage_adapter.py": "76f721d251be931660e482d693533fe85eb9110ecd1f4be891825e059a67862a",
+    "src/oxmemory/storage/retrieval.py": "833e04b6d7b6f62cc94a6a764788912a66dce9070b157bfa9f43e1517549565a",
+    "src/oxmemory/storage/memory_store.py": "57580e7d8c99269a978b96dc55316053dc751b811923e7e80bb0a4325a3c4e36",
+    "src/oxmemory/core/models.py": "d2259df0e394f489cdcea6416fa250c020d5e07dee4866d66e798af318072e4d"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39"
+}

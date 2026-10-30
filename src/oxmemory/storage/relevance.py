@@ -30,4 +30,10 @@ def relevant(query, memory, similarity=None, threshold=DEFAULT_MIN_SIMILARITY):
     text = " ".join([memory.content, *memory.tags, *memory.symbols]).lower()
     overlap = words & set(re.findall(r"\w+", text))
     # File hints influence ranking, but cannot turn unrelated text into an answer.
-    return bool(words) and len(overlap) >= max(1, math.ceil(len(words) * 0.5))
+    # A half-of-query requirement is too brittle for natural-language memory
+    # questions: LoCoMo and real users often paraphrase the stored fact. Keep
+    # the gate conservative for very short queries, while allowing a quarter of
+    # the informative terms for longer questions so ranking can recover the
+    # candidate and score it with the EDAM evidence/temporal features.
+    required = 1 if len(words) <= 4 else max(1, math.ceil(len(words) * 0.25))
+    return bool(words) and len(overlap) >= required

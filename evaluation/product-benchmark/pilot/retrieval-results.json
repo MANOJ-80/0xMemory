@@ -1,0 +1,168 @@
+{
+  "suite": "synthetic retrieval/suppression diagnostic",
+  "engine": "production GEDAM recall_context; keyword-only, semantic embeddings disabled",
+  "cases": [
+    {
+      "case_id": "positive_toml",
+      "category": "positive",
+      "query": "service config TOML SERVICE_PORT override",
+      "gold_ids": [
+        "mem-b56a6fdb"
+      ],
+      "retrieved_ids": [
+        "mem-b56a6fdb"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "abstained": false,
+      "context_tokens_estimated": 147,
+      "context_bytes": 441,
+      "gold_recalled": true,
+      "stale_hit": null,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "positive_pagination",
+      "category": "positive",
+      "query": "event listing page size cursor opaque base64 ID",
+      "gold_ids": [
+        "mem-b513e52b"
+      ],
+      "retrieved_ids": [
+        "mem-b513e52b"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "abstained": false,
+      "context_tokens_estimated": 169,
+      "context_bytes": 505,
+      "gold_recalled": true,
+      "stale_hit": null,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "positive_cache",
+      "category": "positive",
+      "query": "worker result cache LRU maximum entries recency",
+      "gold_ids": [
+        "mem-9ac404d9"
+      ],
+      "retrieved_ids": [
+        "mem-9ac404d9"
+      ],
+      "retrieval_status": "answered_with_memory",
+      "abstained": false,
+      "context_tokens_estimated": 167,
+      "context_bytes": 499,
+      "gold_recalled": true,
+      "stale_hit": null,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "stale",
+      "category": "stale",
+      "query": "legacy Redis endpoint retired address",
+      "gold_ids": [
+        "mem-56c4ea4e"
+      ],
+      "retrieved_ids": [],
+      "retrieval_status": "abstained_only_ineligible",
+      "abstained": true,
+      "context_tokens_estimated": 0,
+      "context_bytes": 0,
+      "gold_recalled": null,
+      "stale_hit": false,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "candidate",
+      "category": "candidate",
+      "query": "unapproved Kafka migration option",
+      "gold_ids": [
+        "mem-f34c7ad6"
+      ],
+      "retrieved_ids": [],
+      "retrieval_status": "abstained_no_candidates",
+      "abstained": true,
+      "context_tokens_estimated": 0,
+      "context_bytes": 0,
+      "gold_recalled": null,
+      "stale_hit": null,
+      "candidate_suppressed": true,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "no_answer",
+      "category": "no_answer",
+      "query": "which cloud provider hosts production",
+      "gold_ids": [],
+      "retrieved_ids": [],
+      "retrieval_status": "abstained_no_candidates",
+      "abstained": true,
+      "context_tokens_estimated": 0,
+      "context_bytes": 0,
+      "gold_recalled": null,
+      "stale_hit": null,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": false,
+      "conflict_correctly_abstained": null,
+      "budget_compliant": true
+    },
+    {
+      "case_id": "conflict",
+      "category": "conflict",
+      "query": "service request timeout current setting",
+      "gold_ids": [],
+      "retrieved_ids": [],
+      "retrieval_status": "abstained_conflict",
+      "abstained": true,
+      "context_tokens_estimated": 0,
+      "context_bytes": 0,
+      "gold_recalled": null,
+      "stale_hit": null,
+      "candidate_suppressed": null,
+      "no_answer_false_positive": null,
+      "conflict_correctly_abstained": true,
+      "budget_compliant": true
+    }
+  ],
+  "summary": {
+    "positive_queries": 3,
+    "positive_recall_at_5": 1.0,
+    "candidate_suppression_rate": 1,
+    "stale_hit_rate": 0,
+    "no_answer_false_positive_rate": 0,
+    "no_answer_correct_abstention_rate": 1,
+    "conflict_correct_abstention": true,
+    "budget_compliance_rate": 1.0
+  },
+  "limits": [
+    "Tiny synthetic fixtures, one query per category; percentages are diagnostic only.",
+    "No independent annotators; gold labels are fixture-authored.",
+    "Keyword-only retrieval intentionally disables embeddings.",
+    "Conflict behavior measures retrieval abstention, not model answer correctness."
+  ],
+  "source_commit": "d368c38705b71c5ecacac13f73a74a4d8f47951a",
+  "source_sha256": {
+    "evaluation/product-benchmark/run_pilot.py": "0360f0ee54127bf125f7c08245eddb7acef8e9acd483a0eb12803165dd4f49c3",
+    "evaluation/product-benchmark/run_retrieval_pilot.py": "1f67e679f78ceceed23381149198fa544ff2fe330efd698627032e9b34a80e59",
+    "evaluation/product-benchmark/codex_usage_adapter.py": "76f721d251be931660e482d693533fe85eb9110ecd1f4be891825e059a67862a",
+    "src/oxmemory/storage/retrieval.py": "833e04b6d7b6f62cc94a6a764788912a66dce9070b157bfa9f43e1517549565a",
+    "src/oxmemory/storage/memory_store.py": "57580e7d8c99269a978b96dc55316053dc751b811923e7e80bb0a4325a3c4e36",
+    "src/oxmemory/core/models.py": "d2259df0e394f489cdcea6416fa250c020d5e07dee4866d66e798af318072e4d"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39"
+}

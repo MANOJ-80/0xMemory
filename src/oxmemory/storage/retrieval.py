@@ -244,7 +244,18 @@ def rank_memories(
             cosine = similarities.get(mid)
             similarity_relevance = (0.5 if cosine is None else
                                     max(0.0, min(1.0, (cosine + 1.0) / 2.0)))
-            relevance = 0.65 * rrf_relevance + 0.35 * similarity_relevance
+            # Preserve the direct lexical signal instead of letting the very
+            # compressed RRF values dominate ties. This is especially useful
+            # for imported natural-language facts when embeddings are disabled
+            # or unavailable: a memory sharing more informative query terms is
+            # a stronger candidate, while EDAM still applies evidence,
+            # temporal, scope, and provenance scoring afterwards.
+            query_words = query_tokens(query)
+            memory_words = query_tokens(" ".join([memory.content, *memory.tags, *memory.symbols]))
+            lexical_relevance = (len(query_words & memory_words) / max(len(query_words), 1)
+                                 if query_words else 0.0)
+            relevance = (0.50 * lexical_relevance + 0.30 * rrf_relevance
+                         + 0.20 * similarity_relevance)
             utility = memory.utility if memory.utility_observations else 0.5
             provenance = {
                 "human_reviewed": 1.0,
@@ -282,6 +293,7 @@ def rank_memories(
             scores[mid] = score * review_penalty
             components[mid] = {"relevance": round(relevance, 4),
                                "rrf_relevance": round(rrf_relevance, 4),
+                               "lexical_relevance": round(lexical_relevance, 4),
                                "similarity_relevance": round(similarity_relevance, 4),
                                "evidence": round(evidence_score, 4),
                                "temporal": round(temporal_fit, 4),
@@ -304,6 +316,16 @@ def rank_memories(
     for mid in ordered:
         memory = memories[mid]
         missing = sorted(slot for slot in requested if not slot_supported(memory, slot))
+        # Unstructured memories (for example imported conversation facts) do
+        # not have a complete answer-slot schema. Treating every missing slot
+        # as disqualifying drops valid paraphrased evidence such as a "when"
+        # question whose fact contains the event but no normalized date field.
+        # Enforce slot completeness only when the memory actually declares
+        # structured answer attributes or claim metadata.
+        if missing and not memory.answer_slots and not (
+            memory.claim_subject or memory.claim_predicate or memory.claim_value
+        ):
+            missing = []
         # Only the user's question can establish answerability. The task context
         # helps find candidate memories but cannot by itself make one an answer.
         lexical = query_tokens(query) & query_tokens(

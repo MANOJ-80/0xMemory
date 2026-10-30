@@ -223,13 +223,16 @@ class RetrievalConfig(BaseModel):
     architecture: str = "edam"
     relevance_gate: bool = True
     min_similarity: float = Field(default=0.25, ge=-1, le=1, allow_inf_nan=False)
-    min_edam_score: float = Field(default=0.22, ge=0, le=1, allow_inf_nan=False)
-    w_relevance: float = Field(default=0.25, ge=0, le=1, allow_inf_nan=False)
-    w_evidence: float = Field(default=0.20, ge=0, le=1, allow_inf_nan=False)
-    w_temporal: float = Field(default=0.10, ge=0, le=1, allow_inf_nan=False)
+    # Keep the EDAM floor low enough to retain paraphrased evidence; the
+    # relevance gate and downstream conflict/validity checks still control
+    # unsafe memories. A high floor caused valid low-salience facts to vanish.
+    min_edam_score: float = Field(default=0.12, ge=0, le=1, allow_inf_nan=False)
+    w_relevance: float = Field(default=0.45, ge=0, le=1, allow_inf_nan=False)
+    w_evidence: float = Field(default=0.15, ge=0, le=1, allow_inf_nan=False)
+    w_temporal: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
     w_freshness: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
-    w_scope: float = Field(default=0.15, ge=0, le=1, allow_inf_nan=False)
-    w_utility: float = Field(default=0.10, ge=0, le=1, allow_inf_nan=False)
+    w_scope: float = Field(default=0.10, ge=0, le=1, allow_inf_nan=False)
+    w_utility: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
     w_provenance: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
     w_confidence: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)
     w_extraction_confidence: float = Field(default=0.05, ge=0, le=1, allow_inf_nan=False)

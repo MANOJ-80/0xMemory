@@ -1,0 +1,50 @@
+{
+  "task_id": "toml_config",
+  "repetition": 1,
+  "condition": "no_memory",
+  "order": 2,
+  "agent_returncode": 0,
+  "test_passed": false,
+  "test_returncode": 1,
+  "runtime_seconds": 37.48,
+  "retrieval_ids": [],
+  "retrieval_status": "no_memory",
+  "retrieval_tokens_estimated": 0,
+  "retrieval_bytes": 0,
+  "usage": {
+    "source": "codex_cli_turn_completed_usage",
+    "granularity": "agent_turn",
+    "model_requested": "gpt-6-luna",
+    "codex_version": "codex-cli 0.163.0-alpha.11.1",
+    "created_utc": "2026-10-30T07:42:07.505334+00:00",
+    "returncode": 0,
+    "turns_completed": 1,
+    "turns_with_usage": 1,
+    "usage_coverage": 1.0,
+    "totals": {
+      "input_tokens": 111580,
+      "cached_input_tokens": 85120,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1173,
+      "reasoning_output_tokens": 574
+    },
+    "turn_usage": [
+      {
+        "turn_index": 1,
+        "usage": {
+          "input_tokens": 111580,
+          "cached_input_tokens": 85120,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1173,
+          "reasoning_output_tokens": 574
+        }
+      }
+    ],
+    "limitations": [
+      "Counts are Codex-reported turn totals, not per-HTTP-request billing records.",
+      "A null field was not exposed; null does not mean zero.",
+      "Monetary cost is not inferred from token counts."
+    ]
+  },
+  "test_stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError: {'service': {'port': 7000}}\n"
+}
